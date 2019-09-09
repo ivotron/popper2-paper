@@ -38,9 +38,13 @@ Most (if not all) of these runtimes support `Dockerfile`s as a way to
 specify the environment dependencies for an application.
 
 The more complex the container image definition (a more complex 
-`Dockerfile`), the more "monolithic" it gets, making it easier to. 
-Instead, we can break it down into a workflow, which makes it more 
+`Dockerfile`), the more "monolithic" it gets, and thus the less 
+maintainable and reusable it is. On the other hand, if we have finer 
+granularity, it's easier to maintain. Thus, we would like to break an 
+experimentation pipeline down into a workflow, which makes it more 
 modular and more maintainable.
+
+Alternatives for this
 
 # Popper 2.0
 
