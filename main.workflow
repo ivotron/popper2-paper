@@ -13,9 +13,6 @@ action "build" {
     "--output=paper.pdf",
     "--highlight-style=tango",
     "--bibliography=refs.bib",
-    "--filter=pandoc/pandoc-tabularize.py",
-    "--filter=pandoc-crossref",
-    "--filter=pandoc-citeproc",
     "--metadata=IEEETran:true",
     "--metadata=documentclass:IEEETran",
     "--metadata=classoption:conference",
@@ -23,6 +20,9 @@ action "build" {
     "--metadata=usedefaultspacing:false",
     "--metadata=numbersections:true",
     "--metadata=secPrefix:section",
+    "--filter=pandoc/pandoc-tabularize.py",
+    "--filter=pandoc-crossref",
+    "--filter=pandoc-citeproc",
     "paper.md"
   ]
 }

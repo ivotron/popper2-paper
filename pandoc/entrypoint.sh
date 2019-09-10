@@ -6,5 +6,3 @@ mkdir -p $HOME/texmf/tex/latex
 cp pandoc/IEEETran.cls $HOME/texmf/tex/latex/
 
 pandoc $@
-
-

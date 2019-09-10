@@ -1,5 +1,5 @@
 ---
-title: "Popper 2.0: A Multi-container Workflow Execution Engine For Testing Applications and Validating Scientific Explorations"
+title: "Popper 2.0: A Multi-container Workflow Execution Engine For Testing Complex Applications and Validating Scientific Explorations"
 author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori and Carlos Maltzahn
 abstract: |
  Software containers allow users to "bring their own environment" to 
@@ -84,33 +84,27 @@ all the burden of self-contained workflow creation to users.
 
 Additionally, as the project team kept incorporating user feedback, 
 the YAML-based pipeline definition syntax (shown above) kept evolving 
-and, over time, started to look like a workflow specification format; 
-we decided it was time to embrace workflows properly. Around this 
-time, Github released Github Actions (referred from this point on as 
-GHA), a workflow language and code execution platform. The GHA 
-workflow syntax is a subset of the Hashicorp Configuration Language 
-(HCL) [@hcl] a popular configuration language used in the DevOps 
-community [@terraform]. The GHA language is one of the simplest 
-workflow formats available; where simplicity is quantified as number 
-of syntactic elements there (see example below). This makes it a 
-viable option for implementing workflows in many distinct domains.
+and, over time, started to look like a workflow specification; thus 
+the team decided it was time to embrace workflows properly. Around 
+this time, Github released Github Actions [@gha] (referred from this 
+point on as GHA), a workflow language and code execution platform. The 
+GHA workflow language is a subset of the Hashicorp Configuration 
+Language (HCL) [@hcl] a popular configuration language used in the 
+DevOps community [@terraform]. The GHA language is one of the simplest 
+workflow formats available. Simplicity in this context being defined 
+in terms of the number of syntactic elements of the language. This 
+makes it a great candidate language for users to implement workflows 
+in multiple domains, as the language assumes a containerized 
+environment.
 
 In the remaining of this section we briefly introduce the GHA workflow 
-language, as well as design and implementation of Popper 2.0, the 
-execution engine; and in particular we dive in the pluggable container 
-runtime component.
+language, as well as design and implementation of Popper 2.0 (the 
+workflow execution engine). In particular, we dive into the pluggable 
+container runtime component of the engine.
 
 ## Language
 
-Popper is a workflow execution engine based on [Github 
-actions](https://github.com/features/actions) (GHA) that allows you to 
-execute GHA workflows locally on your machine. Popper workflows are 
-defined in [HCL](https://github.com/hashicorp/hcl) syntax and behave 
-like GHA workflows. The main difference with respect to GHA workflows 
-is that, through [several extensions to the GHA 
-syntax](https://popper.rtfd.io/en/latest/sections/extensions.html), a 
-Popper workflow can execute actions in other runtimes in addition to 
-Docker.
+The GHA language contains
 
 ## Actions
 
@@ -131,7 +125,25 @@ Custom container configuration.
 
 # Case Study {#sec:study}
 
-SC19 Reproducibility Challenge
+We now present a case study that exemplifies how to follow the SciOps 
+principles presented earlier[^available]. The example shows an 
+end-to-end workflow corresponding to a parameter sweep execution of 
+the NormalModes software package [@shi_computing_2018] from the SC19 
+Student Cluster Competition Reproducibility Challenge 
+[@taufer_sc18_2018].
+
+![An end-to-end example workflow.
+](./figures/casestudy.pdf){#fig:casestudy}
+
+This workflow (@Fig:casestudy) goes through the stages of downloading 
+the dataset from Zenodo, installing the code associated to the study, 
+running the parameter sweep, producing output graphs, and validating 
+claims that are made in the original study. This experimentation 
+pipeline is specified in the Github Actions Workflow Language, an open 
+format for defining workflows. All the principles outlined in the 
+previous section are followed when implementing this workflow.
+
+[^available]: Code available at <https://github.com/popperized/normalmodes-workflows>
 
 # Discussion {#sec:discuss}
 
@@ -155,7 +167,9 @@ Benefits:
 
 Challenges:
 
-  * Mainly cultural; this is a DevOps-like workflow.
+  * Cultural: this is a DevOps-like workflow.
+  * Containers: not everybody can like them.
+  * Instability: container technology is moving fast.
 
 # Related Work {#sec:related}
 
@@ -166,7 +180,7 @@ Challenges:
 
 # Conclusion and Future Work
 
-# Bibliography
+# Bibliography {.unnumbered}
 
 <!-- hanged biblio -->
 
