@@ -71,12 +71,12 @@ and reuse.
 representation of it.
 ](./figures/casestudy.pdf){#fig:casestudy}
 
-Thus, we would like to break workflows into subunits, having one 
-container image per node in the directed acyclic graph (DAG) 
+Thus, we would like to break workflows into subunits, ideally having 
+one container image per node in the directed acyclic graph (DAG) 
 associated to the workflow. From the point of view of UX design, this 
 opens the possibility for devising languages to express 
 multi-container workflows such as the ones implemented in application 
-testing and scientific study validation.
+testing and scientific study validations.
 
 <!-- Singularity is targeted at HPC use cases [@singularity]. -->
 
@@ -91,18 +91,19 @@ shell commands, leaving the burden of ensuring that this commands are
 portable to users. Additionally, as the project team kept 
 incorporating user feedback, the YAML-based workflow definition syntax 
 kept evolving and, over time, started to look like a workflow 
-specification. Thus the team decided it was time to embrace workflows 
-properly. Around this time, Github released Github Actions 
-[@github_github_2018] (referred from this point on as GHA), a workflow 
-language and code execution platform. The GHA workflow language is a 
-subset of the HashiCorp Configuration Language (HCL)[^hcl], a popular 
-configuration language used in the DevOps community 
-[@brikman_terraform_2017]. The GHA workflow language is one of the 
-simplest workflow formats available; simplicity in this context being 
-defined in terms of the number of syntactic elements of the language. 
-This characteristic, along with the fact that the language 
-specification assumes a containerized environment, made the GHA 
-workflow language a great option for implementing Popper version 2.0.
+specification language. Thus the team decided that it was time to 
+embrace workflow languages properly. Around this time, Github released 
+Github Actions [@github_github_2018] (referred from this point on as 
+GHA), a workflow language and code execution platform. The GHA 
+workflow language is a subset of the HashiCorp Configuration Language 
+(HCL)[^hcl], a popular configuration language used in the DevOps 
+community [@brikman_terraform_2017]. The GHA workflow language is one 
+of the simplest workflow formats publicly and openly available; 
+simplicity in this context being defined in terms of the number of 
+syntactic elements of the language. This characteristic, along with 
+the fact that the language specification assumes a containerized 
+environment, made the GHA workflow language a great option for 
+implementing Popper version 2.0.
 
 [^hcl]: <https://github.com/hashicorp/hcl>
 
@@ -137,14 +138,15 @@ assume that it is given access to the project directory (the
 are with respect to this workspace folder. In addition, environment 
 variables defined at runtime allow an action to access environmental 
 information such as the absolute path to the workflow on the machine 
-the workflow is running, the commit in the associated Git repository 
-storing the `.workflow` file, among others. One of the greatest 
+the workflow is running; the commit in the associated Git repository 
+storing the `.workflow` file; among others. One of the greatest 
 advantages of this one-container-per-action approach is that, given 
 that the GHA specification is open, anyone can implement actions and 
 publish them on Git repositories, allowing others to reuse them in 
-distinct contexts, creating a bast catalog of actions; anything from 
-installing python packages, to configuring infrastructure, to manage 
-datasets in data repositories.
+distinct contexts, creating a bast catalog of reusable actions. The 
+GHA community is continuously growing this catalog where one can find 
+anything from installing python packages, to configuring 
+infrastructure, to manage datasets in data repositories.
 
 ![Architecture of the Popper workflow execution engine
 ](./figures/architecture.pdf){#fig:arch}
@@ -213,12 +215,12 @@ In the context of the SCC Reproducibility Challenge, having a fully
 functional workflow upfront reduces significantly the barrier for 
 students to begin being productive. Given that the purpose of the SCC 
 is to have students optimize as much as possible the code for a 
-particular platform, having fully functional end-to-end workflow 
-allows them to focus right away on what it matters (optimizing 
-compilation, swapping libraries, etc.). Compare this to the 
-alternative scenario where students need to start from a tarball and a 
-`README` file; much of the time in this scenario is spent on tasks 
-that do not provide value to their final goal.
+particular platform, having fully a functional end-to-end workflow 
+allows them to focus right away on what it matters: optimizing 
+compilation, swapping libraries, etc. Compare this to the alternative 
+scenario where students need to start from a tarball and a `README` 
+file. Most of the time in this scenario is spent on tasks that do not 
+provide value to their final goal.
 
 [^available]: Code available at 
 <https://github.com/popperized/normalmodes-workflows>
@@ -306,8 +308,9 @@ is that the requirement of having access to a Kubernetes cluster.
 Stable and mature scientific workflow engines such as Pegasus 
 [@deelman_pegasus_2004], Taverna [@oinn_taverna_2004] and NextFlow 
 [@ditommaso_nextflow_2017] have introduced native support for 
-containers. Similarly, these impose the requirement of needing a 
-workflow engine deployment prior to being able to execute workflows.
+containers. Similarly to the previous category, these impose the 
+requirement of needing a workflow engine deployment prior to being 
+able to execute workflows.
 
 ### **Container-based package managers**
 
