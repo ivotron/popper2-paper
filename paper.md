@@ -1,6 +1,6 @@
 ---
 title: "Popper 2.0: A Multi-container Workflow Execution Engine For Testing Complex Applications and Validating Scientific Explorations"
-author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori and Carlos Maltzahn
+author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori, Quincy Woford and Carlos Maltzahn
 abstract: |
  Software containers allow users to "bring their own environment" to 
  shared computing platforms, reducing the friction between system 
@@ -102,22 +102,43 @@ language, as well as design and implementation of Popper 2.0 (the
 workflow execution engine). In particular, we dive into the pluggable 
 container runtime component of the engine.
 
-## Language
+## Github Actions Workflow Language
 
-The GHA language contains
+The GHA language is an (open) workflow specification based on 
+containers [@gha]. Being a workflow language, it specifies a set of 
+tasks and the order in which they should be executed. An example is 
+shown in @Fig:casestudy. A `.workflow` file is made of only two 
+syntactical components: `workflow` and `action` blocks, with either 
+having attributes associated to them. In the case of a `workflow` 
+block, there's only a single attribute (`resolves`) that specifies the 
+list of actions that are to be executed at the end of the workflow. 
+Action blocks define the nodes in the workflow DAG, with a `needs` 
+attribute denoting dependencies among actions, and a `uses` attribute 
+specifying the container that is to be executed. The `uses` attribute 
+can reference Docker images hosted in container image registries; 
+filesystem paths for actions defined locally; or publicly accessible 
+github repositories that contain actions (see [@] for a more detailed 
+description).
 
-## Actions
+In practical terms, an action is a container image that is expected to 
+behave in a constrained manner. In particular, the logic within an 
+action has to assume that it is given access to the project directory 
+(the "workspace") where the workflow file is stored and that relative 
+paths are with respect to this workspace folder. In addition, 
+environment variables defined at runtime allow an action to access 
+environmental information such as the absolute path to the workflow on 
+the machine the workflow is running, the commit in the associated Git 
+repository storing the `.workflow` file, among others. One of the 
+greatest advantages of this one-container-per-action approach is that, 
+given that the GHA specification is open, anyone can implement actions 
+and publish them on Git repositories, allowing others to reuse them in 
+distinct contexts, creating a bast ecosystem that researchers have 
+available to them; anything from installing python packages, to 
+configuring infrastructure, to manage datasets in data repositories.
 
-The open actions specification allows anyone to implement distinct 
-functionality, providing a great extensible framework that can address 
-multiple needs.
+## Execution engine
 
-All existing container runtimes support the `Dockerfile`, the first 
-ever
-
-## Execution engine (container runtime abstraction)
-
-The design
+Popper is Container runtime abstraction. This component
 
 ## Container runtime plugins
 
@@ -130,9 +151,12 @@ principles presented earlier[^available]. The example shows an
 end-to-end workflow corresponding to a parameter sweep execution of 
 the NormalModes software package [@shi_computing_2018] from the SC19 
 Student Cluster Competition Reproducibility Challenge 
-[@taufer_sc18_2018].
+[@michael_sc_2019].
 
-![An end-to-end example workflow.
+![An end-to-end example of a workflow. On the left we have the 
+`main.workflow` file that defines the actions in the workflow. To the 
+left we have a pictorials representation of what the workflow is 
+doing.
 ](./figures/casestudy.pdf){#fig:casestudy}
 
 This workflow (@Fig:casestudy) goes through the stages of downloading 
@@ -167,7 +191,8 @@ Benefits:
 
 Challenges:
 
-  * Cultural: this is a DevOps-like workflow.
+  * Cultural: this is a DevOps-like workflow that requires a new 
+    paradigm for implementing workflows.
   * Containers: not everybody can like them.
   * Instability: container technology is moving fast.
 
@@ -177,8 +202,6 @@ Challenges:
   * workflow languages: commonwl, nextflow
   * kubernetes-based workflow engines: pachyderm, argo
   * container-based package managers: snap, flatpack and appimage
-
-# Conclusion and Future Work
 
 # Bibliography {.unnumbered}
 
