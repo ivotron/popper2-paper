@@ -5,12 +5,12 @@ abstract: |
  Software containers allow users to "bring their own environment" to 
  shared computing platforms, reducing the friction between system 
  administrators and their users. In recent years, multiple container 
- runtimes have arised, each addressing distinct needs (e.g. 
+ runtimes have arisen, each addressing distinct needs (e.g. 
  Singularity, Podman, rkt, among others), and an ongoing effort from 
- the Linux Foundation (Open Container Innitiative) is standardizing 
- the specification of Linux container runtimes. While containers solve 
- a big part of the "dependency hell" problem, there are scenarios 
- where multi-container workflows are not fully addressed by existing 
+ the Linux Foundation (Open Container Initiative) is standardizing the 
+ specification of Linux container runtimes. While containers solve a 
+ big part of the "dependency hell" problem, there are scenarios where 
+ multi-container workflows are not fully addressed by existing 
  runtimes or workflow engines. Current alternatives require a full 
  scheduler (e.g. Kubernetes), a scientific workflow engine (e.g. 
  Pegasus), or are constrained in the type of logic that users can 
@@ -181,23 +181,20 @@ cloning repositories if they have already cloned previously).
 
 ### **Container runtime API and plugins**
 
-This component abstracts the runtime from the. The API exposes generic 
-operations that all runtimes support such as creating a container 
-image from a `Dockerfile`; downloading images from a registry and 
-converting them to their internal format; and operations on containers 
-such as creation, deletion, renaming, etc. Currently, there are 
-plugins for Docker and Singularity, with others planned by the Popper 
-community.
+This component abstracts the runtime from the runner. The API exposes 
+generic operations that all runtimes support such as creating an image 
+from a `Dockerfile`; downloading images from a registry and converting 
+them to their internal format; and container-level operations such as 
+creation, deletion, renaming, etc. Currently, there are plugins for 
+Docker and Singularity, with others planned by the Popper community.
 
 In addition, the container runtime abstraction layer supports the 
 specialization of a runtime by allowing users to provide a 
 runtime-specific configuration file. This enables users to take 
 advantage of runtime-specific features in a transparent way. For 
-example, in the case of Singularity, this file can contain 
-specific information about the batch scheduler, such that 
-a container can connect to it and launch MPI jobs. This file can 
-either be created by users or be provided by system 
-administrators.
+example, in the case of Singularity, this file can contain information 
+about the MPI library available on a cluster. This configuration file 
+can either be created by users or provided by system administrators.
 
 # Case Study {#sec:study}
 
@@ -288,11 +285,11 @@ in categories.
 
 Workflow languages such as CommonWL [@amstutz_common_2016] and Yadage 
 [^yadage] allow users to specify workflows using a standard, 
-runtime-agnistic language that can be implemented by multiple engines. 
-These languages do not assume a containerized environment, although 
-they support container-based workflows. Compared to the GHA language, 
-their syntax is more complex and give users more control over 
-execution aspects (e.g. specify scheduling policies).
+runtime-agnostic language that can be implemented by an engine. These 
+languages do not assume a containerized environment, although they 
+support container-based workflows. Compared to the GHA language, their 
+syntax is more complex and they give users more control over execution 
+aspects (e.g. specify scheduling policies).
 
 ### **Kubernetes-based**
 
@@ -301,25 +298,24 @@ own syntax, allow users to easily submit workflows to a Kubernetes
 cluster (assuming they have access to one). Examples of these are 
 Pachyderm [@novella_containerbased_2018], Argo[^argo] and 
 Brigade[^brigade]. The main drawback of these when compared to Popper 
-is that the requirement of having access to a Kubernetes cluster.
+is the requirement of having access to a Kubernetes cluster.
 
 ### **Scientific workflow engines**
 
 Stable and mature scientific workflow engines such as Pegasus 
 [@deelman_pegasus_2004], Taverna [@oinn_taverna_2004] and NextFlow 
 [@ditommaso_nextflow_2017] have introduced native support for 
-containers. Similarly to the previous category, these impose the 
-requirement of needing a workflow engine deployment prior to being 
-able to execute workflows.
+containers. Similarly to the previous category, these assume a 
+workflow engine deployment prior to being able to execute workflows.
 
 ### **Container-based package managers**
 
 While not proper workflow execution engines, container-based package 
-managers such as category Snappy[^snappy], Flatpack[^flatpack] and 
-AppImage[^appimage] can be employed to implement reproducible 
-workflows. This alternative does not require users to specify their 
-workflows using a workflow language (shell scripts suffice), but 
-assumes that these package managers are available in the Host OS.
+managers such as Snappy[^snappy], Flatpack[^flatpack] and 
+AppImage[^appimage] can be used to implement reproducible workflows. 
+This alternative does not require users to specify workflows using a 
+language (shell scripts suffice), but assumes that these package 
+managers are available in the Host OS.
 
 [^argo]: <https://github.com/argoproj/argo>
 [^snappy]: <https://github.com/snapcore/snapd>
