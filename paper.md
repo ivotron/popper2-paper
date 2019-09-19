@@ -143,7 +143,7 @@ storing the `.workflow` file; among others. One of the greatest
 advantages of this one-container-per-action approach is that, given 
 that the GHA specification is open, anyone can implement actions and 
 publish them on Git repositories, allowing others to reuse them in 
-distinct contexts, creating a bast catalog of reusable actions. The 
+distinct contexts, creating a vast catalog of reusable actions. The
 GHA community is continuously growing this catalog where one can find 
 anything from installing python packages, to configuring 
 infrastructure, to manage datasets in data repositories.
@@ -249,7 +249,7 @@ backend infrastructure.
 
 An extension of the above; container-based workflow language such as 
 GHA hides complexities and runtime-specific setups of a container 
-container runtime. The researcher or developer sees `Dockerfile` and 
+runtime. The researcher or developer sees `Dockerfile` and
 `.workflow` files; system administrators configure the runtime and 
 provide a configuration file that users pass to Popper (e.g. GPU, 
 batch schedulers, etc.).
