@@ -1,5 +1,5 @@
 ---
-title: "Popper 2.0: A Cloud-Native Workflow Execution Engine For Testing Complex Applications and Reproducing Scientific Explorations"
+title: "Popper 2.0: A Container-Native Workflow Execution Engine For Testing Complex Applications and Reproducing Scientific Explorations"
 author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori, Quincy Wofford and Carlos Maltzahn
 abstract: |
  Software containers allow users to "bring their own environment" to 
@@ -17,16 +17,16 @@ abstract: |
  express (e.g. Docker-compose). Ideally, users should be able to 
  express workflows with the same user-friendliness and portability of 
  `Dockerfile`s (write once, run anywhere). In this article, we 
- introduce "Popper 2.0" a multi-container workflow execution engine 
+ introduce "Popper 2.0" a container-native workflow execution engine 
  that allows users to express complex workflows similarly to how they 
  do it in other scientific workflow languages, but with the advantage 
  of running in container runtimes, bringing portability and ease of 
  use to HPC scenarios. Popper 2.0 cleanly separates the three main 
  concerns that are common in HPC scenarios: experimentation logic, 
  environment preparation, and system configuration. To exemplify the 
- suitability of the tool, we present a case study where we take the 
- experimentation pipeline defined for the SC19 Reproducibility 
- Challenge and turn it into a Popper workflow.
+ suitability of the tool, we present three different case studies 
+ where we take examples from Machine Learning and HPC experiments
+ and turn them into Popper workflows.
 ---
 
 # Introduction {#sec:intro}
