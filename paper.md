@@ -25,7 +25,7 @@ abstract: |
  concerns that are common in HPC scenarios: experimentation logic, 
  environment preparation, and system configuration. To exemplify the 
  suitability of the tool, we present three different case studies 
- where we take examples from Machine Learning and HPC experiments 
+ where we take examples from Machine Learning and HPC experiments
  and turn them into Popper workflows.
 ---
 
@@ -75,14 +75,17 @@ experimentation pipeline can be broken down into finer granular
 units, we end up having pieces of logic that are easier to maintain 
 and reuse.
 
-Therefore we built a tool called Popper, which follows a container-native strategy for building reproducible worflows. The tool is described in detail in section II.
-In section III, we present three case studies of how popper can be used 
-to quickly reproduce complex workflows in different environments. We also present a 
-detailed comparison of Popper with existing workflow engines in section V.
+The above problem has been addressed by several tools in the past in distinct
+ways. Some popular Kubernetes based workflow engines include Argo and Pachyderm
+which requires access to a fully provisioned Kubernetes cluster. Some stable and 
+generic workflow engines include Taverna and Pegasus which use custom workflow
+defination languages and assume workflow engine deployment prior to executing
+workflows.
+
+The main contribution of this paper is a tool called Popper, which follows a container-native strategy for building reproducible worflows. The tool is described in detail in section II. This paper also presents three case studies of how popper can be used 
+to quickly reproduce complex workflows in different environments in section III. We also present a detailed comparison of Popper with existing workflow engines in section V.
 
 # Popper 2.0
-
-<!-- The goal of the Popper project [@jimenez_popper_2017] is to aid users in the implementation of workflows following a DevOps approach. Last year, the Popper team released version 1.0 of the command line tool, which allows users to specify workflows in a lightweight YAML syntax. In Popper 1.0, the nodes in a workflow DAG represent arbitrary Bash shell commands, leaving the burden of ensuring that this commands are portable to users. Additionally, as the project team kept incorporating user feedback, the YAML-based workflow definition syntax kept evolving and, over time, started to look like a workflow specification language. Thus the team decided that it was time to embrace workflow languages properly. Around this time, Github released Github Actions [@github_github_2018] (referred from this point on as GHA), a workflow language and code execution platform. The GHA workflow language is a subset of the HashiCorp Configuration Language (HCL)^hcl, a popular configuration language used in the DevOps community [@brikman_terraform_2017]. The GHA workflow language is one of the simplest workflow formats publicly and openly available; simplicity in this context being defined in terms of the number of syntactic elements of the language. This characteristic, along with the fact that the language specification assumes a containerized environment, made the GHA workflow language a great option for implementing Popper version 2.0. -->
 
 In the remaining of this section we briefly expand on choosing YAML as the worflow specification language, as well as the design and implementation of the workflow execution engine (Popper 2.0); in particular, we dive into the container engine and the resource manager API layer.
 
