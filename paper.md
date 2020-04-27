@@ -25,34 +25,43 @@ abstract: |
  concerns that are common in HPC scenarios: experimentation logic, 
  environment preparation, and system configuration. To exemplify the 
  suitability of the tool, we present three different case studies 
- where we take examples from Machine Learning and HPC experiments
+ where we take examples from Machine Learning and HPC experiments 
  and turn them into Popper workflows.
 ---
 
 # Introduction {#sec:intro}
 
-Although Software (Linux) containers are a relatively old technology 
-[@menage_adding_2007], it was not until recently, with the rise of 
-Docker, that they entered mainstream territory 
-[@bernstein_containers_2014]. Since then, this technology has 
-transformed the way applications get deployed in shared 
-infrastructures, with 25% of companies using this form of 
-software deployment [@datadog_surprising_2018] (popularly termed as "cloud-native software development"), and a market size 
-projected to be close to 5B by 2023 
-[@marketsandmarkets_application_2018]. Docker has been the _de facto_ 
-container runtime, with other container runtimes such as Singularity 
-[@kurtzer_singularity_2017], Charliecloud 
-[@priedhorsky_charliecloud_2017] and Podman[^podman] having emerged. 
-The Linux Foundation bootstrapped the Open Container Initiative (OCI) 
-[@opencontainerinitiative_new_2016] and is close to releasing version 
-1.0 of a container image and runtime specifications.
+Scientists and researchers often leave experimental artifacts
+like scripts, datasets, configuration files, etc. These
+when accompanied by lack of proper documentation makes the reproduction
+of the experiment highly difficult. Even with proper documentation 
+of the steps that one need to follow to reproduce the experiments and rebuild
+the outcomes, it becomes cubersome due to the differences in the environment
+in which the artifacts were developed and in which they are being reproduced.
+
+For example, a researcher working in a Windows environment
+writes some Windows PowerShell scripts. Now, if some other researcher with 
+access to a Linux machine only wants to run those scripts in correct order in their
+environment, it would become time taking and difficult. They will probably 
+end up spending a huge amount of time setting up VM's, finding the 
+appropriate OS and interpreting the correct order of execution of the steps, 
+hence making the process highly inefficent and time consuming, which 
+it does not need to be.
+
+![An end-to-end example of a workflow. On the left we have the 
+`.yml` file that defines the workflow. On the right, a pictorial 
+representation of it.
+](./figures/casestudy.png){#fig:casestudy}
+
+Through this paper, we propose a methodology in which a complex experimental 
+workflow is decomposed into several discrete steps and each step executes in a
+separate container. Doing this way, makes the workflow platform independent. Although Software (Linux) containers are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. Since then, this technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. Docker has been the *de facto* container runtime, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Charliecloud [@priedhorsky_charliecloud_2017] and Podman[^podman] having emerged. Since, these container runtimes are available for almost every well known operating systems and architectures, experiments can be reproduced easily using containerized workflows in
+almost any environment.
 
 [^podman]: <https://github.com/containers/libpod>
 
-While containers solve a big part of the "dependency hell" problem 
-[@merkel_docker_2014], there are scenarios where a single container 
-image is not suitable for implementing workflows associated to complex 
-application testing or validating scientific explorations 
+At this point, one might think "Why not use a single container for the entire workflow?". 
+There are scenarios where a single container image is not suitable for implementing workflows associated to complex application testing or validating scientific explorations 
 [@zheng_integrating_2015]. For example, a workflow might involve 
 executing two steps, both of them requiring conflicting versions of a 
 language runtime (e.g. Python 2.7 **and** Python 3.6). In this 
@@ -66,20 +75,10 @@ experimentation pipeline can be broken down into finer granular
 units, we end up having pieces of logic that are easier to maintain 
 and reuse.
 
-![An end-to-end example of a workflow. On the left we have the 
-`.yml` file that defines the workflow. On the right, a pictorial 
-representation of it.
-](./figures/casestudy.png){#fig:casestudy}
-
-Through this paper, we propose a protocol in which a
-complex workflow is decomposed into several steps and each step executes in a
-separate container. This protocol is implemented through the tool called Popper,
-which follows a container-native strategy for building reproducible worflows easily. The tool is described in detail in section II.
+Therefore we built a tool called Popper, which follows a container-native strategy for building reproducible worflows. The tool is described in detail in section II.
 In section III, we present three case studies of how popper can be used 
-to quickly reproduce complex workflows in different environments.
-From the point of view of UX design, this opens the possibility for devising 
-languages to express multi-container workflows such as the one implemented 
-in application testing and scientific study evaluations.
+to quickly reproduce complex workflows in different environments. We also present a 
+detailed comparison of Popper with existing workflow engines in section V.
 
 # Popper 2.0
 
