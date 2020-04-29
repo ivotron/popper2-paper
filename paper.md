@@ -2,56 +2,74 @@
 title: "Popper 2.0: A Container-Native Workflow Execution Engine For Testing Complex Applications and Reproducing Scientific Explorations"
 author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori, Quincy Wofford and Carlos Maltzahn
 abstract: |
- Software containers allow users to "bring their own environment" to 
- shared computing platforms, reducing the friction between system 
- administrators and their users. In recent years, multiple container 
- runtimes have arisen, each addressing distinct needs (e.g. 
- Singularity, Podman, rkt, among others), and an ongoing effort from 
- the Linux Foundation (Open Container Initiative) is standardizing the 
- specification of Linux container runtimes. While containers solve a 
- big part of the "dependency hell" problem, there are scenarios where 
- multi-container workflows are not fully addressed by existing 
- runtimes or workflow engines. Current alternatives require a full 
- scheduler (e.g. Kubernetes), a scientific workflow engine (e.g. 
- Pegasus), or are constrained in the type of logic that users can 
- express (e.g. Docker-compose). Ideally, users should be able to 
- express workflows with the same user-friendliness and portability of 
- `Dockerfile`s (write once, run anywhere). In this article, we 
- introduce "Popper 2.0" a container-native workflow execution engine 
- that allows users to express complex workflows similarly to how they 
- do it in other scientific workflow languages, but with the advantage 
- of running in container runtimes, bringing portability and ease of 
- use to HPC scenarios. Popper 2.0 cleanly separates the three main 
- concerns that are common in HPC scenarios: experimentation logic, 
- environment preparation, and system configuration. To exemplify the 
- suitability of the tool, we present three different case studies 
- where we take examples from Machine Learning and HPC experiments
- and turn them into Popper workflows.
+    Reproducibility and Replication crisis is still a prevalent problem
+    in scientific research. Researchers exploring the work done
+    in a field often find it difficult to reproduce the experiments from the
+    artifacts, i-e the code, data, diagrams, results left behind by the previous 
+    researcher. People have tried to solve this problem in the past 
+    and also has been successfull in different ways, mostly
+    by building and using workflow execution engines. With the advent of 
+    light-wight virtualization technologies in the form of containers, people 
+    have tried packaging steps in a workflow inside containers and execute them in 
+    cloud environments. Although this approach seems to work well, it poses an extra 
+    overhead of availibility of Kubernetes clusters deployed in the cloud even
+    when such an arrangement is not necessary. Therefore, as a potential solution
+    to this problem we introduce Popper, a container-native workflow execution engine
+    that executes each step in a workflow in a separate dedicated container in a 
+    wide choice of computing environments. It does not require the presence of 
+    any Kubernetes cluster or any such cloud based container orchestrator.
+    With Popper, researchers can build and validate workflows easily in almost 
+    any environment of their choice like a local machine, a supercomputing cluster
+    or any orchestrated cloud environment. To exemplify the suitability of the tool, 
+    we present three different case studies where we take examples from Machine 
+    Learning and HPC experiments and turn them into Popper workflows.
 ---
 
 # Introduction {#sec:intro}
 
+<!-- the reproducibility problem -->
+
 Scientists and researchers often leave experimental artifacts
-like scripts, datasets, configuration files, etc after completing with
-their work. These when accompanied by lack of proper documentation makes 
-the reproduction of the experiment tedious. Even with proper documentation of the 
-steps that one need to follow to reproduce the experiments and rebuild the outcomes, it becomes cumbersome due to the differences in the environment in which the artifacts 
-were developed and in which they are being reproduced.
+like code, datasets, configuration files, etc. on open-access repositories like 
+Zenodo [@_zenodo_] and Figshare [@_figshare_] after completing with
+their research. These when accompanied by lack of proper documentation makes 
+the reproduction of the experiment tedious [@sep-scientific-reproducibility]. Even with proper documentation of the steps that one need to follow to reproduce the experiments and rebuild the outcomes, it becomes cumbersome due to the differences in the environment [@merkel_docker_2014] in which the artifacts were developed and in which they are being reproduced.
 
 For example, consider a researcher working in a Windows environment
-leaves behind a bunch of Windows PowerShell [@payette2006windows] scripts. Now, if some other researcher with access to a Linux machine only wants to run those scripts in correct order in their environment, it would become time taking and difficult. They will probably 
+leaves behind a bunch of Windows PowerShell scripts. Now, if some other researcher with access to a Linux machine only wants to run those scripts in correct order in their environment, it would become time taking and difficult. They will probably 
 end up spending a huge amount of time setting up VM's, finding the 
 appropriate OS and interpreting the correct order of execution of the steps, 
 hence making the process highly inefficent and time consuming, which 
 it does not need to be.
 
+<!-- case study figure -->
+
 ![An end-to-end example of a workflow. On the left we have the 
 `.yml` file that defines the workflow. On the right, a pictorial 
 representation of it.](./figures/casestudy.png){#fig:casestudy}
 
-Through this paper, we aim to address the reproducibility problem [@goodman2016does] in research. We propose a methodology in which a complex experimental 
-workflow is decomposed into several discrete steps and each step executes in a
-separate container. Doing this way, makes the workflow platform independent. Although Software (Linux) containers [@javed2017linux] are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. Since then, this technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. Docker has been the *de facto* container runtime, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Charliecloud [@priedhorsky_charliecloud_2017] and Podman [@podmancommunity_containers_2019] having emerged. Since, these container runtimes are available for almost every well known operating systems and architectures, experiments can be reproduced easily using containerized workflows in almost any environment.
+<!-- what people have already done -->
+
+The reproducibilty problem has been addressed by several tools in the 
+past in distinct ways. Workflow execution engines [@workflow_engines] has been a 
+predominant way of handling this problem by organizing the steps in a workflow as
+directed acyclic graph (DAG) and executing them in correct order. Currently, the different
+workflow execution engines that are available can be classified into two categories. 
+First category, involves engines that are inherently container-native [@container_native]
+but they assume the presence of a fully provisioned Kubernetes [@kubernetes] cluster at their disposal for workflow execution. Therefore, this category of workflow engines could 
+also be termed as cloud-native [@cloud_native]. Some popular examples of this type of workflow execution engines are Argo [@argocommunity_argoproj_2019], Pachyderm[@novella_containerbased_2018] and Brigade. The other category of workflow 
+engines do not enforce container based execution by default but provides some 
+plugins to execute steps in containers. Nextflow [@nextflow] and Pegasus [@deelman_pegasus_2004] are some popular examples of this category of workflow engines.
+
+<!-- what it hasnt solved -->
+
+After studying the different workflow execution engines available, we discovered
+the absence of a possible third category, which should enforce execution of workflows inside 
+containers, hence making it container-native but should not enforce the presence of a Kubernetes cluster or a cloud computing environment. The presence of a Kubernetes cluster or a cloud computing environment should not be a hard core requirement for reproducing any experiment since it is costly to get access to one and inturn makes reproducibilty complex. Hence, it should provide flexibility for their users to run workflows in a wide range of computing environments like a single node local machine, a HPC environment, a Kubernetes cluster or any cloud computing environment of their choice.
+
+<!-- how containers can address part of the problem -->
+
+Container-Native software development is an emerging paradigm which promotes building, testing and deploying applications inside containers. Although Software (Linux) containers [@javed2017linux] are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. Since then, this technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. Docker has been the *de facto* container runtime, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Charliecloud [@priedhorsky_charliecloud_2017] and Podman [@podmancommunity_containers_2019] having emerged. Since, these container runtimes are available for almost every well known operating systems and architectures, experiments can be reproduced easily using containerized workflows in almost any environment.
 
 At this point, one might think "*Why not use a single container for the entire workflow ?*". 
 There are scenarios where a single container image is not suitable for implementing workflows associated to complex application testing or validating scientific explorations 
@@ -59,7 +77,7 @@ There are scenarios where a single container image is not suitable for implement
 executing two steps, both of them requiring conflicting versions of a 
 language runtime (e.g. Python 2.7 **and** Python 3.6). In this 
 scenario, users could resort to solving such conflicts with the use of 
-package managers [@package_managers_wiki], but this defeats the purpose of containers, which is to _not_ have to do this sort of thing inside a container. More 
+package managers, but this defeats the purpose of containers, which is to _not_ have to do this sort of thing inside a container. More 
 generally, the more complex a container image definition gets (a more 
 complex `Dockerfile`), the more "monolithic" it gets, and thus the 
 less maintainable and reusable it is. On the other hand, if an 
@@ -67,11 +85,10 @@ experimentation workflow can be broken down into finer granular
 units, we end up having pieces of logic that are easier to maintain 
 and reuse.
 
-The above problem has been addressed by several tools in the past in distinct
-ways. Some popular Kubernetes [@kubernetes_google] based workflow engines include Argo [@argocommunity_argoproj_2019] and 
-Pachyderm [@novella_containerbased_2018] which requires access to a fully provisioned Kubernetes cluster. Some stable and generic workflow engines include Taverna [@oinn_taverna_2004] and Pegasus[@deelman_pegasus_2004] which use custom workflow defination languages and assume workflow engine deployment prior to executing workflows.
+<!-- our contributions -->
 
-The main contribution of this paper is the tool called Popper, which follows a container-native [@container_native] strategy for building reproducible worflows from experimental artifacts. We provide a detailed description of the tool in section II. In section III, we present three case studies of how Popper can be used to quickly reproduce complex workflows in different computing environments. We also present a detailed comparison of Popper with existing workflow engines in section V.
+Through this paper, we introduce a tool called Popper, which follows a container-native strategy for building reproducible workflows from archived experimental artifacts. The core idea behind this tool is that it breaks a complex workflow into discrete steps and each step
+executes inside a separate container. These container can run on a wide variety of computing environments like the local machine, the cloud or an HPC environment. We provide a detailed description of the internals of the tool in section II. In section III, we present some case studies of how Popper can be used to quickly reproduce complex workflows in different computing environments. We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPU's to collect results. We also show how a HPC workflow developed on the local machine can be reproduced easily in a SLURM cluster. Then we talk about how Popper differs from existing workflow execution engines in section V. We conclude with discussing some benefits and challenges of using Popper for solving the reproducibilty problem.
 
 # Motivation {#sec:motivation}
 
