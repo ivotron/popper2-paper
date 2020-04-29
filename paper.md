@@ -71,7 +71,7 @@ The above problem has been addressed by several tools in the past in distinct
 ways. Some popular Kubernetes [@kubernetes_google] based workflow engines include Argo [@argocommunity_argoproj_2019] and 
 Pachyderm [@novella_containerbased_2018] which requires access to a fully provisioned Kubernetes cluster. Some stable and generic workflow engines include Taverna [@oinn_taverna_2004] and Pegasus[@deelman_pegasus_2004] which use custom workflow defination languages and assume workflow engine deployment prior to executing workflows.
 
-The main contribution of this paper is the tool called Popper, which follows a container-native strategy for building reproducible worflows from experimental artifacts. We provide a detailed description of the tool in section II. In section III, we present three case studies of how Popper can be used to quickly reproduce complex workflows in different computing environments. We also present a detailed comparison of Popper with existing workflow engines in section V.
+The main contribution of this paper is the tool called Popper, which follows a container-native [@container_native] strategy for building reproducible worflows from experimental artifacts. We provide a detailed description of the tool in section II. In section III, we present three case studies of how Popper can be used to quickly reproduce complex workflows in different computing environments. We also present a detailed comparison of Popper with existing workflow engines in section V.
 
 # Motivation {#sec:motivation}
 
