@@ -30,7 +30,7 @@ Hence, it makes the process inefficient and cumbersome leading to what is known 
 <!-- discuss previous work -->
 
 Numerous existing research have tried to address the problem of reproducibility [@goodman2016does] in distinct ways like logging and tracing systemcalls, using workflow engines, using correctly provisioned shared and public testbeds, by recording and replaying changes from a stable initial state, etc [@reproducibility2018acm] and these led to the development of various tools and frameworks [@piccolo2016tools] [@peng2011reproducible].
-Scientific workflow engines have been a predominant solution [@stevens2013automated] [@banati2015minimal] [@qasha2016framework] for handling the reproducibility problem by organizing the steps in a complex scientific workflow as the nodes of a directed acyclic graph (DAG) and executing them in correct order [@cohen2017scientific] [@albrecht2012makeflow].
+Scientific workflow engines have been a predominant solution [@stevens2013automated] [@banati2015minimal] [@qasha2016framework] for handling the reproducibility problem by organizing the steps in a complex scientific workflow as the nodes of a directed acyclic graph (DAG) and executing them in correct order [@albrecht2012makeflow].
 Nextflow [@ditommaso_nextflow_2017], Pegasus [@deelman_pegasus_2004] and Taverna [@oinn_taverna_2004] are some popular examples of scientific workflow engines.
 But some phenomena like unavailability of third-party services, missing example input data, changes in the execution environment, insufficient documentation of workflows make it difficult for scientists to reuse workflows, thus causing what is known as _workflow decay_ [@workflow_decay].
 
@@ -49,6 +49,7 @@ Since, these container runtimes are available for almost every well known operat
 <!-- what problem is remaining and what are the contributions -->
 
 Although, there are different container engines available, switching between them is hard as they have different API's and image formats and also due to the absence of tools that allow running containerized workflows in an engine agnostic way.
+It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future] [@cohen2017scientific].
 Currently, the different container based workflow engines that are available involves engines that are inherently container-native but assume the presence of a fully provisioned Kubernetes [@kubernetes_google] cluster at their disposal for workflow execution. 
 Therefore, this category of workflow engines could also be termed as cloud-native [@balalaie2016microservices]. 
 Some popular examples of this type of workflow engines are Argo [@argocommunity_argoproj_2019], Pachyderm [@novella_containerbased_2018] and Brigade [@brigade]. 
@@ -58,17 +59,19 @@ Workflow engines should provide flexibility for their users to run workflows in 
 Popper [@systemslabpopper] is a light-weight workflow execution engine that follows a container-native strategy for building reproducible workflows from archived experimental artifacts. 
 This paper makes the following contributions:
 
-1. A workflow engine design that allows running workflows inside containers on different computing environemnts like a local machine, a cloud computing environment or a HPC environment.
+1. A workflow engine that allows running workflows inside containers on different computing environemnts like a local machine, a cloud computing environment or a HPC environment.
 
 2. The design and architecture of a container-native workflow engine that abstracts resource managers and container engines giving users the ability to focus only on Dockerfiles i.e. software dependencies and workflow logic i.e. correct order of execution, and ignore the runtime specific details.
 
-3. Popper, an implementation of the above design and a detailed discussion on its internals.
+3. A design that provides built-in support for continuous validation and portability of workflows which empowers researchers to develop workflows once and run interchangeably between CI services like Travis, Jenkins, etc. and the local machine without any modifications. 
 
-4. Three case studies on how Popper can be used to quickly reproduce complex workflows in different computing environments. 
+4. Popper, an implementation of the above design and a detailed discussion on its internals.
+
+5. Three case studies on how Popper can be used to quickly reproduce complex workflows in different computing environments. 
    We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPU's to scale up and collect results. 
    We also show how an HPC workflow developed on the local machine can be reproduced easily in a Slurm [@slurm] cluster.
 
-5. A detailed comparison of Popper with existing generic and container-native workflow execution engines alongwith a comparison of YAML with popular workflow defination languages like HCL and CommonWL.
+6. A detailed comparison of Popper with existing generic and container-native workflow execution engines alongwith a comparison of YAML with popular workflow defination languages like HCL and CommonWL.
 
 # Motivation {#sec:motivation}
 
