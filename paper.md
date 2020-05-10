@@ -164,7 +164,7 @@ For example, the number of tasks to run per node in a slurm cluster can be defin
 The configuration file can be passed through the CLI interface and can be shared among different workflows.
 It can either be created by users or provided by system administrators.
 
-### **Container engine API and plugins**
+### **Container engine API**
 
 This component abstracts the container engine from the runner. 
 The API exposes generic operations that all engines support such as creating an image from a `Dockerfile`,
