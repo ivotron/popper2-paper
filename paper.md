@@ -69,21 +69,54 @@ This paper makes the following contributions:
    We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPU's to scale up and collect results. 
    We also show how a HPC workflow developed on the local machine can be reproduced easily in a Slurm [@slurm] cluster.
 
-# Motivation {#sec:motivation}
-
 # Popper 2.0 {#sec:popper}
 
 ## Background
 
+In this section, we provide a background on the different tools and technologies that are crucial to Popper for building container-native and reproducible workflows.
+
 ### **Docker**
+
+Docker is an industry standard daemon based light-weight virtualization technology that was released in early 2013.
+It uses various Linux kernel features like namespaces and cgroups to segregate processes so that they can run independently.
+It provides state of the art isolation gurantees and makes it easy to build, deploy and run applications using containers following the OCI (Open Container Initiative) [@oci] specifications. 
+However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable an user inside a Docker container to have root access to the host systems network, filesystem, processes, etc. thus making it unsuitable for use in HPC systems. 
+Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
 
 ### **Singularity**
 
-### **Podman**
+Singularity is a daemonless scientific container technology built by LBNL (Lawrence Berkley National Laboratory) and first released in 2016. 
+It is designed to be simple, fast, secure and provides containerized solutions for HPC systems supporting several HPC components such as resource managers, job schedulers and contains native MPI [@mpi1993] features. 
+One of the main goals of Singularity is to bring container technology and reproducibility to the High Performance Computing world. 
+The key feature that differentiates it from Docker is that it can be used in non-privileged computing environments like the compute nodes of HPC clusters, without any modifications to the software. 
+It also provides an abstraction that enables using container images from different image registries interchangeably like Docker Hub, Singularity Hub and Sylabs Cloud.
+These features make Singularity increasingly useful in areas of Machine learning, Deep learning and other data intensive applications where the workloads benefit from the HPC support of it.
 
 ### **Slurm**
 
+Slurm is an open-source cluster resource management and job scheduling system developed by LLNL (Lawrence Livemore National Laboratory) for Linux clusters ranging from a few nodes to thousands of nodes. 
+It is simple, scalable, portable, fault-tolerant, secure and interconnect agnostic. 
+It is used as a workload manager by almost 60% of the world's top 500 supercomputers [@ibrahim2017algorithms]. 
+Slurm provides a plugin based mechanism for simplyfying its use across different compute infrastructures.
+It enables both exclusive and non-exclusive allocation of resources like compute nodes to the users. 
+It provides a framework for starting, executing, and monitoring parallel jobs on a set of allocated nodes and arbitrates conflicting requests for resources by managing a queue of pending work. 
+Slurm runs as a daemon in the compute nodes and also provides an easy to use CLI interface.
+
 ### **Kubernetes**
+
+Kubernetes is a production-grade open source container orchestration system written in Golang that automates many of the manual processes involved in deploying, scaling and managing of containerized applications across a cluster of hosts. 
+A cluster can span hosts accross public, private or hybrid clouds. 
+This makes Kubernetes an ideal platform for hosting cloud-native applications. 
+Kubernetes supports a wide-range of container runtimes including Docker, Rkt and Podman. 
+It was originally developed and designed by engineers at Google and it is hosted and maintained by the CNCF (Cloud Native Computing Foundation). 
+Many cloud providers like GCP, AWS and Microsoft Azure provide a completely managed and secure hosted Kubernetes platform.
+
+### **Continuous Integration**
+
+Continuous Integration is a software development paradigm where developers commit code into a shared repository frequently, ideally several times a day.
+Each integration is verified by automated builds and tests of the corresponding commits.
+This helps in detecting errors and anomalies quickly and shortens the debugging time [@virmani2015understanding].
+Several hosted CI services like Travis, Circle and Jenkins make continuous integration and continuous validation easily accessible.
 
 ## Workflow Definition Language
 
