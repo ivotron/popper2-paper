@@ -120,15 +120,62 @@ Several hosted CI services like Travis, Circle and Jenkins make continuous integ
 
 ## Workflow Definition Language
 
+YAML [@ben2009yaml] is a human-readable data-serialization language. 
+It is commonly used in writing configuration files and in applications where data is stored or transmitted. 
+Due to its simplicity and wide adoption [@yaml_wide_adoption] by the systems community, we chose YAML for defining popper workflows and for specifying configuration for the execution engine. 
+An example is shown in @Fig:casestudy.
+
+A popper workflow file consists of a series of syntactical components called steps, which are a logical group of related tasks of a workflow. 
+Step blocks represent the nodes in the workflow DAG, with a `uses` attribute specifying the required container image. 
+The `uses` attribute can reference Docker images hosted in container image registries; filesystem paths for actions defined locally; or publicly accessible GitHub repositories that contain actions [@github_github_2018]. 
+The commands or scripts that need to be executed in a container can be defined by the `args` and `runs` attributes. 
+Secrets and environment variables needed by a workflow can be specified by the `secrets` and `env` attributes for making them available inside the containers.
+The steps in a workflow are executed sequentially in the order in which they are defined.
+
 ## Workflow Execution Engine
+
+The Popper workflow execution engine is composed of several loosely coupled components which talk to each other during a workflow execution.
+The vital architectural components of the system is described in detail throughout this section.
 
 ### **Command line interface (CLI)**
 
+Besides allowing users to communicate with the workflow runner, the CLI provides with search capabilities so that users can search for existing actions implemented by other researchers and developers,
+allows visualizing workflows by generating DOT diagrams [@dot] like the one shown in @Fig:casestudy,
+generates configuration files for continuous integration systems, e.g. TravisCI, Jenkins, Gitlab-CI, etc. so that users can continuously validate the workflows they implement,
+provides dynamic workflow variable substitution capabilities, among others.
+
 ### **Workflow Runner**
+
+The Workflow runner is in charge of parsing the `.yml` files, i.e. the workflow files and the configuration files through their corresponding parsers and creating an internal representation for it. 
+It also downloads actions referenced by the steps in the workflow, checks the presence of secrets that are used in a workflow and routes the execution of a step to the configured container engine through the requested resource manager. 
+The runner also maintains a cache directory to optimize multiple aspects of execution such as avoid cloning repositories if they have already cloned previously. 
+Thus, this component orchestrates the entire workflow execution process.
 
 ### **Resource manager API**
 
+Popper supports running containers in both single-node and multi-node cluster environments. 
+Each of these different environments have very specific job or process scheduling policies. 
+The resource manager module contains plugins that utilize the job schedulers or process schedulers of these environments to run the containers there. 
+Each resource manager plugin supports a variety of container engines.
+Currently, popper has plugins for running containers in Slurm clusters and Kubernetes clusters, besides allowing to run containers locally.
+
+The resource manager abstraction layer enables the specialization of a resource manager by allowing the users to provide resource manager specific configuration in the configuration file. 
+For example, the number of tasks to run per node in a slurm cluster can be defined through the `resource_manager` attribute of the file.
+The configuration file can be passed through the CLI interface and can be shared among different workflows.
+It can either be created by users or provided by system administrators.
+
 ### **Container engine API and plugins**
+
+This component abstracts the container engine from the runner. 
+The API exposes generic operations that all engines support such as creating an image from a `Dockerfile`,
+downloading images from a registry and converting them to their internal format,
+and container-level operations such as creation, deletion, renaming, etc.
+Currently, there are plugins for Docker and Singularity, with others planned by the Popper community.
+
+In addition, the container runtime abstraction layer supports the specialization of an engine by allowing users to provide engine specific configuration in the configuration file. 
+This can be done through the `engine` attribute of the configuration file.
+This enables users to take advantage of engine-specific features in a transparent way.
+For example, in the case of Singularity, this file can contain information about the MPI library available on a cluster.
 
 # Case Study {#sec:study}
 
