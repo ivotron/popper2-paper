@@ -175,7 +175,7 @@ The workflow file and the configuration file are parsed by their respective pars
 The parsers are responsible for reading and parsing the YML files into an internal format;
 running syntactic and semantic validation checks;
 normalizing the various attributes and generating a workflow DAG.
-The workflow parser have a pluggable architecture that allows adding support of other workflow languages.
+The workflow parser has a pluggable architecture that allows adding support of other workflow languages.
 
 ### Workflow Runner
 
