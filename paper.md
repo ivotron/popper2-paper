@@ -164,9 +164,8 @@ The architecture of the Popper workflow engine is shown in @Fig:arch;
 
 ### Command Line Interface (CLI)
 
-Besides allowing users to communicate with the workflow runner, the CLI provides with search capabilities so that users can search for existing actions implemented by other researchers and developers;
-allows visualizing workflows by generating DOT diagrams [@dot] like the one shown in @Fig:casestudy;
-generates configuration files for continuous integration systems, e.g. TravisCI, Jenkins, Gitlab-CI, etc. so that users can continuously validate the workflows they implement;
+Besides allowing users to communicate with the workflow runner, the CLI allows visualizing workflows by generating DOT diagrams [@dot] like the one shown in @Fig:casestudy;
+generates configuration files for continuous integration systems, e.g. TravisCI, Jenkins, Gitlab-CI, etc. so that users can continuously validate their workflows;
 provides dynamic workflow variable substitution capabilities, among others.
 
 ### Workflow Definition and Configuration Parsers
@@ -179,7 +178,7 @@ The workflow parser has a pluggable architecture that allows adding support of o
 
 ### Workflow Runner
 
-The Workflow runner is in charge of parsing the `.yml` files, i.e. the workflow files and the configuration files through their corresponding parsers and creating an internal representation for it. 
+The Workflow runner is in charge of taking a parsed workflow representation as input and executing it.
 It also downloads actions referenced by the steps in a workflow, checks the presence of secrets that are required by a workflow and routes the execution of a step to the configured container engine through the requested resource manager. 
 The runner also maintains a cache directory to optimize multiple aspects of execution such as avoid cloning repositories if they have been already cloned previously. 
 Thus, this component orchestrates the entire workflow execution process.
