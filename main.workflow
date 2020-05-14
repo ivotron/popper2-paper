@@ -7,6 +7,7 @@ action "build" {
   runs = [
     "pandoc/entrypoint.sh",
     "--standalone",
+    "--metadata=monofont-size:tiny",
     "--from=markdown+smart",
     "--template=pandoc/template.latex",
     "--csl=pandoc/IEEE.csl",
