@@ -207,9 +207,28 @@ It can either be created by users or provided by system administrators.
 
 # Case Study {#sec:study}
 
-### **Single-Node local workflow execution**
+In this section, we present three case studies of how the Popper workflow engine allows reproducing and scaling workflows easily in different compute environments.
+<!-- briefly describe each case studies here -->
+
+### **Workflow execution on the local machine**
+
+In this section, we discuss how Popper helps researchers to write and test workflows on their local machines and iterate fast.
+We used an Apple Macbook Pro with a 64-bit Intel i5 processor and 8Gb RAM for this casestudy.
+An Image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
+On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
+We ran the workflow with an overfitting patience of 5 on the laptop's CPU.
+It took around 4035 seconds for the workflow to reach an accuracy of 99.19% over 12 epochs, averaged over 5 test runs.
+To achieve lower training durations, the training should ideally be done on GPU's in the cloud which inturn requires these workflows to be easily portable to multi-node cloud environments.
 
 ### **Workflow execution in the Cloud using Kubernetes**
+
+In this section, we discuss how we reduced the training time of the above workflow by running it on GPU in a Kubernetes cluster.
+On Kubernetes clusters, steps of a workflow run in separate pods which can get scheduled on any node of the cluster.
+For this case study, we setup a 2-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU and ran the Image classification workflow there.
+Reproducing the workflow developed on the local machine in the Kubernetes cluster only required changing the resource manager specifications in the configuration file.
+The training was configured with a patience of 5 and was allowed to run till it overfits.
+A model was generated with an accuracy of 99.14% after 15 epochs within around 943 seconds, averaged over 5 test runs.
+This shows how Popper helps improve performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ### **Exascale workflow execution in SLURM clusters**
 
