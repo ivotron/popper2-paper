@@ -209,16 +209,14 @@ It can either be created by users or provided by system administrators.
 
 In this section, we present three case studies of how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 For these case studies, we took an Image Classification workflow with the MNIST dataset having 3 steps; download; verify; and train.
-The first step downloads the dataset; the second step verifies the dataset against checksums; and the third step trains the model over this dataset.
-The workflow is shown below.
-<!-- We recommend using multiple images for building a Popper workflow. A single image can also be used but that would make dependency management complex and defeat the purpose of using containers. -->
+The workflow used for the experiments is shown below.
 ```yaml
 steps:
-- id: download-dataset
+- id: download
   uses: docker://gw000/keras
   args: ["python", "./scripts/download_dataset.py"]
 
-- id: verify-dataset
+- id: verify
   uses: docker://alpine:3.9.5
   args: ["./scripts/verify_dataset.sh"]
 
@@ -226,6 +224,11 @@ steps:
   uses: docker://gw000/keras
   args: ["./scripts/run_training.sh"]
 ```
+The `download` step downloads the MNIST dataset in the workspace. 
+The `verify` step verifies the downloaded archives against precomputed checksums.
+The `train` step then starts training the model on this downloaded dataset. 
+The download and train steps use a keras docker image and the verify step uses a lightweight alpine image.
+Although a single docker image can be used in all the steps of the workflow, we recommend using images specific to the steps purpose otherwise it could make dependency management complex and non-trivial, hence defeating the purpose of containers.
 
 The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
 1. Thinking of the logical steps of the workflow.
@@ -237,27 +240,23 @@ The general paradigm for building reproducible workflows with Popper usually con
 ### **Workflow execution on the local machine**
 
 Popper helps researchers to write, test and debug workflows on their local machines.
-Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect immediately.
-We used an Apple Macbook Pro with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this casestudy.
+Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of the changes immediately.
+We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this casestudy.
 The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
-The workflow used for this experiment is given below.
-```yml
-steps:
-- id: download dataset
-  uses: docker://pytorch/pytorch:1.4-cuda10.1-cudnn7-runtime
-  args: ["python", "./scripts/download_dataset.py"]
-
-- id: run training
-  uses: docker://pytorch/pytorch:1.4-cuda10.1-cudnn7-runtime
-  args: ["./scripts/run_training.sh"]
-  env:
-    EPOCHS: 1
-```
-
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
-We ran the workflow with an overfitting patience of 5 on the laptop's CPU.
-It took around 4035 seconds for the workflow to reach an accuracy of 99.19% over 12 epochs, averaged over 5 test runs.
-To achieve lower training durations, the training should ideally be done on GPU's in the cloud which inturn requires these workflows to be easily portable to multi-node cloud environments.
+We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
+The results obtained over 5 executions is shown in Table I.
+
+|  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
+|--------------------|---------------------------------|----------|-----------| 
+| 1                  |     4035                        |    12    |  99.191%  |
+| 2                  |     4023                        |    11    |  99.188%  |
+| 3                  |     4036                        |    12    |  99.174%  |
+| 4                  |     4021                        |    11    |  99.156%  |
+| 5                  |     4056                        |    13    |  99.144%  |
+
+To achieve lower training durations, the training should ideally be done on GPU's in the cloud which in turn requires these workflows to be easily portable to multi-node cloud environments.
+In next section, we will see how to run experiments developed on the local machine efficiently on the cloud using popper.
 
 ### **Workflow execution in the Cloud using Kubernetes**
 
@@ -265,8 +264,8 @@ In this section, we discuss how we reduced the training time of the above workfl
 On Kubernetes clusters, steps of a Popper workflow run in separate pods which can get scheduled on any node of the cluster.
 Popper first builds the images required by the workflow and pushes them to an online registry.
 Then a `PersistentVolumeClaim` is created to claim storage space from a shared filesystem like NFS for the pods usage.
-Each pod uses this volume claim to access the shared storage space. 
-All of the resources are created in an unique namespace.
+Each pod uses this volume claim to access the shared storage space.
+All of the resources are created in a namespace unique to popper.
 The pods and volume claims are deleted after a workflow execution is complete.
 Although any Kubernetes cluster can be used, for this case study, we used a 2-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU and ran the Image classification workflow there.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only required changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
@@ -277,6 +276,16 @@ This shows how Popper helps improve performance of scientific workflows drastica
 ### **Exascale workflow execution in SLURM clusters**
 
 # Results {#sec:result}
+
+A brief summary of the time taken and the accuracy reached within that time by the workflows on different computing environment is shown below.
+
+| Results            | Time taken (for early stopping) | Accuracy |
+|--------------------|---------------------------------|----------|
+| Local Machine      |     8                           |    5     |
+| Kubernetes Cluster |     4                           |    4     | 
+| Slurm Cluster      |     4                           |    3     |
+
+From Table 1, it can be seen how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers quickly iterate in different computing environments.
 
 ## System Resource Usage
 
