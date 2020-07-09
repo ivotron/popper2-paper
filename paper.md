@@ -207,14 +207,53 @@ It can either be created by users or provided by system administrators.
 
 # Case Study {#sec:study}
 
-In this section, we present three case studies of how the Popper workflow engine allows reproducing and scaling workflows easily in different compute environments.
-<!-- briefly describe each case studies here -->
+In this section, we present three case studies of how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
+For these case studies, we took an Image Classification workflow with the MNIST dataset having 3 steps; download; verify; and train.
+The first step downloads the dataset; the second step verifies the dataset against checksums; and the third step trains the model over this dataset.
+The workflow is shown below.
+<!-- We recommend using multiple images for building a Popper workflow. A single image can also be used but that would make dependency management complex and defeat the purpose of using containers. -->
+```yaml
+steps:
+- id: download-dataset
+  uses: docker://gw000/keras
+  args: ["python", "./scripts/download_dataset.py"]
+
+- id: verify-dataset
+  uses: docker://alpine:3.9.5
+  args: ["./scripts/verify_dataset.sh"]
+
+- id: run-training
+  uses: docker://gw000/keras
+  args: ["./scripts/run_training.sh"]
+```
+
+The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
+1. Thinking of the logical steps of the workflow.
+2. Finding the relevant softwares required for the implementation of these steps.
+  a. Finding images containing the required software from remote image registries like DockerHub, Quay.io, Google Container Registry, etc.
+  b. If a prebuilt image is not available, a `Dockerfile` can be used to build an image manually which is a file containing specifications for building docker images.
+3. Running the workflow and refining it.
 
 ### **Workflow execution on the local machine**
 
-In this section, we discuss how Popper helps researchers to write and test workflows on their local machines and iterate fast.
-We used an Apple Macbook Pro with a 64-bit Intel i5 processor and 8Gb RAM for this casestudy.
-An Image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
+Popper helps researchers to write, test and debug workflows on their local machines.
+Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect immediately.
+We used an Apple Macbook Pro with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this casestudy.
+The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
+The workflow used for this experiment is given below.
+```yml
+steps:
+- id: download dataset
+  uses: docker://pytorch/pytorch:1.4-cuda10.1-cudnn7-runtime
+  args: ["python", "./scripts/download_dataset.py"]
+
+- id: run training
+  uses: docker://pytorch/pytorch:1.4-cuda10.1-cudnn7-runtime
+  args: ["./scripts/run_training.sh"]
+  env:
+    EPOCHS: 1
+```
+
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow with an overfitting patience of 5 on the laptop's CPU.
 It took around 4035 seconds for the workflow to reach an accuracy of 99.19% over 12 epochs, averaged over 5 test runs.
@@ -222,10 +261,15 @@ To achieve lower training durations, the training should ideally be done on GPU'
 
 ### **Workflow execution in the Cloud using Kubernetes**
 
-In this section, we discuss how we reduced the training time of the above workflow by running it on GPU in a Kubernetes cluster.
-On Kubernetes clusters, steps of a workflow run in separate pods which can get scheduled on any node of the cluster.
-For this case study, we setup a 2-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU and ran the Image classification workflow there.
-Reproducing the workflow developed on the local machine in the Kubernetes cluster only required changing the resource manager specifications in the configuration file.
+In this section, we discuss how we reduced the training time of the above workflow by reproducing it on GPU in a Kubernetes cluster.
+On Kubernetes clusters, steps of a Popper workflow run in separate pods which can get scheduled on any node of the cluster.
+Popper first builds the images required by the workflow and pushes them to an online registry.
+Then a `PersistentVolumeClaim` is created to claim storage space from a shared filesystem like NFS for the pods usage.
+Each pod uses this volume claim to access the shared storage space. 
+All of the resources are created in an unique namespace.
+The pods and volume claims are deleted after a workflow execution is complete.
+Although any Kubernetes cluster can be used, for this case study, we used a 2-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU and ran the Image classification workflow there.
+Reproducing the workflow developed on the local machine in the Kubernetes cluster only required changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 The training was configured with a patience of 5 and was allowed to run till it overfits.
 A model was generated with an accuracy of 99.14% after 15 epochs within around 943 seconds, averaged over 5 test runs.
 This shows how Popper helps improve performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.

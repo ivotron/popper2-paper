@@ -1,10 +1,7 @@
-workflow "generate pdf" {
-  resolves = "build"
-}
-
-action "build" {
-  uses = "docker://ivotron/pandoc:2.3.1"
-  runs = [
+steps:
+- id: build
+  uses: docker://ivotron/pandoc:2.3.1
+  runs: [
     "pandoc/entrypoint.sh",
     "--standalone",
     "--metadata=monofont-size:tiny",
@@ -26,4 +23,4 @@ action "build" {
     "--filter=pandoc-citeproc",
     "paper.md"
   ]
-}
+
