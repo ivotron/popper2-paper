@@ -212,11 +212,11 @@ For these case studies, we took an Image Classification workflow with the MNIST 
 The workflow used for the experiments is shown below.
 ```yaml
 steps:
-- id: download
+- id: download-dataset
   uses: docker://gw000/keras
   args: ["python", "./scripts/download_dataset.py"]
 
-- id: verify
+- id: verify-dataset
   uses: docker://alpine:3.9.5
   args: ["./scripts/verify_dataset.sh"]
 
@@ -249,41 +249,71 @@ The results obtained over 5 executions is shown in Table I.
 
 |  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
 |--------------------|---------------------------------|----------|-----------| 
-| 1                  |     4035                        |    12    |  99.191%  |
-| 2                  |     4023                        |    11    |  99.188%  |
-| 3                  |     4036                        |    12    |  99.174%  |
-| 4                  |     4021                        |    11    |  99.156%  |
-| 5                  |     4056                        |    13    |  99.144%  |
+| 1                  |     4035                        |    12    |  99.16%  |
+| 2                  |     4023                        |    11    |  99.18%  |
+| 3                  |     4036                        |    12    |  99.17%  |
+| 4                  |     4021                        |    11    |  99.15%  |
+| 5                  |     4056                        |    13    |  99.14%  |
 
 To achieve lower training durations, the training should ideally be done on GPU's in the cloud which in turn requires these workflows to be easily portable to multi-node cloud environments.
 In next section, we will see how to run experiments developed on the local machine efficiently on the cloud using popper.
 
 ### **Workflow execution in the Cloud using Kubernetes**
 
-In this section, we discuss how we reduced the training time of the above workflow by reproducing it on GPU in a Kubernetes cluster.
-On Kubernetes clusters, steps of a Popper workflow run in separate pods which can get scheduled on any node of the cluster.
+In this section, we discuss how we reduced the training time of the above workflow by reproducing it on GPU enabled Kubernetes clusters.
+On Kubernetes clusters, steps of a Popper workflow run in separate pods which can get scheduled on any node of the cluster in a namespace unique to popper.
 Popper first builds the images required by the workflow and pushes them to an online registry.
-Then a `PersistentVolumeClaim` is created to claim storage space from a shared filesystem like NFS for the pods usage.
-Each pod uses this volume claim to access the shared storage space.
-All of the resources are created in a namespace unique to popper.
-The pods and volume claims are deleted after a workflow execution is complete.
-Although any Kubernetes cluster can be used, for this case study, we used a 2-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU and ran the Image classification workflow there.
+Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS for the pods usage.
+Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on CloudLab [@CloudLab] each with a NVIDIA 12GB PCI P100 GPU.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only required changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
-The training was configured with a patience of 5 and was allowed to run till it overfits.
-A model was generated with an accuracy of 99.14% after 15 epochs within around 943 seconds, averaged over 5 test runs.
+The training was configured with a patience of 5 and was allowed to run till it overfits similar to what was done for the local machine casestudy.
+The results obtained from training on GPU enabled kubernetes clusters is show below.
+
+|  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
+|--------------------|---------------------------------|----------|-----------| 
+| 1                  |     1194                        |    20    |  99.23%   |
+| 2                  |     965                         |    17    |  99.20%   |
+| 3                  |     1021                        |    20    |  99.24%   |
+| 4                  |     894                         |    18    |  99.17%   |
+| 5                  |     934                         |    19    |  99.34%   |
+
+As we can see, that the average training duration was almost 1/4th of what it took to train on the local machine.
 This shows how Popper helps improve performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ### **Exascale workflow execution in SLURM clusters**
+
+In this case study, we modify our python code with the `horovod` distributed deeplearning framework to run the training with MPI in a slurm cluster.
+We need to make sure that the program that we are running in a SLURM cluster with singularity is MPI compatible in order to take the actual benefit of using an HPC cluster by distributing the computation to the different nodes.
+We recommend using a shared FS like NFS (Network File System) or AFS (Andrew File System) mounted on each node and placing the workflow context there in order to keep the workspace consistent accross all the nodes.
+We used 3 bare metal nodes each with a TESLA P100 GPU and running Ubuntu 18.04 for this experiment.
+Since, Singularity supports MPI out of the box, we used singularity as the container runtime for the workflow.
+We used `mpich` which is a popular version of MPI (Message Passing Interface) with Singularity following the bind approach, where we install an MPI implementation on the host and then bind mount the `bin` and `lib` inside the singularity container for MPI version in the host and the container to stay consistent. 
+The training conditions were exactly similar as the previous two casestudies.
+The results collected by training this way is given in table III.
+
+
+|  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
+|--------------------|---------------------------------|----------|-----------| 
+| 1                  |     234                         |    19    |  98.72%   |
+| 2                  |     262                         |    17    |  99.04%   |
+| 3                  |     253                         |    21    |  98.88%   |
+| 4                  |     201                         |    17    |  98.18%   |
+| 5                  |     224                         |    19    |  98.63%   |
+
+As we can see, Popper allowed us to run the workflow in an SLURM cluster with MPI and hence utilise the power of multiple GPU's and drastically reduce the training durations.
 
 # Results {#sec:result}
 
 A brief summary of the time taken and the accuracy reached within that time by the workflows on different computing environment is shown below.
 
-| Results            | Time taken (for early stopping) | Accuracy |
-|--------------------|---------------------------------|----------|
-| Local Machine      |     8                           |    5     |
-| Kubernetes Cluster |     4                           |    4     | 
-| Slurm Cluster      |     4                           |    3     |
+| Results            | Avg. Time taken (for early stopping)    | Avg. Accuracy    |
+|--------------------|-----------------------------------------|------------------|
+| Local Machine      |     4034.2                              |      99.16%      |
+| Kubernetes Cluster |     1001.6                              |      99.236%     | 
+| Slurm Cluster      |     234.8                               |      98.69%      |
+
+![Comparison of training durations in 3 different computing environments with Popper](./figures/plot.png){#fig:casestudies}
+
 
 From Table 1, it can be seen how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers quickly iterate in different computing environments.
 
