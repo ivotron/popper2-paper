@@ -207,9 +207,13 @@ It can either be created by users or provided by system administrators.
 
 # Case Study {#sec:study}
 
-In this section, we present three case studies showing how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
-For these case studies, we took an image classification workflow using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
-The workflow used for the experiments is shown below.
+In this section, we present three case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
+We analyzed the ML benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on their Github repository 
+and categorized them into few well-defined categories like missing or outdated version of dependencies; outdated documentation; missing or broken links of datasets, etc.
+The aim of these casestudies is to emphasize on how Popper help's in mitigating these reproducibility issues and makes life easier for researchers and developers.
+For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
+The workflow used for the casestudies is depicted below.
+
 ```yaml
 steps:
 - id: download-dataset
@@ -224,9 +228,10 @@ steps:
   uses: docker://gw000/keras
   args: ["./scripts/run_training.sh"]
 ```
+
 The `download` step downloads the MNIST dataset in the workspace. 
 The `verify` step verifies the downloaded archives against precomputed checksums.
-The `train` step then starts training the model on this downloaded dataset. 
+The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
 The download and train steps use a keras docker image and the verify step uses a lightweight alpine image.
 Although a single docker image can be used in all the steps of a workflow, we recommend using images specific to a steps purpose otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
