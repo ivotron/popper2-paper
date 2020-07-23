@@ -1,7 +1,6 @@
 steps:
 - id: build
   uses: docker://ivotron/pandoc:2.3.1
-  # args: ["ls"]
   runs: [
     "pandoc/entrypoint.sh",
     "--standalone",
