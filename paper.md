@@ -331,11 +331,11 @@ From Table I & Figure III, it can be seen how the portability of Popper workflow
 The problem of implementing multi-container workflows as described in @Sec:intro is addressed by existing tools.
 We briefly survey some of these technologies and compare them with Popper 2.0 by grouping them in categories.
 
-### **Workflow defination languages**
+### **Workflow definition languages**
 
-Standard workflow defination laguages like CWL (Common Workflow Langauge) [@amstutz2016common] and Yadage [@cranmer2017yadage] provide a runtime agnostic
-interface for writing workflows declaratively. These workflow defination languages also provides syntax for fine-grained control
-by the users for defining the amount of CPU and memory to be allocated for use by the steps in a workflow, specifying scheduling policies, etc.
+Standard workflow definition laguages like CWL (Common Workflow Langauge) [@amstutz2016common] and Yadage [@cranmer2017yadage] provide a runtime agnostic
+interface for writing workflows declaratively. These workflow definition languages also provides syntax for fine-grained control
+by the users like defining the amount of CPU and memory to be allocated to each step, specifying scheduling policies, etc.
 These languages also supports syntax for integration with various computing backends like container engines (docker, uDocker, singularity), HPC clusters (HTCondor, LSF, SLURM), cloud providers (AWS, GCP, Azure), etc.
 Although these languages do not assume a containerized environment, they support containerized workflows. 
 Unlike YAML, which is used by Popper, the syntax of these languages are quite complex and can quickly become overwhelming for beginners.
