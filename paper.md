@@ -328,11 +328,35 @@ From Table I & Figure III, it can be seen how the portability of Popper workflow
 
 # Related Work
 
+The problem of implementing multi-container workflows as described in @Sec:intro is addressed by existing tools.
+We briefly survey some of these technologies and compare them with Popper 2.0 by grouping them in categories.
+
 ### **Workflow defination languages**
+
+Standard workflow defination laguages like CWL (Common Workflow Langauge) [@amstutz2016common] and Yadage [@cranmer2017yadage] provide a runtime agnostic
+interface for writing workflows declaratively. These workflow defination languages also provides syntax for fine-grained control
+by the users for defining the amount of CPU and memory to be allocated for use by the steps in a workflow, specifying scheduling policies, etc.
+These languages also supports syntax for integration with various computing backends like container engines (docker, uDocker, singularity), HPC clusters (HTCondor, LSF, SLURM), cloud providers (AWS, GCP, Azure), etc.
+Although these languages do not assume a containerized environment, they support containerized workflows. 
+Unlike YAML, which is used by Popper, the syntax of these languages are quite complex and can quickly become overwhelming for beginners.
 
 ### **Generic workflow execution engines**
 
+Stable and mature scientific workflow execution engines like Nextflow, Pegasus and Taverna have introduced native support running steps in software containers.
+Airflow and Luigi [@_luigi_] are DAG based workflow engines which requires specifying workflows as code. 
+These workflow engines have a highly extensible and pluggable interface but requires installing a Python interpreter or other software packages. 
+They can be used run containers in a ad-hoc fashion, but doesn't support running steps inside containers natively.
+Some major drawbacks of these worklow engines are that they require a complete workflow engine deployment phase prior to running workflows which is often non-trivial; 
+requires knowledge of specialized terminology and custom workflow languages or specific programming languages like Python or Bash, hence making the entry barrier high; 
+Dependency management can also get messy pretty quickly with large workflows since steps do not run in software containers.
+These workflow engines have recently added support for running workflows in Kubernetes clusters but they are yet to be stabilized.
+     
 ### **Container native workflow execution engines**
+
+The workflow engines that assume running steps of a workflow DAG inside containers are usually termed as container native workflow engines.
+Argo, Pachyderm and Brigade are examples of highly scalable container native workflow engines that allows users to easily submit workflows to a Kubernetes cluster.
+Unlike Popper, these workflow engines follow a client server architecture and hence requires quite a bit of initial effort for deployment.
+The main drawback of these workflow engines when compared to Popper is the requirement of having access to a Kubernetes cluster irrespective of whether the workflow run in the cloud or in a local machine.
 
 # Conclusion {#sec:conclusion}
 
