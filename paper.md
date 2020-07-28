@@ -74,7 +74,7 @@ This paper makes the following contributions:
 Let us take a relatively simple scenario where users have a list of single-purpose tasks in the form of scripts and they want to automate running them in containers in some sequence.
 To accomplish this goal of running a list of containerized tasks using existing workflow engines, users need to learn a specific workflow language, deploy a workflow engine service, and learn to execute workflows on that service.
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
-As in our example workflow shown in section III, we have three high level scripts, `download_dataset.py`, `verify_dataset.sh` and `run_training.sh` to download the dataset, verify it and run the training respectively.
+As in our example workflow shown in @Sec:casestudy, we have three high level scripts, `download_dataset.py`, `verify_dataset.sh` and `run_training.sh` to download the dataset, verify it and run the training respectively.
 To make a workflow out of these scripts and run with Popper, one needs to install the Popper executable, find out images or write Dockerfile's with all the required dependencies, arrange them into a YAML file, and execute a `popper run`.
 Popper will run the scripts sequentially inside containers as individual steps. 
 Users can also customize the container engine and resource manager according to their needs through a YAML based configuration file.
@@ -215,7 +215,7 @@ It can either be created by users or provided by system administrators.
 
 ![Architecture of the Popper workflow engine](./figures/architecture.pdf){#fig:arch}
 
-# Case Study {#sec:study}
+# Case Study {#sec:casestudy}
 
 In this section, we present three case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 We analyzed the ML-based system benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on its Github repository 
@@ -339,10 +339,10 @@ We briefly survey some of these tools and technologies and compare them with Pop
 
 ## Workflow definition languages
 
-Standard workflow definition languages like CWL, OpenWDL, and YAWL provide an engine agnostic interface for specifying workflows declaratively. 
+Standard workflow definition languages like CWL [@amstutz2016common], WDL [@_openwdl_], and YAWL [@van2005yawl] provide an engine agnostic interface for specifying workflows declaratively. 
 Being engine agnostic, different workflow engines can adopt these languages as these workflow languages provide a plethora of useful syntactic elements to support a wide range of workflow engine features.
 Some of these workflow definition languages provide syntax for fine-grained control of resources by the users like defining the amount of CPU and memory to be allocated to each step, specifying scheduling policies, etc.
-Most of these languages support syntax for integration with various computing backends like container engines (e.g. docker, uDocker, singularity), HPC clusters (e.g. HTCondor, LSF, SLURM), cloud providers (e.g. AWS, GCP, Azure), Kubernetes, etc.
+Most of these languages support syntax for integration with various computing backends like container engines (e.g. docker, uDocker [@gomes2018enabling], singularity), HPC clusters (e.g. HTCondor [@tannenbaum2001condor], LSF [@wei2005implementing], SLURM), cloud providers (e.g. AWS, GCP, Azure), Kubernetes, etc.
 For a user whose primary goal is to automate running a set of containerized scripts in sequence, learning these new workflow languages and syntaxes might add to the overall complexity.
 One of Popper's primary goals is to minimize the workflow language overhead as much as possible by allowing users to specify workflows using vanilla YAML syntax, thus keeping the learning curve flat and preventing sources of confusion.
 
@@ -355,7 +355,7 @@ In this section, we have discussed three frequently used categories of workflow 
 
 Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers;
 Popular workflow engines like Apache Airflow and Luigi [@_luigi_] which require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins;
-For example, Airflow and Luigi use Python, Copper use Java, Dagr use Scala and SciPipe use Go as their workflow definition language.
+For example, Airflow and Luigi use Python, Copper [@_copper_engine_] use Java, Dagr [@_dagr_] use Scala and SciPipe [@lampa2019scipipe] use Go as their workflow definition language.
 The goal with Popper is to minimize overhead both in terms of workflow language syntax and infrastructural requirements for running workflows and hence allow users to focus solely on writing the workflows.
 The first issue is already addressed in the previous subsection, but it's also relevant here because not all engines support standard workflow languages such as CWL, and also learning specific programming languages for workflow execution seems like an exaggeration.
 Most of these popular workflow engines like Pegasus, Airflow, and Luigi also require a standalone service that users need to learn how to deploy and interact with before executing workflows, thus adding to the complexity.
@@ -365,7 +365,7 @@ Popper also mitigates this issue as it can be downloaded and run as a standalone
 
 Container native paradigm encourages shifting the entire software development lifecycle which includes building, testing, debugging, and deployment to within software containers.
 The workflow engines that assume running steps of a workflow inside separate containers are usually termed as container-native workflow engines.
-Streamflow, Flyte, and Dray are some well-known examples of container-native workflow execution engines. 
+Streamflow [@_streamflow_], Flyte [@_flyte_], and Dray [@_dray_] are some well-known examples of container-native workflow execution engines. 
 Some of these container-native workflow engines like Flyte and Dray are built around a client-server architecture requiring some service deployment effort before being able to run workflows on them.
 Popper falls in this category of container-native workflow engines but it does not assume any service deployment before running workflows, hence mitigating any extra service maintenance overhead or cost.
 
