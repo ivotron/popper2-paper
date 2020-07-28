@@ -74,7 +74,7 @@ This paper makes the following contributions:
 Let us take a relatively simple scenario where users have a list of single-purpose tasks in the form of scripts and they want to automate running them in containers in some sequence.
 To accomplish this goal of running a list of containerized tasks using existing workflow engines, users need to learn a specific workflow language, deploy a workflow engine service, and learn to execute workflows on that service.
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
-As in our example workflow, we have three high level scripts, `download_dataset.sh`, `verify_dataset.sh` and `run_training.sh` to download the dataset, verify it and run the training respectively.
+As in our example workflow shown in section III, we have three high level scripts, `download_dataset.py`, `verify_dataset.sh` and `run_training.sh` to download the dataset, verify it and run the training respectively.
 To make a workflow out of these scripts and run with Popper, one needs to install the Popper executable, find out images or write Dockerfile's with all the required dependencies, arrange them into a YAML file, and execute a `popper run`.
 Popper will run the scripts sequentially inside containers as individual steps. 
 Users can also customize the container engine and resource manager according to their needs through a YAML based configuration file.
