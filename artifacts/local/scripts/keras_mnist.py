@@ -19,7 +19,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 batch_size = 128
 num_classes = 10
-epochs = 90
+epochs = 1
 
 # input image dimensions
 img_rows, img_cols = 28, 28
