@@ -7,5 +7,10 @@ services: docker
 install:
 - git clone https://github.com/systemslab/popper /tmp/popper
 - export PYTHONUNBUFFERED=1
+<<<<<<< HEAD
 - pip install /tmp/popper/src
 script: popper run -f artifacts/local/.popper.yml -w artifacts/local
+=======
+- pip install /tmp/popper/cli
+script: popper run -f artifacts/local/.popper.yml
+>>>>>>> add .travis.yml
