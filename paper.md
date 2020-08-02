@@ -215,6 +215,12 @@ It can either be created by users or provided by system administrators.
 
 ![Architecture of the Popper workflow engine](./figures/architecture.pdf){#fig:arch}
 
+## Continuous Integration
+
+Popper allows users to continuously validate their workflows by allowing them to export their workflows as CI pipelines for different continuous integration services like Travis, Circle, Jenkins, etc.
+It provides a `ci` subcommand that can be used to generate CI configuration files for different CI services.
+The workflow artifacts along with the CI configuration file can then be pushed in Github to activate continous testing.
+
 # Case Study {#sec:casestudy}
 
 In this section, we present three case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
@@ -252,7 +258,7 @@ The general paradigm for building reproducible workflows with Popper usually con
   b. If a prebuilt image is not available, a `Dockerfile` can be used to build an image manually which is a file containing specifications for building docker images.
 3. Running the workflow and refining it.
 
-### **Workflow execution on the local machine**
+### Workflow execution on the local machine
 
 Popper aid researchers write, test, and debug workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
@@ -273,7 +279,7 @@ The results obtained over 5 executions have been shown in Figure III.
 To achieve lower training durations, the training should ideally be done on GPUs in the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
 In the next section, we will look at how we ran the workflow developed on the local machine efficiently on the Kubernetes using popper.
 
-### **Workflow execution in the Cloud using Kubernetes**
+### Workflow execution in the Cloud using Kubernetes
 
 In this section, we discuss how we reduced the training duration in the above workflow by reproducing it on a GPU enabled Kubernetes cluster.
 On Kubernetes clusters, steps of a Popper workflow run in separate pods that can get scheduled on any node of the cluster in a separate namespace.
@@ -297,7 +303,7 @@ The training was configured with an overfitting patience of 5 and was allowed to
 As we can see from Figure III, the average training duration was almost `1/4th` of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
-### **Exascale workflow execution in SLURM clusters**
+### Exascale workflow execution in SLURM clusters
 
 For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a slurm cluster.
 For running workflows in SLURM clusters, MPI supported container engines like singularity, which is supported by popper need to be used.
@@ -317,6 +323,11 @@ The training conditions were exactly similar to the previous two case studies.
 | 5                  |     224                       |    19    |  98.63%   | -->
 
 As we can see from Figure III, Popper allowed us to run the workflow in a SLURM cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
+
+### Setting up CI for our workflow
+
+We pushed our workflow artifacts to Github and used Travis CI to setup continuous integration for our workflow.
+
 
 # Results {#sec:result}
 
