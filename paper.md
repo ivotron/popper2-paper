@@ -349,17 +349,10 @@ By setting up CI, users can continuously validate changes made to their workflow
 
 # Results {#sec:result}
 
-A summary of the training duration and accuracy obtained by running the workflow on three different computing environment is shown below.
-
-| Compute Environment    | Avg. Duration | Avg. Accuracy    |
-|------------------------|---------------|------------------|
-| Local Machine          |     4034.2s   |      99.16%      |
-| Kubernetes Cluster     |     1001.6s   |      99.236%     | 
-| Slurm Cluster          |     234.8s    |      98.69%      |
-
 ![Comparison of training durations in 3 different computing environments with Popper](./figures/plot.png){#fig:casestudies}
 
-From Table I & Figure III, it can be seen how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
+A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
+It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
 
 # Related Work
 
@@ -383,7 +376,7 @@ In this section, we have discussed three frequently used categories of workflow 
 ### Generic workflow execution engines
 
 Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers;
-Popular workflow engines like Apache Airflow and Luigi [@_luigi_] which require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins;
+Popular workflow engines like Airflow and Luigi [@_luigi_] require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins;
 For example, Airflow and Luigi use Python, Copper [@_copper_engine_] use Java, Dagr [@_dagr_] use Scala and SciPipe [@lampa2019scipipe] use Go as their workflow definition language.
 The goal with Popper is to minimize overhead both in terms of workflow language syntax and infrastructural requirements for running workflows and hence allow users to focus solely on writing the workflows.
 The first issue is already addressed in the previous subsection, but it's also relevant here because not all engines support standard workflow languages such as CWL, and also learning specific programming languages for workflow execution seems like an exaggeration.
@@ -411,12 +404,10 @@ Popper is not exclusively cloud-native since it does not assume the presence of 
 
 # Conclusion {#sec:conclusionandfuturework}
 
-
-
-## Benefits
-
-## Challenges
-
-## Learning Curve
+As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
+One of the future goals of Popper is to add language parsers to support running workflows written in different workflow languages like CWL, HCL, WDL, etc.
+This would allow users familiar with different workflow languages to start using Popper without making any changes to their previously written workflows.
+We also plan to add support for exporting Popper workflows to other workflow formats like Python code as required by Airflow and Luigi to enable reusing the workflow logic with other workflow engines.
+Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
