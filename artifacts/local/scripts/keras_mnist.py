@@ -17,15 +17,23 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-batch_size = 128
+batch_size = int(os.environ.get("BATCH_SIZE", "128"))
 num_classes = 10
-epochs = 1
+epochs = int(os.environ.get("NUM_EPOCHS", "100"))
 
 # input image dimensions
 img_rows, img_cols = 28, 28
 
 # the data, split between train and test sets
 (x_train, y_train), (x_test, y_test) = mnist.load_data('/workspace/mnist.npz')
+
+train_shape = int(x_train.shape[0] * float(os.environ.get("DATASET_REDUCTION", "1")))
+test_shape = int(x_test.shape[0] * float(os.environ.get("DATASET_REDUCTION", "1")))
+
+x_train = x_train[:train_shape]
+x_test = x_test[:test_shape]
+y_train = y_train[:train_shape]
+y_test = y_test[:test_shape]
 
 if K.image_data_format() == 'channels_first':
     x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
