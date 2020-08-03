@@ -1,0 +1,6 @@
+resource_manager:
+    name: kubernetes
+    options:
+        registry_user: jcnitdgp25
+        persistent_volume_name: pv-hostpath
+        node_selector_host_name: node1.ceph.schedock-pg0.clemson.cloudlab.us
