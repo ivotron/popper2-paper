@@ -221,6 +221,7 @@ Popper allows users to continuously validate their workflows by allowing them to
 The tool provides a `ci` subcommand that can be used to generate CI configuration files for different CI services.
 To set up CI for a project using Popper, it is required to generate a CI configuration file, push the project to Github and enable the repository on the CI provider.
 Using CI with Popper workflows enhances the reproducibility guarantees as continous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted docker images, etc.
+Another benifit of using CI with Popper is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
 
 # Case Study {#sec:casestudy}
 
@@ -304,7 +305,7 @@ The training was configured with an overfitting patience of 5 and was allowed to
 As we can see from Figure III, the average training duration was almost `1/4th` of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
-### Exascale workflow execution in SLURM clusters
+### Workflow execution in SLURM clusters
 
 For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a slurm cluster.
 For running workflows in SLURM clusters, MPI supported container engines like singularity, which is supported by popper need to be used.
@@ -378,8 +379,8 @@ In this section, we have discussed three frequently used categories of workflow 
 ### Generic workflow execution engines
 
 Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers;
-Popular workflow engines like Airflow and Luigi [@_luigi_] require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins;
-For example, Airflow and Luigi use Python, Copper [@_copper_engine_] use Java, Dagr [@_dagr_] use Scala and SciPipe [@lampa2019scipipe] use Go as their workflow definition language.
+Popular workflow engines like Airflow and Luigi [@_luigi_] require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins.
+For example, Airflow and Luigi use Python, Copper [@_copper_engine_] uses Java, Dagr [@_dagr_] uses Scala and SciPipe [@lampa2019scipipe] uses Go as their workflow definition language.
 The goal with Popper is to minimize overhead both in terms of workflow language syntax and infrastructural requirements for running workflows and hence allow users to focus solely on writing the workflows.
 The first issue is already addressed in the previous subsection, but it's also relevant here because not all engines support standard workflow languages such as CWL, and also learning specific programming languages for workflow execution seems like an exaggeration.
 Most of these popular workflow engines like Pegasus, Airflow, and Luigi also require a standalone service that users need to learn how to deploy and interact with before executing workflows, thus adding to the complexity.
