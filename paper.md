@@ -411,11 +411,16 @@ The limitation of these workflow engines is the requirement of having access to 
 Although Popper can run workflows in the cloud using Kubernetes, it does not necessarily require access to a Kubernetes cluster for running the containerized steps of a workflow.
 Popper is not exclusively cloud-native since it does not assume the presence of a Kubernetes cluster for running workflows, but in addition to being able to work as cloud-native i.e. run workflows on Kubernetes, it can also behave as container-native in different computing environments like a local machine, SLURM and cloud VM instances over SSH.
 
-# Conclusion {#sec:conclusionandfuturework}
+# Conclusion and Future Work {#sec:conclusionandfuturework}
+
+In this paper, we present Popper, a container-native workflow execution engine that aims to solve the reproducibility problem in computational science.
+We first describe and analyze the design of Popper's YAML based workflow syntax and the architecture of the Popper workflow engine.
+We present a few case studies using an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and SLURM quickly and with minimal changes in configuration.
+Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
 We also plan to add a compatibility layer between the Popper syntax and more advanced workflow languages such as CWL/WDL to enable interoperability between different workflow engines.
-This would allow users familiar with different workflow languages to start using Popper without making any changes to their previously written workflows.
+This would also allow Popper users to migrate to other workflow engines without making any changes to their previously written workflows, thus keeping the overhead minimal.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
