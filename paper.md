@@ -220,8 +220,8 @@ It can either be created by users or provided by system administrators.
 Popper allows users to continuously validate their workflows by allowing them to export workflows as CI pipelines for different continuous integration services like Travis, Circle, Jenkins, etc.
 The tool provides a `ci` subcommand that can be used to generate CI configuration files for different CI services.
 To set up CI for a project using Popper, it is required to generate a CI configuration file, push the project to Github and enable the repository on the CI provider.
-Using CI with Popper workflows enhances the reproducibility guarantees as continous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted docker images, etc.
-Another benifit of using CI with Popper is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
+Using CI with Popper workflows enhances the reproducibility guarantees as continuous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted docker images, etc.
+Another benefit of using CI with Popper is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
 
 # Case Study {#sec:casestudy}
 
@@ -267,7 +267,7 @@ Researchers can iterate quickly by making changes and executing the `popper run`
 We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
 The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
-We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
+We ran the workflow 5 times with overfitting patience of 5 on the laptop's CPU.
 The results obtained over 5 executions have been shown in Figure III.
 <!-- 
 |  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
@@ -291,7 +291,7 @@ After the pod is created, the workflow context consisting of the scripts, config
 Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on Cloudlab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
 The training pod used the single GPU of the node in which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
-The training was configured with an overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
+The training was configured with overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
 <!-- 
 |  Iterations        | Duration (in seconds)         | Epochs   | Accuracy  |
@@ -357,6 +357,12 @@ By setting up CI, users can continuously validate changes made to their workflow
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
 It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
 
+![Popper configuration files for different computing environments](./figures/config.jpg){#fig:conffiles}
+
+Figure 4 shows the different Popper configuration files used in each casestudy. 
+It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and SLURM.
+In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
+
 # Related Work
 
 The problem of implementing multi-container workflows as described in @Sec:intro is addressed by several existing tools.
@@ -408,9 +414,8 @@ Popper is not exclusively cloud-native since it does not assume the presence of 
 # Conclusion {#sec:conclusionandfuturework}
 
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
-One of the future goals of Popper is to add language parsers to support running workflows written in different workflow languages like CWL, HCL, WDL, etc.
+We also plan to add a compatibility layer between the Popper syntax and more advanced workflow languages such as CWL/WDL to enable interoperability between different workflow engines.
 This would allow users familiar with different workflow languages to start using Popper without making any changes to their previously written workflows.
-We also plan to add support for exporting Popper workflows to other workflow formats like Python code as required by Airflow and Luigi to enable reusing the workflow logic with other workflow engines.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
