@@ -357,7 +357,7 @@ By setting up CI, users can continuously validate changes made to their workflow
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
 It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
 
-![Popper configuration files for different computing environments](./figures/config.jpg){#fig:conffiles}
+![Popper configuration files for different computing environments](./figures/config.png){#fig:conffiles}
 
 Figure 4 shows the different Popper configuration files used in each casestudy. 
 It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and SLURM.
