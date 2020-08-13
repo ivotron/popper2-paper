@@ -357,9 +357,35 @@ By setting up CI, users can continuously validate changes made to their workflow
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
 It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
 
-![Popper configuration files for different computing environments](./figures/config.png){#fig:conffiles}
+The adjustments that users need to make to reproduce workflows on Kubernetes and SLURM is described below.
 
-Figure 4 shows the different Popper configuration files used in each casestudy. 
+1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a yaml file 
+with contents similar to the one shown below. Users can control the size of the persistent volume, the namespace to
+use, image registry options, etc. among many others.
+
+```yaml
+resource_manager:
+  name: kubernetes
+  options:
+    registry_user: myuser
+    volume_size: 4Gi
+    namespace: mynamespace
+```
+
+2. Similarly for running on SLURM, users need to specify few configuration options like number of nodes to use for running the job concurrently, number of cpus to allocate to each task, the worker nodes to use, etc.
+
+```yaml
+engine:
+  name: singularity
+
+resource_manager:
+  name: slurm
+  options:
+    nodes: 2
+    nodelist: worker1,worker2
+    cpus-per-task: 2
+```
+
 It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and SLURM.
 In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
 
