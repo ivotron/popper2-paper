@@ -1,0 +1,6 @@
+resource_manager:
+    name: kubernetes
+    options:
+        registry_user: <registry_username>
+        persistent_volume_name: pv-hostpath
+        node_selector_host_name: <hostname>

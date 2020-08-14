@@ -10,3 +10,7 @@ steps:
 - id: run-training
   uses: docker://gw000/keras
   args: ["./scripts/run_training.sh"]
+  env:
+    NUM_EPOCHS: '1'
+    BATCH_SIZE: '128'
+    DATASET_REDUCTION: '0.1'
