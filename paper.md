@@ -311,7 +311,7 @@ For this case study, we modified our training script to use the Horovod [@horovo
 For running workflows in SLURM clusters, MPI supported container engines like singularity, which is supported by popper need to be used.
 Also, the programs and scripts need to be MPI compatible to enjoy the total compute capacity of multiple nodes in HPC clusters.
 We recommend using a shared filesystem like NFS or AFS (Andrew File System) [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
-We used 3 bare metal nodes from Cloudlab each with an NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used singularity as the container engine for running this workflow.
+We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with singularity following the bind approach, where we install MPI on the host and then bind mount the `bin`'s and `lib`'s of the MPI package inside the singularity container for the MPI version in the host and the container to stay consistent. 
 The training conditions were exactly similar to the previous two case studies.
 
@@ -359,9 +359,7 @@ It can be seen from the graph how the portability of Popper workflows drasticall
 
 The adjustments that users need to make to reproduce workflows on Kubernetes and SLURM is described below.
 
-1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a yaml file 
-with contents similar to the one shown below. Users can control the size of the persistent volume, the namespace to
-use, image registry options, etc. among many others.
+1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown below. Users can control the size of the persistent volume, the namespace to use, image registry options, etc. among many others.
 
 ```yaml
 resource_manager:
@@ -372,7 +370,7 @@ resource_manager:
     namespace: mynamespace
 ```
 
-2. Similarly for running on SLURM, users need to specify few configuration options like number of nodes to use for running the job concurrently, number of cpus to allocate to each task, the worker nodes to use, etc.
+2. Similarly, for running on SLURM, users need to specify few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc.
 
 ```yaml
 engine:
@@ -381,9 +379,10 @@ engine:
 resource_manager:
   name: slurm
   options:
-    nodes: 2
-    nodelist: worker1,worker2
-    cpus-per-task: 2
+    run-training:
+      nodes: 2
+      nodelist: worker1,worker2
+      cpus-per-task: 2
 ```
 
 It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and SLURM.

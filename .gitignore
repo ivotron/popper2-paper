@@ -1,1 +1,4 @@
 *.sw?
+artifacts/non_distributed/*.npz
+artifacts/non_distributed/*.gz
+
