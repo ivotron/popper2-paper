@@ -24,3 +24,10 @@ steps:
     "paper.md"
   ]
 
+- id: plot
+  uses: docker://jupyter/datascience-notebook:python-3.8.5
+  runs: [jupyter]
+  args: ["nbconvert", "--execute", "--to=notebook", "./artifacts/plot.ipynb"]
+  options:
+    ports:
+      8888/tcp: 8888

@@ -1,4 +1,5 @@
 *.sw?
 artifacts/non_distributed/*.npz
 artifacts/non_distributed/*.gz
-
+artifacts/*.ipynb_checkpoints
+artifacts/*.nbconvert.ipynb
