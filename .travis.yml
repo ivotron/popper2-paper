@@ -7,4 +7,4 @@ install:
 - git clone https://github.com/systemslab/popper /tmp/popper
 - export PYTHONUNBUFFERED=1
 - pip install /tmp/popper/src
-script: popper run -f artifacts/non_distributed/.popper.yml -w artifacts/non_distributed
+script: popper run -f artifacts/local/.popper.yml -w artifacts/local
