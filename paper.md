@@ -1,5 +1,5 @@
 ---
-title: "Popper 2.0: A Container-Native Workflow Execution Engine For Testing Complex Applications and Reproducing Scientific Explorations"
+title: "Enabling seamless execution of containerized workflows on HPC and Cloud using Popper"
 author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori, Quincy Wofford and Carlos Maltzahn
 abstract: |
    The problem of reproducibility and replication in scientific research is quite prevalent to date. 
