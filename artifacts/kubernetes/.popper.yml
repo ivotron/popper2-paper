@@ -1,0 +1,28 @@
+steps:
+# run these steps in kubernetes
+- id: download-dataset
+  uses: docker://gw000/keras
+  args: ["python", "./scripts/download_dataset.py"]
+
+- id: verify-dataset
+  uses: docker://alpine:3.9.5
+  args: ["./scripts/verify_dataset.sh"]
+
+- id: run-training
+  uses: docker://gw000/keras
+  args: ["./scripts/run_training.sh"]
+  env:
+    NUM_EPOCHS: '1'
+    BATCH_SIZE: '128'
+    DATASET_REDUCTION: '0.1'
+
+- id: upload-results
+  uses: docker://byrnedo/alpine-curl:0.1.8
+  runs: [curl]
+  args: [-F, file=@results, https://file.io]
+
+# run this step in the local
+- id: download-results
+  uses: docker://mwendler/wget
+  runs: [wget]
+  args: [-O, results, $_URL, --no-check-certificate]

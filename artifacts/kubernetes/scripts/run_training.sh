@@ -1,9 +1,14 @@
 #!/bin/bash
 set -e
 
+rm -rf ./results
+
 # fetch timestamp
 timestamp=$(date "+%Y%m%d-%H%M%S")
 
+counter=1
+while [ $counter -le 5 ]
+do
 # start timing
 start=$(date +%s)
 start_fmt=$(date +%Y-%m-%d\ %r)
@@ -27,3 +32,7 @@ echo "Sample name: $result_name"
 echo "Start Time: $start_fmt"
 echo "End Time: $end_fmt"
 echo "Duration: $result"
+echo $result >> ./results
+
+((counter++))
+done

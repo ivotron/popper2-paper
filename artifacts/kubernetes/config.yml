@@ -3,3 +3,4 @@ resource_manager:
     options:
         registry_user: jcnitdgp25
         namespace: popper-experiment
+        pod_retry_limit: 10
