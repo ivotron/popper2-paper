@@ -1,6 +1,9 @@
 ---
 title: "Enabling seamless execution of containerized workflows on HPC and Cloud using Popper"
-author: Ivo Jimenez, Jayjeet Chakraborty, Arshul Mansoori, Quincy Wofford and Carlos Maltzahn
+author: 
+- name: Jayjeet Chakraborty, Carlos Maltzahn, Ivo Jimenez
+  affiliation: UC Santa Cruz
+
 abstract: |
    The problem of reproducibility and replication in scientific research is quite prevalent to date. 
    Researchers working in fields of computational science often find it difficult to reproduce experiments from artifacts like code, data, diagrams, and results which are left behind by the previous researchers. 
@@ -11,7 +14,7 @@ abstract: |
    Therefore, there is a need for a container-native workflow engine that does not assume the presence of a Kubernetes cluster or any other specific computing environment.
    In this paper, we introduce Popper, a container-native workflow engine that executes each step of a workflow in a separate dedicated container without assuming the presence of a Kubernetes cluster or any cloud-based Kubernetes service.
    We also discuss the design and architecture of Popper and how it abstracts away the complexity of multiple container engines and resource managers, enabling users to focus only on writing workflows.
-   With Popper, researchers can build and validate workflows easily in almost any environment of their choice including local machines, SLURM based HPC clusters, CI services, or Kubernetes based cloud computing environments. 
+   With Popper, researchers can build and validate workflows easily in almost any environment of their choice including local machines, Slurm based HPC clusters, CI services, or Kubernetes based cloud computing environments. 
    To exemplify the suitability of this workflow engine, we present three case studies where we take examples from Machine Learning and High-Performance Computing and turn them into Popper workflows.
 ---
 
@@ -65,7 +68,7 @@ This paper makes the following contributions:
 
 3. Three case studies on how Popper can be used to quickly reproduce complex workflows in different computing environments. 
    We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPUs to scale up and collect results. 
-   We also show how an HPC workflow developed on the local machine can be reproduced easily in a SLURM [@slurm] cluster.
+   We also show how an HPC workflow developed on the local machine can be reproduced easily in a Slurm [@slurm] cluster.
 
 # Popper 2.0 {#sec:popper}
 
@@ -89,7 +92,7 @@ Docker is an industry-standard daemon based light-weight virtualization technolo
 It uses various Linux kernel features like namespaces and cgroups to segregate processes so that they can run independently.
 It provides state of the art isolation guarantees and makes it easy to build, deploy, and run applications using containers following the OCI (Open Container Initiative) [@oci] specifications. 
 However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable a user inside a Docker container to have root access to the host systems network, filesystem, processes, etc. thus making it unsuitable for use in HPC systems. 
-Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conflicts with the SLURM scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
+Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
 
 ### **Singularity**
 
@@ -102,15 +105,15 @@ These features make Singularity increasingly useful in areas of Machine learning
 
 ![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy}
 
-### **SLURM**
+### **Slurm**
 
-SLURM is an open-source cluster resource management and job scheduling system developed by LLNL (Lawrence Livermore National Laboratory) for Linux clusters ranging from a few nodes to thousands of nodes. 
+Slurm is an open-source cluster resource management and job scheduling system developed by LLNL (Lawrence Livermore National Laboratory) for Linux clusters ranging from a few nodes to thousands of nodes. 
 It is simple, scalable, portable, fault-tolerant, secure, and interconnect agnostic. 
 It is used as a workload manager by almost 60% of the world's top 500 supercomputers [@ibrahim2017algorithms]. 
-SLURM provides a plugin-based mechanism for simplifying its use across different computing infrastructures.
+Slurm provides a plugin-based mechanism for simplifying its use across different computing infrastructures.
 It enables both exclusive and non-exclusive allocation of resources like compute nodes to the users. 
 It provides a framework for starting, executing, and monitoring parallel jobs on a set of allocated nodes and arbitrate conflicting requests for resources by managing a queue of pending work. 
-SLURM runs as a daemon in the compute nodes and also provides an easy to use CLI interface.
+Slurm runs as a daemon in the compute nodes and also provides an easy to use CLI interface.
 
 ### **Kubernetes**
 
@@ -197,10 +200,10 @@ Thus, this component orchestrates the entire workflow execution process.
 
 Popper supports running containers in both single-node and multi-node cluster environments. 
 Each of these different environments has a very specific job and process scheduling policies. 
-The resource manager API is a pluggable interface that allows the creation of plugins (also referred to as runners) for distinct job schedulers (e.g. SLURM, SGE, HTCondor, etc.) and cluster managers (e.g. Kubernetes, Mesos, YARN, etc.). 
-Currently, plugins for SLURM and Kubernetes exist, as well as the default local runner that executes workflows on the local machine where Popper is executed.
+The resource manager API is a pluggable interface that allows the creation of plugins (also referred to as runners) for distinct job schedulers (e.g. Slurm, SGE, HTCondor, etc.) and cluster managers (e.g. Kubernetes, Mesos, YARN, etc.). 
+Currently, plugins for Slurm and Kubernetes exist, as well as the default local runner that executes workflows on the local machine where Popper is executed.
 Resource manager plugins provide abstractions for different container engines which allows a particular resource manager to support new container engines through plugins.
-For example, in the case of SLURM, it currently supports running Docker and Singularity containers but other container engines can also be integrated like Charliecloud [@charliecloud] and Pyxis [@pyxis].
+For example, in the case of Slurm, it currently supports running Docker and Singularity containers but other container engines can also be integrated like Charliecloud [@charliecloud] and Pyxis [@pyxis].
 The container engine plugins abstract generic operations that all engines support such as creating an image from a `Dockerfile`;
 downloading images from a registry and converting them to their internal format;
 and container-level operations such as creation, deletion, renaming, etc.
@@ -220,7 +223,7 @@ It can either be created by users or provided by system administrators.
 Popper allows users to continuously validate their workflows by allowing them to export workflows as CI pipelines for different continuous integration services like Travis, Circle, Jenkins, etc.
 The tool provides a `ci` subcommand that can be used to generate CI configuration files for different CI services.
 To set up CI for a project using Popper, it is required to generate a CI configuration file, push the project to Github and enable the repository on the CI provider.
-Using CI with Popper workflows enhances the reproducibility guarantees as continuous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted docker images, etc.
+Using CI with Popper workflows enhances the reproducibility guarantees as continuous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted Docker images, etc.
 Another benefit of using CI with Popper is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
 
 # Case Study {#sec:casestudy}
@@ -251,13 +254,13 @@ The `download` step downloads the MNIST dataset in the workspace.
 The `verify` step verifies the downloaded archives against precomputed checksums.
 The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
 The download and train steps use a Keras docker image and the verify step uses a lightweight alpine image.
-Although a single docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
+Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
 The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
 1. Thinking of the logical steps of the workflow.
 2. Finding the relevant software packages required for the implementation of these steps.
   a. Finding images containing the required software from remote image registries like DockerHub, Quay.io, Google Container Registry, etc.
-  b. If a prebuilt image is not available, a `Dockerfile` can be used to build an image manually which is a file containing specifications for building docker images.
+  b. If a prebuilt image is not available, a `Dockerfile` can be used to build an image manually which is a file containing specifications for building Docker images.
 3. Running the workflow and refining it.
 
 ### Workflow execution on the local machine
@@ -289,7 +292,7 @@ Popper first builds the images required by the workflow and pushes them to an on
 Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS [@sandberg1985design] for the different step pods to share.
 After the pod is created, the workflow context consisting of the scripts, configs, etc. is copied into the shared volume mounted inside the pod and executed.
 Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on Cloudlab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
-The training pod used the single GPU of the node in which it was scheduled.
+The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 The training was configured with overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
@@ -305,15 +308,15 @@ The training was configured with overfitting patience of 5 and was allowed to ru
 As we can see from Figure III, the average training duration was almost `1/4th` of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
-### Workflow execution in SLURM clusters
+### Workflow execution in Slurm clusters
 
-For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a slurm cluster.
-For running workflows in SLURM clusters, MPI supported container engines like singularity, which is supported by popper need to be used.
+For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a Slurm cluster.
+For running workflows in Slurm clusters, MPI supported container engines like Singularity, which is supported by popper need to be used.
 Also, the programs and scripts need to be MPI compatible to enjoy the total compute capacity of multiple nodes in HPC clusters.
-We recommend using a shared filesystem like NFS or AFS (Andrew File System) [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
-We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used singularity as the container engine for running this workflow.
-We used `mpich` which is a popular implementation of MPI, with singularity following the bind approach, where we install MPI on the host and then bind mount the `bin`'s and `lib`'s of the MPI package inside the singularity container for the MPI version in the host and the container to stay consistent. 
-The training conditions were exactly similar to the previous two case studies.
+We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
+We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
+We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `bin`'s and `lib`'s of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent. 
+The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were same as in the previous case studies.
 
 <!-- 
 |  Iterations        | Duration (in seconds)         | Epochs   | Accuracy  |
@@ -324,7 +327,7 @@ The training conditions were exactly similar to the previous two case studies.
 | 4                  |     201                       |    17    |  98.18%   |
 | 5                  |     224                       |    19    |  98.63%   | -->
 
-As we can see from Figure III, Popper allowed us to run the workflow in a SLURM cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
+As we can see from Figure III, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
 
 ### Setting up CI for our project
 
@@ -357,7 +360,7 @@ By setting up CI, users can continuously validate changes made to their workflow
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
 It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
 
-The adjustments that users need to make to reproduce workflows on Kubernetes and SLURM is described below.
+The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
 1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown below. Users can control the size of the persistent volume, the namespace to use, image registry options, etc. among many others.
 
@@ -370,7 +373,7 @@ resource_manager:
     namespace: mynamespace
 ```
 
-2. Similarly, for running on SLURM, users need to specify few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc.
+2. Similarly, for running on Slurm, users need to specify few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc.
 
 ```yaml
 engine:
@@ -385,7 +388,7 @@ resource_manager:
       cpus-per-task: 2
 ```
 
-It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and SLURM.
+It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and Slurm.
 In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
 
 # Related Work
@@ -398,7 +401,7 @@ We briefly survey some of these tools and technologies and compare them with Pop
 Standard workflow definition languages like CWL [@amstutz2016common], WDL [@_openwdl_], and YAWL [@van2005yawl] provide an engine agnostic interface for specifying workflows declaratively. 
 Being engine agnostic, different workflow engines can adopt these languages as these workflow languages provide a plethora of useful syntactic elements to support a wide range of workflow engine features.
 Some of these workflow definition languages provide syntax for fine-grained control of resources by the users like defining the amount of CPU and memory to be allocated to each step, specifying scheduling policies, etc.
-Most of these languages support syntax for integration with various computing backends like container engines (e.g. Docker, uDocker [@gomes2018enabling], Singularity), HPC clusters (e.g. HTCondor [@tannenbaum2001condor], LSF [@wei2005implementing], SLURM), cloud providers (e.g. AWS, GCP, Azure), Kubernetes, etc.
+Most of these languages support syntax for integration with various computing backends like container engines (e.g. Docker, uDocker [@gomes2018enabling], Singularity), HPC clusters (e.g. HTCondor [@tannenbaum2001condor], LSF [@wei2005implementing], Slurm), cloud providers (e.g. AWS, GCP, Azure), Kubernetes, etc.
 For a user whose primary goal is to automate running a set of containerized scripts in sequence, learning these new workflow languages and syntaxes might add to the overall complexity.
 One of Popper's primary goals is to minimize the workflow language overhead as much as possible by allowing users to specify workflows using vanilla YAML syntax, thus keeping the learning curve flat and preventing sources of confusion.
 
@@ -434,13 +437,13 @@ With the wide-spread acceptance of the cloud-native paradigm, several cloud-nati
 These workflow engines facilitate running workflows in the cloud by running an entire workflow in containers managed by Kubernetes.
 The limitation of these workflow engines is the requirement of having access to a Kubernetes cluster which can block users from running workflows in the absence of one.
 Although Popper can run workflows in the cloud using Kubernetes, it does not necessarily require access to a Kubernetes cluster for running the containerized steps of a workflow.
-Popper is not exclusively cloud-native since it does not assume the presence of a Kubernetes cluster for running workflows, but in addition to being able to work as cloud-native i.e. run workflows on Kubernetes, it can also behave as container-native in different computing environments like a local machine, SLURM and cloud VM instances over SSH.
+Popper is not exclusively cloud-native since it does not assume the presence of a Kubernetes cluster for running workflows, but in addition to being able to work as cloud-native i.e. run workflows on Kubernetes, it can also behave as container-native in different computing environments like a local machine, Slurm and cloud VM instances over SSH.
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 
 In this paper, we present Popper, a container-native workflow execution engine that aims to solve the reproducibility problem in computational science.
 We first describe and analyze the design of Popper's YAML based workflow syntax and the architecture of the Popper workflow engine.
-We present a few case studies using an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and SLURM quickly and with minimal changes in configuration.
+We present a few case studies using an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and Slurm quickly and with minimal changes in configuration.
 Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
@@ -449,3 +452,5 @@ This would also allow Popper users to migrate to other workflow engines without 
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
+
+\footnotesize
