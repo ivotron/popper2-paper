@@ -1,0 +1,8 @@
+steps:
+- id: run-training
+  uses: docker//horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
+  args: ["python", "./scripts/pytorch_mnist_horovod.py"]
+  env:
+    NUM_EPOCHS: '1'
+    BATCH_SIZE: '128'
+    DATASET_REDUCTION: '0.1'

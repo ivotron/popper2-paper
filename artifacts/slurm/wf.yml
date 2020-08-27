@@ -1,5 +1,0 @@
-version: 1
-steps:
-- id: single gpu training
-  uses: ./horovod
-  args: ./scripts/single_gpu.sh

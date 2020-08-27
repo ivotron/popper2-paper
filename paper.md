@@ -316,7 +316,7 @@ Also, the programs and scripts need to be MPI compatible to enjoy the total comp
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
-The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were same as in the previous case studies.
+The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous case studies.
 
 <!-- 
 |  Iterations        | Duration (in seconds)         | Epochs   | Accuracy  |

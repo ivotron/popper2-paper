@@ -1,0 +1,10 @@
+engine:
+  name: singularity
+  options:
+    nv: True
+
+resource_manager:
+  name: slurm
+  options:
+    run-training:
+      nodes: 2
