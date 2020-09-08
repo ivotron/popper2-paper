@@ -47,15 +47,13 @@ The Linux Foundation bootstrapped the Open Container Initiative (OCI) [@opencont
 With Docker, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, so that users do not need to install and maintain packages on their machines, rather they can build or fetch container images which have all the dependencies present. 
 Since these container runtimes are available for almost every well known operating system and architecture, experiments can be reproduced easily using containerized workflows in almost any environment [@stubbs2016endofday] [@zheng_integrating_2015].
 
-Although there are different container engines available, switching between them is difficult as they have different API's, image formats, CLI interfaces, among many others.
-Also, there is an absence of tools that allow running containerized workflows in an engine agnostic way.
-It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future] [@cohen2017scientific].
-Currently, different container-based workflow engines are available but all of them assume the presence of a fully provisioned Kubernetes [@kubernetes_google] cluster.
-The practice of running applications and workflows in Kubernetes is commonly referred to as cloud-native [@balalaie2016microservices]. 
-The difference between cloud-native and container-native is that, in the former, a Kubernetes cluster is required, while in the latter, only a container engine is required.
-Argo [@argocommunity_argoproj_2019], Pachyderm [@novella_containerbased_2018], and Brigade [@brigade] are popular examples of cloud-native workflow execution engines.
-The presence of a Kubernetes cluster or a cloud computing environment should not be a hardcore requirement for reproducing any experiment in a container-native manner since it is often costly [@rodriguez2020container] to get access to one and this, in turn, makes reproducibility complex. 
-It would be more convenient for researchers if workflow engines provide the flexibility of running workflows in a wide range of computing environments including those of their choice. 
+Different container engines exist such as Docker, Podman and Singularity, each of them serving distinct use cases, and with distinct underlying differences such as those found in their command line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
+In practice, for users attempting to make use of container technology, these differences can be overwhelming, especially if they are only familiar with the basic concepts of how containers work. 
+Based on our analysis of the tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine agnostic way is evident.
+It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future; @cohen2017scientific].
+Currently, different container-based workflow engines are available but all of them assume the presence of a fully provisioned Kubernetes cluster [@kubernetes_google].
+The presence of a Kubernetes cluster or a cloud computing environment reduces the likelihood of researchers to adopt container technology for reproducing any experiment since it is often costly [@rodriguez2020container] to get access to one and this, in turn, makes reproducibility complex. 
+It would be more convenient for researchers if workflow engines provided the flexibility of running workflows in a wide range of computing environments including those that are readily available for them to use.
 
 <!-- our contributions -->
 
@@ -365,7 +363,7 @@ It can be seen from the graph how the portability of Popper workflows drasticall
 
 The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
-1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown below. Users can control the size of the persistent volume, the namespace to use, image registry options, etc. among many others.
+1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown below.
 
 ```yaml
 resource_manager:
