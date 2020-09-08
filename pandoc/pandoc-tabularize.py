@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # taken from https://groups.google.com/d/topic/pandoc-discuss/RUC-tuu_qf0
 
 import pandocfilters as pf
