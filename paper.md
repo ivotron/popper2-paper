@@ -83,6 +83,7 @@ These tasks may not be always trivial to accomplish if we assume the only thing 
 Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download a dataset, verify its contents and run a computational step.
 In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, or deploy software.
 Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
+
 The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks.
 Running workflows on dissimilar environments like Kubernetes and Slurm incurs multiple operational overheads like adopting environment-specific commands, writing job scripts and definitions, dealing with different image formats like the flat image format of singularity, etc. which are peculiar to a specific computing environment.
 For example, running a containerized step on Kubernetes would require writing Pod and Volume specifications and creating them using a Kubernetes client. 
@@ -91,7 +92,7 @@ Popper mitigates these environment-specific overheads by abstracting the differe
 
 ## Background
 
-In this section, we provide background on the different tools and technologies that Popper leverages in order to provide the ability of running engine- and resource manager-agnostic container-native workflows.
+In this subsection, we provide background on the different tools and technologies that Popper leverages in order to provide the ability of running engine- and resource manager-agnostic container-native workflows.
 
 ### Docker
 
@@ -276,7 +277,7 @@ We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit
 The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
-The results obtained over 5 executions have been shown in Figure III.
+The results obtained over 5 executions have been shown in @Fig:casestudies.
 
 To achieve lower training durations, the training should ideally be done on GPUs in the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
 In the next section, we will look at how we ran the workflow developed on the local machine efficiently on the Kubernetes using Popper.
@@ -293,7 +294,7 @@ The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 The training was configured with an overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
-As we can see from Figure III, the average training duration was almost `1/4th` of what it took to train on the local machine.
+As we can see from @Fig:casestudies, the average training duration was almost `1/4th` of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ### Workflow execution in Slurm clusters
@@ -306,7 +307,7 @@ We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubu
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous case studies.
 
-As we can see from Figure III, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
+As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
 
 ### Setting up CI for our project
 
