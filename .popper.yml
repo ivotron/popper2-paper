@@ -12,7 +12,7 @@ steps:
   runs: [
     "pandoc/entrypoint.sh",
     "--standalone",
-    "--metadata=monofont-size:tiny",
+    "--metadata=monofont-size:scriptsize",
     "--from=markdown+smart",
     "--template=pandoc/template.latex",
     "--csl=pandoc/IEEE.csl",
