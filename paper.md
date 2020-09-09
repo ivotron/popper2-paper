@@ -368,8 +368,9 @@ By setting up CI, users can continuously validate changes made to their workflow
 
 ![Comparison of training durations in 3 different computing environments with Popper](./figures/plot.png){#fig:casestudies}
 
-A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in Figure @Fig:casestudies.
-It can be seen from the graph how the portability of Popper workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test in different computing environments.
+A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
+As we would expect, running the same workflow on better hardware reduces the amount of time needed to train the models.
+This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 
 The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
