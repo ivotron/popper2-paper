@@ -108,7 +108,7 @@ The key feature that differentiates it from Docker is that it can be used in non
 It also provides an abstraction that enables using container images from different image registries interchangeably like Docker Hub, Singularity Hub, and Sylabs Cloud.
 These features make Singularity increasingly useful in areas of Machine learning, Deep learning, and other data-intensive applications where the workloads benefit from the HPC support of it.
 
-![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy}
+![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy .center height=35%}
 
 ### Slurm
 
