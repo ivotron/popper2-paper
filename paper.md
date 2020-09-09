@@ -294,7 +294,7 @@ The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 The training was configured with an overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
-As we can see from @Fig:casestudies, the average training duration was almost `1/4th` of what it took to train on the local machine.
+As we can see from @Fig:casestudies, the average training duration was almost 1/4th of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ### Workflow execution in Slurm clusters
@@ -335,14 +335,14 @@ By setting up CI, users can continuously validate changes made to their workflow
 
 # Discussion {#sec:result}
 
-![Comparison of training durations in 3 different computing environments with Popper. The Y axis denotes time in seconds.](./figures/plot.png){#fig:casestudies}
+![Comparison of training durations in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
 As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
 
 This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 To expand on this point, we analyzed the GitHub repository for the MLPerf [@mattson2019mlperf] machine learning (ML) training benchmark suite that can be found at <https://github.com/mlperf/training>.
-From a total of **`XX`** issues, `XX%` were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
+From a total of 123 issues, 67 were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
 Popper can solve much of the problems generally noticed in reproducing research artifacts like these we found.
 
 As exemplified in the use cases, Popper helps build workflows that can be run on Cloud and HPC environments asides the local machine with minimal changes in configuration in a sustainable fashion.
