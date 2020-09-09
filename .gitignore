@@ -17,3 +17,5 @@ artifacts/*.nbconvert.ipynb
 
 *.ipynb_checkpoints
 
+.DS_Store
+.vim
