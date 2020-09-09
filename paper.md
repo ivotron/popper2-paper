@@ -154,7 +154,7 @@ steps:
   args: [
     "--create-dirs",
     "-Lo data/global.csv",
-    "https://github.com/datasets/co2-fossil-global/raw/master/global.csv"
+    "https://git.io/JUcRU"
   ]
 
 - id: run analysis
@@ -357,7 +357,7 @@ install:
 - git clone https://github.com/systemslab/popper /tmp/popper
 - export PYTHONUNBUFFERED=1
 - pip install /tmp/popper/src
-script: popper run -f artifacts/local/.popper.yml -w artifacts/local
+script: popper run -f wf.yml
 ```
 
 By setting up CI, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, broken links, etc.
