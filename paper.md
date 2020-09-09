@@ -342,7 +342,7 @@ As one would expect, running the same workflow on better, larger hardware resour
 
 This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 To expand on this point, we analyzed the GitHub repository for the MLPerf [@mattson2019mlperf] machine learning (ML) training benchmark suite that can be found at <https://github.com/mlperf/training>.
-From a total of 123 issues, 54.4% were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
+From a total of 123 issues, 67 were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
 Popper can solve much of the problems generally noticed in reproducing research artifacts like these we found.
 
 As exemplified in the use cases, Popper helps build workflows that can be run on Cloud and HPC environments asides the local machine with minimal changes in configuration in a sustainable fashion.
