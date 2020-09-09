@@ -81,10 +81,11 @@ Let us take a relatively simple scenario where users have a list of single-purpo
 To accomplish this goal of running a list of containerized tasks using existing workflow engines, users need to learn a specific workflow language, deploy a workflow engine service, and learn to execute workflows on that service.
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
 Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download a dataset, verify its contents and run a computational step.
-Without Popper, one would need to run these scripts sequentially along with installing and managing the dependencies by themselves, thus making the process irreproducible and manual.
+In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, deploy software, etc. 
+Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
+The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks.
 With Popper, users need to find or build Docker images containing the required dependencies, write a workflow in YAML, and execute a `popper run`.
-Popper will automate the process by running the scripts sequentially inside the specified containers as individual steps effectively mitigating the dependency management overhead. 
-Users can also customize the container engine and resource manager according to their needs through a YAML based configuration file.
+Popper will automate the process by running the scripts inside the specified containers as individual steps in the prescribed order.
 The workflow file can be shared through GitHub and the experiments can be reproduced in different environments with a single command.
 
 ## Background
