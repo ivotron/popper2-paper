@@ -21,9 +21,9 @@ abstract: |
 
 <!-- defining the problem of reproducibility in computational science -->
 
-Around 48.6% of scientists and researchers working in various domains related to computational science upload experimental artifacts like code, figures, datasets, configuration files, etc. to open-access repositories like Zenodo [@_zenodo_], Figshare [@_figshare_] or GitHub [@github]. 
-Only 1.1% of the artifacts available online are fully reproducible and 0.6% of them are partially reproducible [@stagge2019assessing]. 
-According to a study of 2016 by Nature, among a group of 1576 scientists around 70% of them failed to reproduce each other's experiments [@baker2016reproducibility].
+Researchers working in various domains related to computational and data-intensive science upload experimental artifacts like code, figures, datasets, configuration files, etc. to open-access repositories like Zenodo [@_zenodo_], Figshare [@_figshare_] or GitHub [@github]. 
+According to [@stagge2019assessing], approximately 1% of the artifacts available online are fully reproducible and 0.6% of them are partially reproducible. 
+A 2016 study by Nature found that from a group of 1576 scientists, around 70% of them failed to reproduce each other's experiments [@baker2016reproducibility].
 This problem occurs mostly due to the lack of proper documentation, missing artifacts, or encountering broken software dependencies.
 This results in other researchers wasting time trying to figure out how to reproduce those experiments from the archived artifacts, ultimately making this process inefficient, cumbersome, and error-prone [@sep-scientific-reproducibility].
 
@@ -33,24 +33,26 @@ Numerous existing research has tried to address the problem of reproducibility [
 These approaches have led to the development of various tools and frameworks to address these problems of reproducibility [@piccolo2016tools; @peng2011reproducible], 
 with scientific workflow engines being a predominant one [@stevens2013automated; @banati2015minimal; @qasha2016framework]. A workflow engine organizes the steps of a scientific experiment as the nodes of a directed acyclic graph (DAG) and executes them in the correct order [@albrecht2012makeflow].
 Nextflow [@ditommaso_nextflow_2017], Pegasus [@deelman_pegasus_2004] and Taverna [@oinn_taverna_2004] are examples of widely used scientific workflow engines.
-But some phenomena like unavailability of third-party services, missing example input data, changes in the execution environment, insufficient documentation of workflows make it difficult for scientists to reuse workflows, thus causing what is known as _workflow decay_ [@workflow_decay].
+But some phenomena like unavailability of third-party services, missing example input data, changes in the execution environment, insufficient documentation of workflows make it difficult for scientists to reuse workflows, resulting in _workflow decay_ [@workflow_decay].
 
 <!-- attempts to solves using containers and what problem still remains -->
 
-One of the main reasons behind _workflow decay_ is the difference in the environment where a workflow is developed and originally executed, compared to where it is reproduced [@meng2017facilitating]. 
+One of the main reasons behind _workflow decay_ is the difficulty in reproducing the environment where a workflow is developed and originally executed [@meng2017facilitating]. 
 Virtual machines (VM's) can be used to address this problem, as its isolation guarantees make it suitable for running steps or the entirety of a workflow inside a separate VM [@howe2012virtual; @virtandnestedvirt2012].
-A VM are typically associated with large resource footprints (e.g. long start times and high memory usage), thus OS-level virtualization technologies provide platform-independent reproducibility with less resource utilization [@barik2016performance] [@sharma2016containers].
+A VM is typically associated with large resource utilization (e.g. long start times and high memory usage), making OS-level virtualization technologies a better-suited tool for reproducing computational environments with less overheads [@barik2016performance; @sharma2016containers]. 
 Although software (Linux) containers are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. 
-Since then, this technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. 
+From this point on, container technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. 
+
 Docker has been the de facto container runtime, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Rkt [@rktcommunity_rkt_2019], Charliecloud [@priedhorsky_charliecloud_2017], and Podman [@podmancommunity_containers_2019] having emerged. 
 The Linux Foundation bootstrapped the Open Container Initiative (OCI) [@opencontainerinitiative_new_2016] and is close to releasing version 1.0 of a container image and runtime specifications. 
 With Docker, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, so that users do not need to install and maintain packages on their machines, rather they can build or fetch container images which have all the dependencies present. 
 Since these container runtimes are available for almost every well known operating system and architecture, experiments can be reproduced easily using containerized workflows in almost any environment [@stubbs2016endofday] [@zheng_integrating_2015].
 
-Different container engines exist such as Docker, Podman and Singularity, each of them serving distinct use cases, and with distinct underlying differences such as those found in their command line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
+Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
 In practice, for users attempting to make use of container technology, these differences can be overwhelming, especially if they are only familiar with the basic concepts of how containers work. 
-Based on our analysis of the tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine agnostic way is evident.
+Based on our analysis of the container tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine-agnostic way. 
 It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future; @cohen2017scientific].
+
 Currently, different container-based workflow engines are available but all of them assume the presence of a fully provisioned Kubernetes cluster [@kubernetes_google].
 The presence of a Kubernetes cluster or a cloud computing environment reduces the likelihood of researchers to adopt container technology for reproducing any experiment since it is often costly [@rodriguez2020container] to get access to one and this, in turn, makes reproducibility complex. 
 It would be more convenient for researchers if workflow engines provided the flexibility of running workflows in a wide range of computing environments including those that are readily available for them to use.
