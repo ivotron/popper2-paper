@@ -86,7 +86,7 @@ Keeping track of which commands were executed, in which order, and which flags w
 The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks.
 With Popper, users need to find or build Docker images containing the required dependencies, write a workflow in YAML, and execute a `popper run`.
 Popper will automate the process by running the scripts inside the specified containers as individual steps in the prescribed order.
-The workflow file can be shared through GitHub and the experiments can be reproduced in different environments with a single command.
+The workflow file can be shared through GitHub and the experiments can be reproduced in different computing environments with a single command.
 
 ## Background
 
