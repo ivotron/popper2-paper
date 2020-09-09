@@ -81,8 +81,11 @@ Let us take a relatively simple scenario where users have a list of single-purpo
 To accomplish this goal of running a list of containerized tasks using existing workflow engines, users need to learn a specific workflow language, deploy a workflow engine service, and learn to execute workflows on that service.
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
 Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download a dataset, verify its contents and run a computational step.
-
-**TODO**: describe what we do **_without_** Popper, so that it becomes evident why we need to have Popper.
+Without Popper, one would need to run these scripts sequentially along with installing and managing the dependencies by themselves, thus making the process irreproducible and manual.
+With Popper, users need to find or build Docker images containing the required dependencies, write a workflow in YAML, and execute a `popper run`.
+Popper will automate the process by running the scripts sequentially inside the specified containers as individual steps effectively mitigating the dependency management overhead. 
+Users can also customize the container engine and resource manager according to their needs through a YAML based configuration file.
+The workflow file can be shared through GitHub and the experiments can be reproduced in different environments with a single command.
 
 ## Background
 
@@ -138,16 +141,11 @@ Several hosted CI services like Travis, Circle, and Jenkins make continuous inte
 YAML [@ben2009yaml] is a human-readable data-serialization language. 
 It is commonly used in writing configuration files and in applications where data is stored or transmitted. 
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining popper workflows and for specifying the configuration for the execution engine. 
-An example of a popper workflow is shown below.
+An example popper workflow is shown in @Lst:wf-example.
 
 **TODO**:
 
   * expand listing caption.
-
-  * make references to it using @Lst:wf-example.
-
-  * add captions to all listings and reference them as mentioned as above.
-
 
 ```{#lst:wf-example .yaml caption="A three-step workflow."}
 steps:
@@ -233,20 +231,20 @@ It can either be created by users or provided by system administrators.
 
 Popper allows users to continuously validate their workflows by allowing them to export workflows as CI pipelines for different continuous integration services like Travis, Circle, Jenkins, etc.
 The tool provides a `ci` subcommand that can be used to generate CI configuration files for different CI services.
-To set up CI for a project using Popper, it is required to generate a CI configuration file, push the project to Github and enable the repository on the CI provider.
+To set up CI for a project using Popper, it is required to generate a CI configuration file, push the project to GitHub and enable the repository on the CI provider.
 Using CI with Popper workflows enhances the reproducibility guarantees as continuous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, deleted Docker images, etc.
 Another benefit of using CI with Popper is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
 
 # Case Study {#sec:casestudy}
 
 In this section, we present three case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
-We analyzed the ML-based system benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on its Github repository 
+We analyzed the ML-based system benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on its GitHub repository 
 and categorized them into a few commonly occurring categories like missing or outdated versions of dependencies; outdated documentation; missing or broken links of datasets; etc.
 These case studies aim to emphasize on how Popper can help in mitigating these reproducibility issues and make life easier for researchers and developers.
 For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
-The workflow used for the case studies is depicted below.
+The workflow used for the case studies is depicted in @Lst:casestudy.
 
-```yaml
+```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
 steps:
 - id: download-dataset
   uses: docker://gw000/keras
@@ -342,14 +340,14 @@ As we can see from Figure III, Popper allowed us to run the workflow in a Slurm 
 
 ### Setting up CI for our project
 
-We pushed our MNIST project to Github and activated the repository in Travis to set up continuous integration on our project.
+We pushed our MNIST project to GitHub and activated the repository in Travis to set up continuous integration on our project.
 For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, epochs, etc. with the help of environment variables to reduce the CI running time and iterate quickly. 
 We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
 Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
-The `.travis.yml` file used by our case study is shown below. 
+The `.travis.yml` file used by our case study is shown in @Lst:travis.
 It can be generated by running `popper ci travis` from the command line.
 
-```yaml
+```{#lst:travis .yaml caption="Popper generated Travis config."}
 ---
 dist: xenial
 language: python
@@ -374,9 +372,9 @@ This case study showcases the benefits of using Popper: having portable workflow
 
 The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
-1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown below.
+1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes.
 
-```yaml
+```{#lst:kubernetes .yaml caption="Config file for running on Kubernetes."}
 resource_manager:
   name: kubernetes
   options:
@@ -385,9 +383,9 @@ resource_manager:
     namespace: mynamespace
 ```
 
-2. Similarly, for running on Slurm, users need to specify few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc.
+2. Similarly, for running on Slurm, users need to specify few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc. as shown in @Lst:slurm.
 
-```yaml
+```{#lst:slurm .yaml caption="Config file for running on Slurm."}
 engine:
   name: singularity
 
