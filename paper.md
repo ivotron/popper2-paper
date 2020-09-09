@@ -335,7 +335,7 @@ By setting up CI, users can continuously validate changes made to their workflow
 
 # Discussion {#sec:result}
 
-![Comparison of training durations in 3 different computing environments with Popper. The Y axis denotes time in seconds.](./figures/plot.png){#fig:casestudies}
+![Comparison of training durations in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
 As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
