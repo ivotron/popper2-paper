@@ -88,7 +88,7 @@ Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `ru
 
 In this section, we provide background on the different tools and technologies that Popper leverages in order to provide the ability of running engine- and resource manager-agnostic container-native workflows.
 
-### **Docker**
+### Docker
 
 Docker is an industry-standard daemon based light-weight virtualization technology that was released in early 2013.
 It uses various Linux kernel features like namespaces and cgroups to segregate processes so that they can run independently.
@@ -96,7 +96,7 @@ It provides state of the art isolation guarantees and makes it easy to build, de
 However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable a user inside a Docker container to have root access to the host systems network, filesystem, processes, etc. thus making it unsuitable for use in HPC systems. 
 Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
 
-### **Singularity**
+### Singularity
 
 Singularity is a daemon less scientific container technology built by LBNL (Lawrence Berkley National Laboratory) and first released in 2016. 
 It is designed to be simple, fast, secure, and provides containerized solutions for HPC systems supporting several HPC components such as resource managers, job schedulers and contains native MPI [@mpi1993] features. 
@@ -107,7 +107,7 @@ These features make Singularity increasingly useful in areas of Machine learning
 
 ![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy}
 
-### **Slurm**
+### Slurm
 
 Slurm is an open-source cluster resource management and job scheduling system developed by LLNL (Lawrence Livermore National Laboratory) for Linux clusters ranging from a few nodes to thousands of nodes. 
 It is simple, scalable, portable, fault-tolerant, secure, and interconnect agnostic. 
@@ -117,7 +117,7 @@ It enables both exclusive and non-exclusive allocation of resources like compute
 It provides a framework for starting, executing, and monitoring parallel jobs on a set of allocated nodes and arbitrate conflicting requests for resources by managing a queue of pending work. 
 Slurm runs as a daemon in the compute nodes and also provides an easy to use CLI interface.
 
-### **Kubernetes**
+### Kubernetes
 
 Kubernetes is a production-grade open-source container orchestration system written in Golang that automates many of the manual processes involved in deploying, scaling, and managing of containerized applications across a cluster of hosts. 
 A cluster can span hosts across public, private, or hybrid clouds. 
@@ -126,7 +126,7 @@ Kubernetes supports a wide range of container runtimes including Docker, Rkt, an
 It was originally developed and designed by engineers at Google and it is hosted and maintained by the CNCF (Cloud Native Computing Foundation). 
 Many cloud providers like GCP, AWS, and Azure provide a completely managed and secure hosted Kubernetes platform.
 
-### **Continuous Integration**
+### Continuous Integration
 
 Continuous Integration is a software development paradigm where developers commit code into a shared repository frequently, ideally several times a day.
 Each integration is verified by automated builds and tests of the corresponding commits.
