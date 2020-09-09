@@ -294,7 +294,7 @@ The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 The training was configured with an overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
-As we can see from @Fig:casestudies, the average training duration was almost `1/4th` of what it took to train on the local machine.
+As we can see from @Fig:casestudies, the average training duration was almost 1/4th of what it took to train on the local machine.
 This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ### Workflow execution in Slurm clusters
