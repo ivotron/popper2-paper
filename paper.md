@@ -225,7 +225,7 @@ For example, a workflow developed on the local machine can be run on an HPC clus
 The configuration file can be passed through the CLI interface and can be shared among different workflows.
 It can either be created by users or provided by system administrators.
 
-![Architecture of the Popper workflow engine](./figures/architecture.pdf){#fig:arch}
+![Architecture of the Popper workflow engine](./figures/architecture_med.pdf){#fig:arch}
 
 ## Continuous Integration
 
