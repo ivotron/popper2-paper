@@ -80,14 +80,13 @@ In this section we describe the motivation behind Popper, provide background, an
 Let us take a relatively simple scenario where users have a list of single-purpose tasks in the form of scripts and they want to automate running them in containers in some sequence.
 To accomplish this goal of running a list of containerized tasks using existing workflow engines, users need to learn a specific workflow language, deploy a workflow engine service, and learn to execute workflows on that service.
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
-As in our example workflow shown in @Sec:casestudy, we have three high-level scripts, `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download the dataset, verify it and run the training respectively.
-To make a workflow out of these scripts and run with Popper, one needs to install the Popper executable, find out images or write Dockerfile's with all the required dependencies, arrange them into a YAML file, and execute a `popper run`.
-Popper will run the scripts sequentially inside containers as individual steps. 
-Users can also customize the container engine and resource manager according to their needs through a YAML based configuration file.
+Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download a dataset, verify its contents and run a computational step.
+
+**TODO**: describe what we do **_without_** Popper, so that it becomes evident why we need to have Popper.
 
 ## Background
 
-In this section, we provide a background on the different tools and technologies that are crucial to Popper for building container-native and reproducible workflows.
+In this section, we provide background on the different tools and technologies that Popper leverages in order to provide the ability of running engine- and resource manager-agnostic container-native workflows.
 
 ### **Docker**
 
@@ -141,7 +140,7 @@ It is commonly used in writing configuration files and in applications where dat
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining popper workflows and for specifying the configuration for the execution engine. 
 An example of a popper workflow is shown below.
 
-```yml
+```yaml
 steps:
 - id: download data
   uses: docker://byrnedo/curl
