@@ -140,7 +140,16 @@ It is commonly used in writing configuration files and in applications where dat
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining popper workflows and for specifying the configuration for the execution engine. 
 An example of a popper workflow is shown below.
 
-```yaml
+**TODO**:
+
+  * expand listing caption.
+
+  * make references to it using @Lst:wf-example.
+
+  * add captions to all listings and reference them as mentioned as above.
+
+
+```{#lst:wf-example .yaml caption="A three-step workflow."}
 steps:
 - id: download data
   uses: docker://byrnedo/curl
