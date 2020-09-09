@@ -9,7 +9,7 @@ abstract: |
    Researchers working in fields of computational science often find it difficult to reproduce experiments from artifacts like code, data, diagrams, and results which are left behind by the previous researchers. 
    The code developed on one machine often fails to run on other machines due to differences in hardware architecture, OS, software dependencies, among others. 
    This is accompanied by the difficulty in understanding how artifacts are organized, as well as in using them in the correct order. 
-   Software containers (also known as Linux containers) can be used to address some of these problems, and thus researchers and developers have built scientific workflow engines that execute the steps of a workflow in a separate containers. 
+   Software containers (also known as Linux containers) can be used to address some of these problems, and thus researchers and developers have built scientific workflow engines that execute the steps of a workflow in separate containers. 
    Existing container-native workflow engines assume the availability of infrastructure deployed in the cloud or HPC centers. 
    In this paper, we present Popper, a container-native workflow engine that does not assume the presence of a Kubernetes cluster or any service other than a container engine such as Docker or Podman. 
    We introduce the design and architecture of Popper and describe how it abstracts away the complexity of multiple container engines and resource managers, enabling users to focus only on writing workflow logic. 
@@ -25,7 +25,7 @@ Researchers working in various domains related to computational and data-intensi
 According to [@stagge2019assessing], approximately 1% of the artifacts available online are fully reproducible and 0.6% of them are partially reproducible. 
 A 2016 study by Nature found that from a group of 1576 scientists, around 70% of them failed to reproduce each other's experiments [@baker2016reproducibility].
 This problem occurs mostly due to the lack of proper documentation, missing artifacts, or encountering broken software dependencies.
-This results in other researchers wasting time trying to figure out how to reproduce those experiments from the archived artifacts, ultimately making this process inefficient, cumbersome, and error-prone [@sep-scientific-reproducibility].
+This results in other researchers wasting time trying to figure out how to reproduce those experiments from the archived artifacts, ultimately making this process inefficient, cumbersome, and error prone [@sep-scientific-reproducibility].
 
 <!-- discuss previous work -->
 
@@ -39,7 +39,7 @@ But some phenomena like unavailability of third-party services, missing example 
 
 One of the main reasons behind _workflow decay_ is the difficulty in reproducing the environment where a workflow is developed and originally executed [@meng2017facilitating]. 
 Virtual machines (VM's) can be used to address this problem, as its isolation guarantees make it suitable for running steps or the entirety of a workflow inside a separate VM [@howe2012virtual; @virtandnestedvirt2012].
-A VM is typically associated with large resource utilization (e.g. long start times and high memory usage), making OS-level virtualization technologies a better-suited tool for reproducing computational environments with less overheads [@barik2016performance; @sharma2016containers]. 
+A VM is typically associated with large resource utilization (e.g. long start times and high memory usage), making OS-level virtualization technologies a better-suited tool for reproducing computational environments with fewer overheads [@barik2016performance; @sharma2016containers]. 
 Although software (Linux) containers are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. 
 From this point on, container technology has transformed the way applications get deployed in shared infrastructures, with 25% of companies using this form of software deployment [@datadog_surprising_2018], and a market size projected to be close to 5B by 2023 [@marketsandmarkets_application_2018]. 
 
@@ -48,7 +48,7 @@ The Linux Foundation bootstrapped the Open Container Initiative (OCI) [@opencont
 With Docker, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, so that users do not need to install and maintain packages on their machines, rather they can build or fetch container images which have all the dependencies present. 
 Since these container runtimes are available for almost every well known operating system and architecture, experiments can be reproduced easily using containerized workflows in almost any environment [@stubbs2016endofday] [@zheng_integrating_2015].
 
-Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
+Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command-line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
 In practice, for users attempting to make use of container technology, these differences can be overwhelming, especially if they are only familiar with the basic concepts of how containers work. 
 Based on our analysis of the container tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine-agnostic way. 
 It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future; @cohen2017scientific].
@@ -73,7 +73,7 @@ This paper makes the following contributions:
 
 # Popper {#sec:popper}
 
-In this section we describe the motivation behind Popper, provide background, and then introduce its architectural design and implementation.
+In this section, we describe the motivation behind Popper, provide background, and then introduce its architectural design and implementation.
 
 ## Motivation
 
@@ -84,9 +84,10 @@ Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `ru
 In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, deploy software, etc. 
 Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
 The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks.
-With Popper, users need to find or build Docker images containing the required dependencies, write a workflow in YAML, and execute a `popper run`.
-Popper will automate the process by running the scripts inside the specified containers as individual steps in the prescribed order.
-The workflow file can be shared through GitHub and the experiments can be reproduced in different computing environments with a single command.
+Running workflows on dissimilar environments like Kubernetes and Slurm incurs multiple operational overheads like adopting environment-specific commands, writing job scripts and definitions, dealing with different image formats like the flat image format of singularity, etc. which are peculiar to a specific computing environment.
+For example, running a containerized step on Kubernetes would require writing Pod and Volume specifications and creating them using a Kubernetes client. 
+Likewise, running an MPI workload inside a Singularity container on Slurm would require creating job scripts and starting the job with `sbatch`.
+Popper mitigates these environment-specific overheads by abstracting the different implementation details and provides a uniform interface that allows users to write workflows once and reuse them on different environments with tweaks to the configuration file.
 
 ## Background
 
@@ -108,8 +109,6 @@ One of the main goals of Singularity is to bring container technology and reprod
 The key feature that differentiates it from Docker is that it can be used in non-privileged computing environments like the compute nodes of HPC clusters, without any modifications to the software. 
 It also provides an abstraction that enables using container images from different image registries interchangeably like Docker Hub, Singularity Hub, and Sylabs Cloud.
 These features make Singularity increasingly useful in areas of Machine learning, Deep learning, and other data-intensive applications where the workloads benefit from the HPC support of it.
-
-![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy .center height=35%}
 
 ### Slurm
 
@@ -142,11 +141,7 @@ Several hosted CI services like Travis, Circle, and Jenkins make continuous inte
 YAML [@ben2009yaml] is a human-readable data-serialization language. 
 It is commonly used in writing configuration files and in applications where data is stored or transmitted. 
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining popper workflows and for specifying the configuration for the execution engine. 
-An example popper workflow is shown in @Lst:wf-example.
-
-**TODO**:
-
-  * expand listing caption.
+An example popper workflow is shown in @Lst:wf-example which downloads a dataset in CSV format, runs statistical functions on the data, and validates the results.
 
 ```{#lst:wf-example .yaml caption="A three-step workflow."}
 steps:
@@ -172,6 +167,8 @@ steps:
     "data/global_per_capita_mean.csv"
   ]
 ```
+
+![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy .center height=35%}
 
 A popper workflow consists of a series of syntactical components called steps, where each step represents a node in the workflow DAG, with a `uses` attribute specifying the required container image. 
 The `uses` attribute can reference Docker images hosted in container image registries; filesystem paths for locally defined container images (Dockerfiles); or publicly accessible GitHub repositories that contain Dockerfiles. 
@@ -239,7 +236,7 @@ Another benefit of using CI with Popper is that even without changes, jobs can b
 # Case Study {#sec:casestudy}
 
 In this section, we present three case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
-We analyzed the ML-based system benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on its GitHub repository 
+We analyzed the ML-based system benchmarking project MLPerf [@mattson2019mlperf] based on the reproducibility related issues that get frequently opened on its GitHub [repository](https://github.com/mlperf/training) 
 and categorized them into a few commonly occurring categories like missing or outdated versions of dependencies; outdated documentation; missing or broken links of datasets; etc.
 These case studies aim to emphasize on how Popper can help in mitigating these reproducibility issues and make life easier for researchers and developers.
 For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
@@ -280,7 +277,7 @@ Researchers can iterate quickly by making changes and executing the `popper run`
 We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
 The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
-We ran the workflow 5 times with overfitting patience of 5 on the laptop's CPU.
+We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
 The results obtained over 5 executions have been shown in Figure III.
 <!-- 
 |  Iterations        | Time taken (in seconds)         | Epochs   | Accuracy  |
@@ -304,7 +301,7 @@ After the pod is created, the workflow context consisting of the scripts, config
 Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on Cloudlab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
 The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
-The training was configured with overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
+The training was configured with an overfitting patience of 5 and was allowed to run till it overfits similar to what was done for the local machine case study.
 
 <!-- 
 |  Iterations        | Duration (in seconds)         | Epochs   | Accuracy  |
@@ -367,19 +364,21 @@ By setting up CI, users can continuously validate changes made to their workflow
 
 ![Comparison of training durations in 3 different computing environments with Popper](./figures/plot.png){#fig:casestudies}
 
+As evident from the case studies, we can conclude that Popper solves much of the problems generally noticed in reproducing research artifacts like those we found from the MLPerf repository issues effectively.
+It helps build workflows that can be run on Cloud and HPC environments asides the local machine with minimal changes in configuration in a sustainable fashion.
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
 As we would expect, running the same workflow on better hardware reduces the amount of time needed to train the models.
 This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 
 The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
-1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes.
+1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes. 
+The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
 
 ```{#lst:kubernetes .yaml caption="Config file for running on Kubernetes."}
 resource_manager:
   name: kubernetes
   options:
-    registry_user: myuser
     volume_size: 4Gi
     namespace: mynamespace
 ```
