@@ -104,12 +104,12 @@ Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conf
 
 ### Singularity
 
-Singularity is a daemon less scientific container technology built by LBNL (Lawrence Berkley National Laboratory) and first released in 2016. 
+Singularity is a daemon-less scientific container technology built by LBNL (Lawrence Berkley National Laboratory) and first released in 2016. 
 It is designed to be simple, fast, secure, and provides containerized solutions for HPC systems supporting several HPC components such as resource managers, job schedulers and contains native MPI [@mpi1993] features. 
 One of the main goals of Singularity is to bring container technology and reproducibility to the High-Performance Computing world. 
 The key feature that differentiates it from Docker is that it can be used in non-privileged computing environments like the compute nodes of HPC clusters, without any modifications to the software. 
 It also provides an abstraction that enables using container images from different image registries interchangeably like Docker Hub, Singularity Hub, and Sylabs Cloud.
-These features make Singularity increasingly useful in areas of Machine learning, Deep learning, and other data-intensive applications where the workloads benefit from the HPC support of it.
+These features make Singularity increasingly useful in areas of Machine learning, Deep learning, and other data-intensive applications where the workloads benefit from HPC systems.
 
 ### Slurm
 
