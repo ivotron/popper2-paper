@@ -437,6 +437,8 @@ We also plan to add a compatibility layer between the Popper syntax and more adv
 This would also allow Popper users to migrate to other workflow engines without making any changes to their previously written workflows, thus keeping the overhead minimal.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
+**Acknowledgements**: This work was partially funded by the Center for Research in Open Source Software (CROSS), Institute for Research and Innovation in Software for High Energy Physics (IRIS-HEP), and NSF Award #1450488.
+
 # References {#sec:references}
 
 \footnotesize
