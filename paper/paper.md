@@ -43,9 +43,8 @@ A VM is typically associated with large resource utilization (e.g. long start ti
 Although software (Linux) containers are a relatively old technology [@menage_adding_2007], it was not until recently, with the rise of Docker, that they entered mainstream territory [@bernstein_containers_2014]. 
 
 Docker has been a popular container runtime for a long time, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Rkt [@rktcommunity_rkt_2019], Charliecloud [@priedhorsky_charliecloud_2017], and Podman [@podmancommunity_containers_2019] having emerged. 
-With containers, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, simultaneously giving rise to the practice of running scientific experiments inside containers to make them platform independent and reproducible [@stubbs2016endofday] [@zheng_integrating_2015]. 
-
-Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command-line interfaces (CLIs), container image formats, support for distinct container image repositories, to name a few.
+With containers, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, simultaneously giving rise to the practice of running scientific experiments inside containers to make them platform independent and reproducible [@jimenez:woc15; @stubbs2016endofday; @zheng_integrating_2015]. 
+Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command-line interfaces (CLIs), container image formats; security requirement and environment differences such as Podman for enhanced security and Singularity for use in HPC, etc.
 In practice, for users attempting to make use of container technology, these differences can be overwhelming, especially if they are only familiar with the basic concepts of how containers work. 
 Based on our analysis of the container tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine-agnostic way. 
 It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future; @cohen2017scientific].
@@ -237,7 +236,7 @@ In this section, we present three case studies demonstrating how the Popper work
 These case studies aim to emphasize on how Popper can help in mitigating these reproducibility issues and make life easier for researchers and developers.
 For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
 The workflow used for the case studies is depicted in @Lst:casestudy. 
-The code implemented for these case studies can be found here [^artifacts]. 
+The code implemented for these case studies is publicly available on GitHub [^artifacts]. 
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
 steps:
@@ -271,7 +270,7 @@ The general paradigm for building reproducible workflows with Popper usually con
 
 ### Workflow execution on the local machine
 
-Popper aid researchers write, test, and debug workflows on their local development machines.
+Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
 We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
 The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using the Docker container engine.
@@ -310,9 +309,9 @@ The training step was run using MPI on 2 compute nodes having a GPU each and the
 
 As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
 
-### Setting up CI for our project
+### Workflow execution on CI
 
-We pushed our MNIST project to GitHub and activated the repository in Travis to set up continuous integration on our project.
+We pushed our MNIST project to GitHub and activated the repository in Travis to run our workflows on CI.
 For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, epochs, etc. with the help of environment variables to reduce the CI running time and iterate quickly. 
 We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
 Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
@@ -332,7 +331,7 @@ install:
 script: popper run -f wf.yml
 ```
 
-By setting up CI, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, broken links, etc.
+By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, broken links, etc.
 
 ![Comparison of training durations in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
@@ -422,7 +421,7 @@ Popper falls in this category of container-native workflow engines but it does n
 Cloud-native computing is an emerging paradigm in software development that aims to utilize existing cloud infrastructure to build, run, and scale applications in the cloud.
 The cloud-native paradigm is a subset of the container-native paradigm since it encourages running applications not only inside containers but also on cloud infrastructure.
 Container engines like Docker and orchestration tools like Kubernetes have become an integral part of the cloud-native paradigm over the years.
-With the wide-spread acceptance of the cloud-native paradigm, several cloud-native workflow engines like  Argo, Pachyderm, Brigade have come into existence.
+With the wide-spread acceptance of the cloud-native paradigm, several cloud-native workflow engines like  Argo [@argocommunity_argoproj_2019], Pachyderm [@novella_containerbased_2018], Brigade [@brigade] have come into existence.
 These workflow engines facilitate running workflows in the cloud by running an entire workflow in containers managed by Kubernetes.
 The limitation of these workflow engines is the requirement of having access to a Kubernetes cluster which can block users from running workflows in the absence of one.
 Although Popper can run workflows in the cloud using Kubernetes, it does not necessarily require access to a Kubernetes cluster for running the containerized steps of a workflow.
@@ -431,12 +430,19 @@ Popper is not exclusively cloud-native since it does not assume the presence of 
 ## Continuous Integration Tools
 
 Continuous Integration is a DevOps practice that enables building and testing code frequently to prevent the accumulation of broken code and support faster development cycles.
-Tools like Travis, Circle, Jenkins have become the standard for doing CI, but they were primarily built for running on the Cloud.
+Tools like Travis, Circle, Jenkins, GitLab-CI, etc. have become the standard for doing CI, but they were primarily built for running on the Cloud.
 This results in increased iteration time, especially for quick build and test scenarios, where the time spent in booting of VMs, scheduling of CI jobs becomes an overhead.
 Reproducing experiments on the local machine that originally run on CI, requires manually setting up the entire development environment, making the entry barrier high.
 Running on CI tools hosted locally requires knowledge and expertise in deploying and using the specific tools.
 Popper tackles these problems by providing a workflow abstraction that allows users to write a workflow once and run them interchangeably between different environments like a local machine, CI services, Cloud, and HPC by learning a single tool only.
 Talking of CI, Popper is not a CI tool, instead, it is a tool that helps bridge the gap between a local and a CI environment.
+
+## Related Case Studies
+
+Popper aids in making experiments reproducible not only from ML/AI, but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
+Reproducibility issues in Systems experiments like experiments with File systems were also explored and tackled by Popper [@jimenez:ucsctr16]. 
+Few network simulation experiments that run on the Cooja network simulation platform were made reproducible by Popper [@david:precs19]. 
+Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@jimenez:xldb18; @10.1145/3293883.3302575].
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 
@@ -451,5 +457,4 @@ This would also allow Popper users to migrate to other workflow engines without 
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
-
 \footnotesize
