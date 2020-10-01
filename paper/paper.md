@@ -419,8 +419,8 @@ Popper is not exclusively cloud-native since it does not assume the presence of 
 Continuous Integration is a DevOps practice that enables building and testing code frequently to prevent the accumulation of broken code and support faster development cycles.
 Tools like Travis, Circle, Jenkins, and GitLab-CI have become the standard for doing CI, but they were primarily built for running on the Cloud.
 This results in increased iteration time, especially for quick modify-compile-test loops, where the time spent in booting of VMs, scheduling of CI jobs becomes an overhead.
-Reproducing experiments on the local machine that originally run on CI, requires manually setting up the entire development environment, making the entry barrier high.
-Running on CI tools hosted locally, like using Gitlab-runner [@gitlabrunner], requires knowledge and expertise in deploying and using the specific tools.
+Reproducing experiments on the local machine that originally run on CI services, requires imitating the CI environment locally which makes the entry barrier high.
+Running on CI tools hosted locally, like using Gitlab-runner [@gitlabrunner], requires knowledge and expertise in running and using the specific tools.
 Popper tackles these problems by providing a workflow abstraction that allows users to write a workflow once and run them interchangeably between different environments like a local machine, CI services, Cloud, and HPC by learning a single tool only.
 Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
@@ -439,8 +439,7 @@ We present a few case studies using an ML workflow to demonstrate how Popper hel
 Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
-We also plan to add a compatibility layer between the Popper syntax and more advanced workflow languages such as CWL/WDL to enable interoperability between different workflow engines.
-This would also allow Popper users to migrate to other workflow engines without making any changes to their previously written workflows, thus keeping the overhead minimal.
+We plan to add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL and Airflow to enable interoperability between different workflow engines.
 We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
