@@ -79,7 +79,7 @@ Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `ru
 In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, or deploy software.
 Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
 
-The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks.
+The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks, and to launch them, and track their completion.
 Running workflows on dissimilar environments like Kubernetes and Slurm incurs multiple operational overheads like adopting environment-specific commands, writing job scripts and definitions, dealing with different image formats like the flat image format of singularity, etc. which are peculiar to a specific computing environment.
 For example, running a containerized step on Kubernetes would require writing Pod and Volume specifications and creating them using a Kubernetes client. 
 Likewise, running an MPI workload inside a Singularity container on Slurm would require creating job scripts and starting the job with `sbatch`.
@@ -442,6 +442,7 @@ Next, we compare Popper with existing state-of-the-art workflow engines illustra
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
 We also plan to add a compatibility layer between the Popper syntax and more advanced workflow languages such as CWL/WDL to enable interoperability between different workflow engines.
 This would also allow Popper users to migrate to other workflow engines without making any changes to their previously written workflows, thus keeping the overhead minimal.
+We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
 # References {#sec:references}
