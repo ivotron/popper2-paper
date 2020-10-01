@@ -59,7 +59,6 @@ Popper [@systemslabpopper] is a light-weight workflow execution engine that allo
 This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts multiple resource managers and container engines giving users the ability to focus only on Dockerfiles, i.e. software dependencies and workflow logic, i.e. correct order of execution, and ignore the runtime specific details.
-   This arrangement also provides built-in support for continuous validation and portability of workflows which empowers researchers to develop workflows once and run interchangeably between CI services and the local machine without any modifications. 
 
 2. Popper, an implementation of the above design that allows running workflows inside containers in different computing environments like local machines, Kubernetes clusters, or HPC [@yang2005high] environments.
 
@@ -92,7 +91,7 @@ In this subsection, we provide background on the different tools and technologie
 
 ### Docker
 
-Docker is an industry-standard daemon-based light-weight virtualization technology that was released in early 2013.
+Docker is an OS-level virtualization technology that was released in early 2013.
 It uses various Linux kernel features like namespaces and cgroups to segregate processes so that they can run independently.
 It provides state of the art isolation guarantees and makes it easy to build, deploy, and run applications using containers following the OCI (Open Container Initiative) [@oci] specifications. 
 However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable a user inside a Docker container to have root access to the host system's network and filesystem, thus making it unsuitable for use in HPC systems. 
@@ -142,27 +141,15 @@ An example Popper workflow is shown in @Lst:wf-example which downloads a dataset
 
 ```{#lst:wf-example .yaml caption="A three-step workflow."}
 steps:
-- id: download data
-  uses: docker://byrnedo/curl
-  args: [
-    "--create-dirs",
-    "-Lo data/global.csv",
-    "https://git.io/JUcRU"
-  ]
+# download CSV file with data on global CO2 emissions
+- id: download
+  uses: docker://byrnedo/alpine-curl:0.1.8
+  args: [-LO, https://git.io/JUcRU]
 
-- id: run analysis
-  uses: docker://python:alpine
-  args: [
-    "scripts/get_mean_by_group.py",
-    "data/global.csv", "5"
-  ]
-
-- id: validate results
-  uses: docker://python:alpine
-  args: [
-    "scripts/validate_output.py",
-    "data/global_per_capita_mean.csv"
-  ]
+# obtain the transpose of the global CO2 emissions table
+- id: get-transpose
+  uses: docker://getpopper/csvtool:2.4
+  args: [transpose, global.csv, -o, global_transposed.csv]
 ```
 
 ![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy .center height=35%}
@@ -236,7 +223,7 @@ In this section, we present three case studies demonstrating how the Popper work
 These case studies aim to emphasize on how Popper can help in mitigating these reproducibility issues and make life easier for researchers and developers.
 For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
 The workflow used for the case studies is depicted in @Lst:casestudy. 
-The code implemented for these case studies is publicly available on GitHub [^artifacts]. 
+The code that the workflow references can be found here [^code].
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
 steps:
@@ -251,6 +238,9 @@ steps:
 - id: run-training
   uses: docker://gw000/keras
   args: ["./scripts/run_training.sh"]
+  env:
+    NUM_EPOCHS: '10'
+    BATCH_SIZE: '128'
 ```
 
 The `download` step downloads the MNIST dataset in the workspace. 
@@ -266,7 +256,7 @@ The general paradigm for building reproducible workflows with Popper usually con
   b. If a prebuilt image is not available, a `Dockerfile` can be used to build an image manually which is a file containing specifications for building Docker images.
 3. Running the workflow and refining it.
 
-[^artifacts]: <https://github.com/ivotron/popper2-paper/tree/master/artifacts>
+[^code]: <https://github.com/ivotron/popper-canopie-paper>
 
 ### Workflow execution on the local machine
 
@@ -332,8 +322,6 @@ script: popper run -f wf.yml
 ```
 
 By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, broken links, etc.
-
-![Comparison of training durations in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 # Discussion {#sec:result}
 
@@ -430,19 +418,19 @@ Popper is not exclusively cloud-native since it does not assume the presence of 
 ## Continuous Integration Tools
 
 Continuous Integration is a DevOps practice that enables building and testing code frequently to prevent the accumulation of broken code and support faster development cycles.
-Tools like Travis, Circle, Jenkins, GitLab-CI, etc. have become the standard for doing CI, but they were primarily built for running on the Cloud.
-This results in increased iteration time, especially for quick build and test scenarios, where the time spent in booting of VMs, scheduling of CI jobs becomes an overhead.
+Tools like Travis, Circle, Jenkins, and GitLab-CI have become the standard for doing CI, but they were primarily built for running on the Cloud.
+This results in increased iteration time, especially for quick modify-compile-test loops, where the time spent in booting of VMs, scheduling of CI jobs becomes an overhead.
 Reproducing experiments on the local machine that originally run on CI, requires manually setting up the entire development environment, making the entry barrier high.
-Running on CI tools hosted locally requires knowledge and expertise in deploying and using the specific tools.
+Running on CI tools hosted locally, like using Gitlab-runner [@gitlabrunner], requires knowledge and expertise in deploying and using the specific tools.
 Popper tackles these problems by providing a workflow abstraction that allows users to write a workflow once and run them interchangeably between different environments like a local machine, CI services, Cloud, and HPC by learning a single tool only.
-Talking of CI, Popper is not a CI tool, instead, it is a tool that helps bridge the gap between a local and a CI environment.
+Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
 ## Related Case Studies
 
 Popper aids in making experiments reproducible not only from ML/AI, but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
 Reproducibility issues in Systems experiments like experiments with File systems were also explored and tackled by Popper [@jimenez:ucsctr16]. 
-Few network simulation experiments that run on the Cooja network simulation platform were made reproducible by Popper [@david:precs19]. 
-Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@jimenez:xldb18; @10.1145/3293883.3302575].
+Few network simulation experiments that run on the Cooja network simulation platform were made reproducible with the use of Popper [@david:precs19]. 
+Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 
