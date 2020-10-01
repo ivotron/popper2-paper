@@ -209,13 +209,12 @@ It can either be created by users or provided by system administrators.
 
 ![Architecture of the Popper workflow engine](./figures/architecture_med.pdf){#fig:arch}
 
-## Continuous Integration
+## Workflow Exporter
 
-Popper allows users to continuously validate their workflows by allowing them to export workflows as CI pipelines for different continuous integration services like Travis, Circle, or Jenkins.
-The Popper workflows that are written and run locally can be seamlessly run on CI services and vice versa, allowing the development environment to be consistent on both local and CI.
-To run a Popper workflow on a CI service, it is required to generate a CI configuration file using the `ci` subcommand of the Popper CLI tool, push the project to GitHub and enable the repository on the CI provider.
-Using CI to run Popper workflows enhances the reproducibility guarantees as continuous validation helps to keep a check on various breaking changes like outdated dependencies, broken links, or deleted Docker images.
-Another benefit of using CI to run Popper workflows is that even without changes, jobs can be configured so that they run periodically (e.g. once a week), to ensure that they are in a healthy state.
+Popper allows exporting workflows to other formats which are more complex in terms of syntax like that of Airflow, Dagster, Travis, GitLab-CI, etc.
+This difference in complexity is mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that support containerized workflows.
+This prevents lock-in of workflows by Popper as workflows written initially for Popper can be exported to other formats and executed on other workflow engines or CI tools.
+Currently, Popper supports exporting workflows to formats recognized by CI tools like Travis, Circle, Gitlab-CI, Jenkins and Brigade.
 
 # Case Study {#sec:casestudy}
 
