@@ -203,7 +203,7 @@ Currently, there are plugins for Docker, Podman and Singularity, with others pla
 The behavior of a resource manager and a container engine can be customized by passing specific configuration through the configuration file.
 This enables the users to take advantage of engine and resource manager specific features in a transparent way.
 In the presence of a `Dockerfile` and a workflow file, a workflow can be reproduced easily in different computing environments only by tweaking the configuration file.
-For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information like the available MPI library, the number of nodes and CPUs to run on, etc. in the configuration file.
+For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information like the available MPI library, the number of nodes and CPUs to run a job on, etc. in the configuration file.
 The configuration file can be passed through the CLI interface and can be shared among different workflows.
 It can either be created by users or provided by system administrators.
 
@@ -366,6 +366,8 @@ In this way, Popper allows researchers and developers to build and test workflow
 
 [^mlperf]: <https://github.com/mlperf/training>
 
+[^mlperf]: <https://github.com/mlperf/training>
+
 # Related Work
 
 The problem of implementing multi-container workflows as described in @Sec:intro is addressed by several existing tools.
@@ -444,8 +446,10 @@ We are also planning to add an `image` attribute to our workflow syntax, that wo
 Some additional improvements planned for Popper are as follows:
 
 * Currently, Popper supports logging to the STDOUT or to a file. This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, AWS CloudWatch, etc.
+Similar abstractions can be implemented to support different tracing mechanisms of containers like `dtrace`.
+
 * Adding plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
-* Caching and Layering of images is taken care by the underlying container engine by default. We plan to add support for build tools like Kaniko and BuildKit to enable rootless image building in HPC environments and to make builds efficient by leveraging their remote caching feature.
+* Caching and Layering of images is taken care by the underlying container engine by default. We plan to add an `image` attribute to our workflow syntax to abstract the building and pushing of images using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
 
 **Acknowledgements**: This work was partially funded by the NSF Award #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021 and the Center for Research in Open Source Software (CROSS)[^cross].
 
