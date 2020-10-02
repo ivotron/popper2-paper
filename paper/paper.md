@@ -443,5 +443,10 @@ We plan to add more exporter plugins for exporting Popper workflows to advanced 
 We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
 Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
 
+**Acknowledgements**: This work was partially funded by the NSF Award #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021 and the Center for Research in Open Source Software (CROSS)[^cross].
+
+[^cross]: <https://cross.ucsc.edu>
+[^iris-hep]: <https://iris-hep.org>
+
 # References {#sec:references}
 \footnotesize
