@@ -215,7 +215,7 @@ For example, in the case of Slurm, it currently supports running Docker and Sing
 The container engine plugins abstract generic operations that all engines support such as creating an image from a `Dockerfile`;
 downloading images from a registry and converting them to their internal format;
 and container-level operations such as creation, deletion, and renaming.
-Currently, there are plugins for Docker and Singularity, with others planned by the Popper community.
+Currently, there are plugins for Docker, Podman and Singularity, with others planned by the Popper community.
 
 The behavior of a resource manager and a container engine can be customized by passing specific configuration through the configuration file.
 This enables the users to take advantage of engine and resource manager specific features in a transparent way.
@@ -301,7 +301,8 @@ This shows how Popper helps improve the performance of scientific workflows dras
 
 For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a Slurm cluster.
 For running workflows in Slurm clusters, MPI supported container engines like Singularity, which is supported by popper need to be used.
-Also, the programs and scripts need to be MPI compatible to enjoy the total compute capacity of multiple nodes in HPC clusters.
+The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations, if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
+Also, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
