@@ -441,7 +441,11 @@ Next, we compare Popper with existing state-of-the-art workflow engines illustra
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
 We plan to add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL and Airflow to enable interoperability between different workflow engines.
 We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
-Several other features have also been planned like workflow report generation, GUI dashboard, etc. to make the tool more user friendly.
+Some additional improvements planned for Popper are as follows:
+
+* Currently, Popper supports logging to the STDOUT or to a file. This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, AWS CloudWatch, etc.
+* Adding plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
+* Caching and Layering of images is taken care by the underlying container engine by default. We plan to add support for build tools like Kaniko and BuildKit to enable rootless image building in HPC environments and to make builds efficient by leveraging their remote caching feature.
 
 **Acknowledgements**: This work was partially funded by the NSF Award #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021 and the Center for Research in Open Source Software (CROSS)[^cross].
 
