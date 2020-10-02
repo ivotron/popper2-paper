@@ -44,7 +44,7 @@ Although software (Linux) containers are a relatively old technology [@menage_ad
 
 Docker has been a popular container runtime for a long time, with other container runtimes such as Singularity [@kurtzer_singularity_2017], Rkt [@rktcommunity_rkt_2019], Charliecloud [@priedhorsky_charliecloud_2017], and Podman [@podmancommunity_containers_2019] having emerged. 
 With containers, the container-native software development paradigm emerged, which promotes the building, testing, and deployment of software in containers, simultaneously giving rise to the practice of running scientific experiments inside containers to make them platform independent and reproducible [@jimenez:woc15; @stubbs2016endofday; @zheng_integrating_2015]. 
-Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command-line interfaces (CLIs), container image formats; security requirement and environment differences such as Podman for enhanced security and Singularity for use in HPC, etc.
+Differences among container engines stem from the need to serve distinct use cases, manifesting in user experience (UX) differences such as those found in their command-line interfaces (CLIs), container image formats; security requirement and environmental differences such as Podman for enhanced security and Singularity for use in HPC, etc.
 In practice, for users attempting to make use of container technology, these differences can be overwhelming, especially if they are only familiar with the basic concepts of how containers work. 
 Based on our analysis of the container tooling landscape, we found that there is an absence of tools for allowing users to work with containers in an engine-agnostic way. 
 It has also been found that as scientific workflows become increasingly complex, continuous validation of the workflows which is critical to ensuring good reproducibility, becomes difficult [@deelman2018future; @cohen2017scientific].
@@ -79,7 +79,7 @@ Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `ru
 In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, or deploy software.
 Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
 
-The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks, and to launch them, and track their completion.
+The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks and to launch them, and track their completion.
 Running workflows on dissimilar environments like Kubernetes and Slurm incurs multiple operational overheads like adopting environment-specific commands, writing job scripts and definitions, dealing with different image formats like the flat image format of singularity, etc. which are peculiar to a specific computing environment.
 For example, running a containerized step on Kubernetes would require writing Pod and Volume specifications and creating them using a Kubernetes client. 
 Likewise, running an MPI workload inside a Singularity container on Slurm would require creating job scripts and starting the job with `sbatch`.
@@ -198,7 +198,7 @@ For example, in the case of Slurm, it currently supports running Docker and Sing
 The container engine plugins abstract generic operations that all engines support such as creating an image from a `Dockerfile`;
 downloading images from a registry and converting them to their internal format;
 and container-level operations such as creation, deletion, and renaming.
-Currently, there are plugins for Docker, Podman and Singularity, with others planned by the Popper community.
+Currently, there are plugins for Docker, Podman, and Singularity, with others planned by the Popper community.
 
 The behavior of a resource manager and a container engine can be customized by passing specific configuration through the configuration file.
 This enables the users to take advantage of engine and resource manager specific features in a transparent way.
@@ -212,9 +212,9 @@ It can either be created by users or provided by system administrators.
 ## Workflow Exporter
 
 Popper allows exporting workflows to other formats which are more complex in terms of syntax like that of Airflow, Dagster, Travis, GitLab-CI, etc.
-This difference in complexity is mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that support containerized workflows.
-This prevents lock-in of workflows by Popper as workflows written initially for Popper can be exported to other formats and executed on other workflow engines or CI tools.
-Currently, Popper supports exporting workflows to formats recognized by CI tools like Travis, Circle, Gitlab-CI, Jenkins and Brigade.
+This difference in complexity is mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
+This prevents lock-in of workflows by Popper as workflows that are written initially for Popper can be exported to other formats and executed on other workflow engines or CI tools.
+Currently, Popper supports exporting workflows to formats recognized by CI tools like Travis, Circle, Gitlab-CI, Jenkins, and Brigade.
 
 # Case Study {#sec:casestudy}
 
@@ -428,7 +428,7 @@ Given the above, Popper is not intended to replace CI tools, but rather serve as
 
 ## Related Case Studies
 
-Popper aids in making experiments reproducible not only from ML/AI, but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
+Popper aids in making experiments reproducible not only from ML/AI but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
 Reproducibility issues in Systems experiments like experiments with File systems were also explored and tackled by Popper [@jimenez:ucsctr16]. 
 Few network simulation experiments that run on the Cooja network simulation platform were made reproducible with the use of Popper [@david:precs19]. 
 Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
@@ -441,15 +441,15 @@ We present a few case studies using an ML workflow to demonstrate how Popper hel
 Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
 As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
-We plan to add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL and Airflow to enable interoperability between different workflow engines.
+We plan to add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL, and Airflow to enable interoperability between different workflow engines.
 We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
 Some additional improvements planned for Popper are as follows:
 
-* Currently, Popper supports logging to the STDOUT or to a file. This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, AWS CloudWatch, etc.
+* Currently, Popper supports logging to the STDOUT or a file. This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, AWS CloudWatch, etc.
 Similar abstractions can be implemented to support different tracing mechanisms of containers like `dtrace`.
 
 * Adding plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
-* Caching and Layering of images is taken care by the underlying container engine by default. We plan to add an `image` attribute to our workflow syntax to abstract the building and pushing of images using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
+* Caching and Layering of images is taken care of by the underlying container engine by default. We plan to add an `image` attribute to our workflow syntax to abstract the building and pushing of images using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
 
 **Acknowledgements**: This work was partially funded by the NSF Award #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021 and the Center for Research in Open Source Software (CROSS)[^cross].
 
