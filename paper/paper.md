@@ -220,7 +220,7 @@ Currently, there are plugins for Docker, Podman and Singularity, with others pla
 The behavior of a resource manager and a container engine can be customized by passing specific configuration through the configuration file.
 This enables the users to take advantage of engine and resource manager specific features in a transparent way.
 In the presence of a `Dockerfile` and a workflow file, a workflow can be reproduced easily in different computing environments only by tweaking the configuration file.
-For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information about the available MPI library in the configuration file.
+For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information like the available MPI library, the number of nodes and CPUs to run on, etc. in the configuration file.
 The configuration file can be passed through the CLI interface and can be shared among different workflows.
 It can either be created by users or provided by system administrators.
 
@@ -342,7 +342,7 @@ A summary of the training duration and accuracy obtained by running the workflow
 As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
 
 This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
-To expand on this point, we analyzed the GitHub repository for the MLPerf [@mattson2019mlperf] machine learning (ML) training benchmark suite that can be found at <https://github.com/mlperf/training>.
+To expand on this point, we analyzed the GitHub repository [^mlperf] of MLPerf [@mattson2019mlperf], a benchmark suite that measures how fast a system can train ML models.
 From a total of 123 issues, 67 were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
 Popper can solve much of the problems generally noticed in reproducing research artifacts like these we found.
 
@@ -377,6 +377,8 @@ resource_manager:
 
 It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and Slurm.
 In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
+
+[^mlperf]: <https://github.com/mlperf/training>
 
 # Related Work
 

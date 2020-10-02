@@ -15,6 +15,7 @@ steps:
     "--metadata=documentclass:IEEETran",
     "--metadata=classoption:conference",
     "--metadata=natbib:false",
+    "--metadata=urlcolor:black",
     "--metadata=usedefaultspacing:false",
     "--metadata=numbersections:true",
     "--metadata=secPrefix:section",
