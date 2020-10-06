@@ -426,13 +426,15 @@ Running on CI tools hosted locally, like using Gitlab-runner [@gitlabrunner], re
 Popper tackles these problems by providing a workflow abstraction that allows users to write a workflow once and run them interchangeably between different environments like a local machine, CI services, Cloud, and HPC by learning a single tool only.
 Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
-## Related Case Studies
+## Related work on Popper
 
 Popper aids in making experiments reproducible not only from ML/AI but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
 Reproducibility issues in Systems experiments like experiments with the GassyFS file system were explored and tackled by Popper [@jimenez:ucsctr16]. 
 This experiment used the `1.x` version of Popper, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow.
 Few network simulation experiments that run on the Cooja network simulation platform were made reproducible with the use of Popper [@david:precs19]. 
 Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
+This paper introduces the `2.x` version of Popper that assumes a workflow defined in a YAML format and adds support for more container engines like Podman and Singularity along with resource managers like Slurm and Kubernetes.
+This paper also evaluates the usefulness of having support for running workflows in Cloud and HPC by providing a case study.
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 
