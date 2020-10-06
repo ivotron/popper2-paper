@@ -57,7 +57,7 @@ It would be more convenient for researchers if workflow engines provided the fle
 
 Popper [@systemslabpopper] is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
 The current version of Popper represents the evolution of an early version `1.x`, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow whereas the current version takes a workflow defined in a light-weight YAML format.
-Also the `1.x` version of Popper supported running containerized workflows on CI and local only, but now Popper supports running workflows on Cloud and HPC too.
+Also, the `1.x` version of Popper supported running containerized workflows on CI and local only, but now Popper supports running workflows on Cloud and HPC too.
 This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts multiple resource managers and container engines giving users the ability to focus only on Dockerfiles, i.e. software dependencies and workflow logic, i.e. correct order of execution, and ignore the runtime specific details.
@@ -449,12 +449,15 @@ Popper tackles these problems by providing a workflow abstraction that allows us
 Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
 ## Related work on Popper
-<!--TODO: add more distinction from Popper 1.x-->
+<!--TODO: 
+1. add more distinction from Popper 1.x
+2. organize the section
+-->
 
 Popper aids in making experiments reproducible not only from ML/AI but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
-Reproducibility issues in Systems experiments like experiments with the GassyFS file system were explored and tackled by Popper [@jimenez:ucsctr16]. 
+Reproducibility issues in Systems experiments like experiments with the GassyFS [@watkins2016gassyfs] file system were explored and tackled by Popper [@jimenez:ucsctr16]. 
 This experiment used the `1.x` version of Popper, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow.
-Few network simulation experiments that run on the Cooja network simulation platform were made reproducible with the use of Popper [@david:precs19]. 
+Few network simulation experiments that run on the Cooja network simulation platform [@mehmood2017cooja] were made reproducible with the use of Popper [@david:precs19]. 
 Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
