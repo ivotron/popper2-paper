@@ -1,5 +1,5 @@
 ---
-title: "Enabling seamless execution of containerized workflows on HPC and Cloud using Popper"
+title: "Enabling seamless execution of Computational and Data science workflows on HPC and Cloud with the Popper Container-native Automation Engine"
 author:
 - name: Jayjeet Chakraborty, Carlos Maltzahn, Ivo Jimenez
   affiliation: UC Santa Cruz
@@ -30,8 +30,8 @@ This results in other researchers wasting time trying to figure out how to repro
 <!-- discuss previous work -->
 
 Numerous existing research has tried to address the problem of reproducibility [@goodman2016does] by different means; for example, logging and tracing system calls, using workflow engines, using correctly provisioned shared and public testbeds, by recording and replaying changes from a stable initial state, among many others [@reproducibility2018acm].
-These approaches have led to the development of various tools and frameworks to address these problems of reproducibility [@piccolo2016tools; @peng2011reproducible], 
-with scientific workflow engines being a predominant one [@stevens2013automated; @banati2015minimal; @qasha2016framework]. A workflow engine organizes the steps of a scientific experiment as the nodes of a directed acyclic graph (DAG) and executes them in the correct order [@albrecht2012makeflow].
+These approaches have led to the development of various tools and frameworks to address these problems of reproducibility [@piccolo2016tools; @peng2011reproducible], with scientific workflow engines being a predominant one [@stevens2013automated; @banati2015minimal; @qasha2016framework].
+A workflow engine organizes the steps of a scientific experiment as the nodes of a directed acyclic graph (DAG) and executes them in the correct order [@albrecht2012makeflow].
 Nextflow [@ditommaso_nextflow_2017], Pegasus [@deelman_pegasus_2004] and Taverna [@oinn_taverna_2004] are examples of widely used scientific workflow engines.
 But some phenomena like unavailability of third-party services, missing example input data, changes in the execution environment, insufficient documentation of workflows make it difficult for scientists to reuse workflows, resulting in _workflow decay_ [@workflow_decay].
 
@@ -130,21 +130,21 @@ Many cloud providers like GCP, AWS, and Azure provide a completely managed and s
 Continuous Integration is a software development paradigm where developers commit code into a shared repository frequently, ideally several times a day.
 Each integration is verified by automated builds and tests of the corresponding commits.
 This helps in detecting errors and anomalies quickly and shortens the debugging time [@virmani2015understanding].
-Several hosted CI services like Travis, Circle, and Jenkins make continuous integration and continuous validation easily accessible.
+Several hosted CI services like Travis [@travis], Circle [@circleci], and Jenkins [@jenkins] make continuous integration and continuous validation easily accessible.
 
 ## Workflow Definition Language
 
 YAML [@ben2009yaml] is a human-readable data-serialization language. 
 It is commonly used in writing configuration files and in applications where data is stored or transmitted. 
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining Popper workflows and for specifying the configuration for the execution engine. 
-An example Popper workflow is shown in @Lst:wf-example which downloads a dataset in CSV format, runs statistical functions on the data, and validates the results.
+An example Popper workflow is shown in @Lst:wf-example which downloads a dataset in CSV format and generates its transpose.
 
 ```{#lst:wf-example .yaml caption="A three-step workflow."}
 steps:
 # download CSV file with data on global CO2 emissions
 - id: download
   uses: docker://byrnedo/alpine-curl:0.1.8
-  args: [-LO, https://git.io/JUcRU]
+  args: [-L, https://git.io/JUcRU, -o, global.csv]
 
 # obtain the transpose of the global CO2 emissions table
 - id: get-transpose
@@ -203,7 +203,7 @@ Currently, there are plugins for Docker, Podman, and Singularity, with others pl
 The behavior of a resource manager and a container engine can be customized by passing specific configuration through the configuration file.
 This enables the users to take advantage of engine and resource manager specific features in a transparent way.
 In the presence of a `Dockerfile` and a workflow file, a workflow can be reproduced easily in different computing environments only by tweaking the configuration file.
-For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information like the available MPI library, the number of nodes and CPUs to run a job on, etc. in the configuration file.
+For example, a workflow developed on the local machine can be run on an HPC cluster using Singularity containers by specifying information like the available MPI library and the number of nodes and CPUs to use for running a job in the configuration file.
 The configuration file can be passed through the CLI interface and can be shared among different workflows.
 It can either be created by users or provided by system administrators.
 
@@ -211,10 +211,11 @@ It can either be created by users or provided by system administrators.
 
 ## Workflow Exporter
 
-Popper allows exporting workflows to other formats which are more complex in terms of syntax like that of Airflow, Dagster, Travis, GitLab-CI, etc.
-This difference in complexity is mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
+Popper allows exporting a workflow to other workflow specification formats such as CWL and WDL, as well as those associated with a CI service (e.g. Travis) or workflow engine (e.g. Airflow [@airflow]).
+In most cases, the workflow specification syntax for these formats is more complex from that one of Popper's, mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
 This prevents lock-in of workflows by Popper as workflows that are written initially for Popper can be exported to other formats and executed on other workflow engines or CI tools.
-Currently, Popper supports exporting workflows to formats recognized by CI tools like Travis, Circle, Gitlab-CI, Jenkins, and Brigade.
+Exporting to other formats is handled by an extensible Workflow Exporter module that allows creating exporters for an arbitrary list of workflow specification formats. 
+Currently, plugins for CI services like TravisCI, CircleCI, Jenkins and Gitlab-CI are implemented.
 
 # Case Study {#sec:casestudy}
 
@@ -287,20 +288,19 @@ This shows how Popper helps improve the performance of scientific workflows dras
 
 ### Workflow execution in Slurm clusters
 
-For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] in a Slurm cluster.
-For running workflows in Slurm clusters, MPI supported container engines like Singularity, which is supported by popper need to be used.
-The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations, if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
+For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] on a Slurm cluster.
+For running workflows on Slurm clusters, container engines that are HPC aware, like Singularity, Charliecloud, and Pyxis need to be used.
+The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
 Also, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous case studies.
-
 As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
 
 ### Workflow execution on CI
 
-We pushed our MNIST project to GitHub and activated the repository in Travis to run our workflows on CI.
+We used the workflow exporter to generate a Travis config file, pushed our MNIST project to GitHub with the config, and activated the repository on Travis to run our workflows on CI.
 For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, epochs, etc. with the help of environment variables to reduce the CI running time and iterate quickly. 
 We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
 Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
@@ -320,7 +320,7 @@ install:
 script: popper run -f wf.yml
 ```
 
-By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, broken links, etc.
+By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, and broken links.
 
 # Discussion {#sec:result}
 
@@ -390,6 +390,7 @@ In this section, we have discussed three frequently used categories of workflow 
 ### Generic workflow execution engines
 
 Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers;
+Also, tools like the Collective Knowledge Framework [@grigori_fursin_2020] helps researchers in sharing their research in the form of reusable workflows that consists of artifacts like algorithms, datasets, models, scripts, and experimental results and provide APIs, CLI, meta descriptions, and common automation actions for the related artifacts.
 Popular workflow engines like Airflow and Luigi [@_luigi_] require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins.
 For example, Airflow and Luigi use Python, Copper [@_copper_engine_] uses Java, Dagr [@_dagr_] uses Scala and SciPipe [@lampa2019scipipe] uses Go as their workflow definition language.
 The goal with Popper is to minimize overhead both in terms of workflow language syntax and infrastructural requirements for running workflows and hence allow users to focus solely on writing the workflows.
@@ -443,18 +444,20 @@ We first describe and analyze the design of Popper's YAML based workflow syntax 
 We present a few case studies using an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and Slurm quickly and with minimal changes in configuration.
 Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
-As future work, we have planned to add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
-We plan to add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL, and Airflow to enable interoperability between different workflow engines.
-We are also planning to add an `image` attribute to our workflow syntax, that would abstract the building and pushing of images irrespective of the container engine used.
-Some additional improvements planned for Popper are as follows:
+As future work, we have planned the following improvements for Popper: 
+
+* Add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
+
+* Add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL, and Airflow to enable interoperability between different workflow engines.
 
 * Currently, Popper supports logging to the STDOUT or a file. This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, AWS CloudWatch, etc.
 Similar abstractions can be implemented to support different tracing mechanisms of containers like `dtrace`.
 
-* Adding plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
-* Caching and Layering of images is taken care of by the underlying container engine by default. We plan to add an `image` attribute to our workflow syntax to abstract the building and pushing of images using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
+* Add plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
 
-**Acknowledgements**: This work was partially funded by the NSF Award #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021 and the Center for Research in Open Source Software (CROSS)[^cross].
+* Building, Caching, and Layering of images is currently taken care of by the underlying container engine. We plan to add an `image` attribute to our workflow syntax to make the building and pushing of images container-engine agnostic using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
+
+**Acknowledgements**: This work was partially funded by the NSF Awards #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021, as well as by the Center for Research in Open Source Software (CROSS)[^cross].
 
 [^cross]: <https://cross.ucsc.edu>
 [^iris-hep]: <https://iris-hep.org>
