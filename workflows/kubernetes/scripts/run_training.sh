@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-rm -rf ./results
+rm -rf ./results/kubernetes
 
 # fetch timestamp
 timestamp=$(date "+%Y%m%d-%H%M%S")
@@ -15,7 +15,7 @@ start_fmt=$(date +%Y-%m-%d\ %r)
 echo "STARTING TIMING RUN AT $start_fmt"
 
 # start training
-python ./scripts/keras_mnist.py
+python ./workflows/kubernetes/scripts/keras_mnist.py
 
 # end timing
 end=$(date +%s)
@@ -32,7 +32,7 @@ echo "Sample name: $result_name"
 echo "Start Time: $start_fmt"
 echo "End Time: $end_fmt"
 echo "Duration: $result"
-echo $result >> ./results
+echo $result >> ./results/kubernetes
 
 ((counter++))
 done
