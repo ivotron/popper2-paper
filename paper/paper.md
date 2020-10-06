@@ -102,7 +102,7 @@ The syntax of Popper workflows can be learned in seconds and is meant to be as c
 
 * It is not meant to replace existing workflow engines.
 Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
-It is intended to codify the highest level workflow like codifying the README file, or documentation that explains how to compile, run, and test a software project.
+It is intended to automate the highest level workflow like codifying the README file, or documentation that explains how to compile, run, and test a software project.
 
 ## Background
 
@@ -111,10 +111,10 @@ In this subsection, we provide background on the different tools and technologie
 ### Docker
 
 Docker is an OS-level virtualization technology that was released in early 2013.
-It uses various Linux kernel features like namespaces and cgroups to segregate processes so that they can run independently.
+It uses various Linux kernel features like namespaces and cgroups [@rosen2013resource] to segregate processes so that they can run independently.
 It provides state of the art isolation guarantees and makes it easy to build, deploy, and run applications using containers following the OCI (Open Container Initiative) [@oci] specifications. 
 However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable a user inside a Docker container to have root access to the host system's network and filesystem, thus making it unsuitable for use in HPC systems. 
-Also, Docker uses cgroups [@rosen2013resource] to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
+Also, Docker uses cgroups to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
 
 ### Singularity
 
