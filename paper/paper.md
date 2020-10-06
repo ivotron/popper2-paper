@@ -1,5 +1,5 @@
 ---
-title: "Enabling seamless execution of Computational and Data science workflows on HPC and Cloud with the Popper Container-native Automation Engine"
+title: "Enabling seamless execution of Computational and Data science workflows on HPC and Cloud with the Popper Container-Native Automation Engine"
 author:
 - name: Jayjeet Chakraborty, Carlos Maltzahn, Ivo Jimenez
   affiliation: UC Santa Cruz
@@ -25,7 +25,7 @@ Researchers working in various domains related to computational and data-intensi
 According to [@stagge2019assessing], approximately 1% of the artifacts available online are fully reproducible and 0.6% of them are partially reproducible. 
 A 2016 study by Nature found that from a group of 1576 scientists, around 70% of them failed to reproduce each other's experiments [@baker2016reproducibility].
 This problem occurs mostly due to the lack of proper documentation, missing artifacts, or encountering broken software dependencies.
-This results in other researchers wasting time trying to figure out how to reproduce those experiments from the archived artifacts, ultimately making this process inefficient, cumbersome, and error prone [@sep-scientific-reproducibility].
+This results in other researchers wasting time trying to figure out how to reproduce those experiments from the archived artifacts, ultimately making this process inefficient, cumbersome, and error-prone [@sep-scientific-reproducibility].
 
 <!-- discuss previous work -->
 
@@ -55,7 +55,9 @@ It would be more convenient for researchers if workflow engines provided the fle
 
 <!-- our contributions -->
 
-Popper [@systemslabpopper] is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building reproducible workflows from archived experimental artifacts. 
+Popper [@systemslabpopper] is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
+The current version of Popper represents the evolution of an early version `1.x`, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow whereas the current version takes a workflow defined in a light-weight YAML format.
+Also the `1.x` version of Popper supported running containerized workflows on CI and local only, but now Popper supports running workflows on Cloud and HPC too.
 This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts multiple resource managers and container engines giving users the ability to focus only on Dockerfiles, i.e. software dependencies and workflow logic, i.e. correct order of execution, and ignore the runtime specific details.
@@ -77,13 +79,30 @@ To accomplish this goal of running a list of containerized tasks using existing 
 These tasks may not be always trivial to accomplish if we assume the only thing users should care about is writing experimentation scripts and running them inside containers.
 Assume we have three scripts `download_dataset.py`, `verify_dataset.sh`, and `run_training.sh` to download a dataset, verify its contents and run a computational step.
 In practice, when developers work following the container-native paradigm they end up interactively executing multiple Docker commands to build containers, compile code, test applications, or deploy software.
-Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error prone, and hard to reproduce.
+Keeping track of which commands were executed, in which order, and which flags were passed to each, can quickly become unmanageable, difficult to document, error-prone, and hard to reproduce.
 
 The goal of Popper is to bring order to this chaotic scenario by providing a framework for clearly and explicitly defining container-native tasks and to launch them, and track their completion.
 Running workflows on dissimilar environments like Kubernetes and Slurm incurs multiple operational overheads like adopting environment-specific commands, writing job scripts and definitions, dealing with different image formats like the flat image format of singularity, etc. which are peculiar to a specific computing environment.
 For example, running a containerized step on Kubernetes would require writing Pod and Volume specifications and creating them using a Kubernetes client. 
 Likewise, running an MPI workload inside a Singularity container on Slurm would require creating job scripts and starting the job with `sbatch`.
 Popper mitigates these environment-specific overheads by abstracting the different implementation details and provides a uniform interface that allows users to write workflows once and reuse them on different environments with tweaks to the configuration file.
+
+## Design Principles
+
+The design of Popper is based on the following high-level principles:
+
+* Every step of a workflow is executed inside containers, promoting the container-native paradigm.
+
+* As containers abstract the OS, Popper abstracts over containers.
+All container-engines support generating OCI images from Dockerfile's as well as importing and exporting OCI images from a Docker registry.
+This allows Popper to behave in a container-engine agnostic manner.
+
+* It is light-weight.
+The syntax of Popper workflows can be learned in seconds and is meant to be as close to a Makefile or a shell script as possible with the exception being that every command runs inside a container.
+
+* It is not meant to replace existing workflow engines.
+Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
+It is intended to codify the highest level workflow like codifying the README file, or documentation that explains how to compile, run, and test a software project.
 
 ## Background
 
@@ -215,7 +234,7 @@ Popper allows exporting a workflow to other workflow specification formats such 
 In most cases, the workflow specification syntax for these formats is more complex from that one of Popper's, mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
 This prevents lock-in of workflows by Popper as workflows that are written initially for Popper can be exported to other formats and executed on other workflow engines or CI tools.
 Exporting to other formats is handled by an extensible Workflow Exporter module that allows creating exporters for an arbitrary list of workflow specification formats. 
-Currently, plugins for CI services like TravisCI, CircleCI, Jenkins and Gitlab-CI are implemented.
+Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-CI are implemented.
 
 # Case Study {#sec:casestudy}
 
@@ -288,9 +307,11 @@ This shows how Popper helps improve the performance of scientific workflows dras
 
 ### Workflow execution in Slurm clusters
 
-For this case study, we modified our training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] on a Slurm cluster.
 For running workflows on Slurm clusters, container engines that are HPC aware, like Singularity, Charliecloud, and Pyxis need to be used.
+Currently, Popper supports running MPI workloads only through Slurm using Singularity as the container-engine.
+For our case study, we modified the training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] on a Slurm cluster.
 The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
+Otherwise, pre-built images with MPI installed might not be portable as the version of the MPI installed on the host and inside the image might not match.
 Also, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
@@ -428,14 +449,13 @@ Popper tackles these problems by providing a workflow abstraction that allows us
 Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
 ## Related work on Popper
+<!--TODO: add more distinction from Popper 1.x-->
 
 Popper aids in making experiments reproducible not only from ML/AI but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
 Reproducibility issues in Systems experiments like experiments with the GassyFS file system were explored and tackled by Popper [@jimenez:ucsctr16]. 
 This experiment used the `1.x` version of Popper, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow.
 Few network simulation experiments that run on the Cooja network simulation platform were made reproducible with the use of Popper [@david:precs19]. 
 Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
-This paper introduces the `2.x` version of Popper that assumes a workflow defined in a YAML format and adds support for more container engines like Podman and Singularity along with resource managers like Slurm and Kubernetes.
-This paper also evaluates the usefulness of having support for running workflows in Cloud and HPC by providing a case study.
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 
@@ -455,7 +475,7 @@ Similar abstractions can be implemented to support different tracing mechanisms 
 
 * Add plugins for engines like Kata container and Firecracker will allow running containers with the isolation guarantees of a VM.
 
-* Building, Caching, and Layering of images is currently taken care of by the underlying container engine. We plan to add an `image` attribute to our workflow syntax to make the building and pushing of images container-engine agnostic using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
+* Building, Caching, and Layering of images are currently taken care of by the underlying container engine. We plan to add an `image` attribute to our workflow syntax to make the building and pushing of images container-engine agnostic using tools like Kaniko and BuildKit that supports rootless image builds and makes builds efficient using their remote caching feature.
 
 **Acknowledgements**: This work was partially funded by the NSF Awards #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021, as well as by the Center for Research in Open Source Software (CROSS)[^cross].
 
