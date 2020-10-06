@@ -7,13 +7,12 @@ workflows/kubernetes/*.npz
 workflows/kubernetes/*.gz
 workflows/kubernetes/results
 
-
 workflows/slurm/*.npz
 workflows/slurm/*.gz
 workflows/slurm/results
 
-workflows/*.ipynb_checkpoints
-workflows/*.nbconvert.ipynb
+results/*.ipynb_checkpoints
+results/*.nbconvert.ipynb
 
 *.ipynb_checkpoints
 
