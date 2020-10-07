@@ -55,12 +55,11 @@ It would be more convenient for researchers if workflow engines provided the fle
 
 <!-- our contributions -->
 
-Popper [@systemslabpopper] is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
-The current version of Popper represents the evolution of an early version `1.x`, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow whereas the current version takes a workflow defined in a light-weight YAML format.
-Also, the `1.x` version of Popper supported running containerized workflows on CI and local only, but now Popper supports running workflows on Cloud and HPC too.
+Popper is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
+The current version of Popper represents a major evolution from an early version [@jimenez2017popper], which inferred a workflow from a pre-determined hard-coded folder layout consisting of bash scripts representing each step instead of assuming the container-native paradigm.
 This paper makes the following contributions:
 
-1. The design and architecture of a container-native workflow engine that abstracts multiple resource managers and container engines giving users the ability to focus only on Dockerfiles, i.e. software dependencies and workflow logic, i.e. correct order of execution, and ignore the runtime specific details.
+1. The design and architecture of a container-native workflow engine that abstracts over container engines, image builders and resource managers, giving users the ability to focus on Dockerfiles (software dependencies) and workflow logic, without having to invest time in runtime specific details.
 
 2. Popper, an implementation of the above design that allows running workflows inside containers in different computing environments like local machines, Kubernetes clusters, or HPC [@yang2005high] environments.
 
@@ -114,7 +113,7 @@ Docker is an OS-level virtualization technology that was released in early 2013.
 It uses various Linux kernel features like namespaces and cgroups [@rosen2013resource] to segregate processes so that they can run independently.
 It provides state of the art isolation guarantees and makes it easy to build, deploy, and run applications using containers following the OCI (Open Container Initiative) [@oci] specifications. 
 However, it was not designed for use in multi-user HPC environments and also has significant security issues [@yasrab2018mitigating], which might enable a user inside a Docker container to have root access to the host system's network and filesystem, thus making it unsuitable for use in HPC systems. 
-Also, Docker uses cgroups to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
+Docker uses Linux's cgroups to isolate containers, which conflicts with the Slurm scheduler since it also uses cgroups to allocate resources to jobs and enforce limits [@brayford2019deploying].
 
 ### Singularity
 
@@ -312,7 +311,7 @@ Currently, Popper supports running MPI workloads only through Slurm using Singul
 For our case study, we modified the training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] on a Slurm cluster.
 The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
 Otherwise, pre-built images with MPI installed might not be portable as the version of the MPI installed on the host and inside the image might not match.
-Also, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
+In addition, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
@@ -408,8 +407,8 @@ In this section, we discuss a few frequently used categories of workflow executi
 
 ### Generic workflow execution engines
 
-Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers;
-Also, tools like the Collective Knowledge Framework [@grigori_fursin_2020] helps researchers in sharing their research in the form of reusable workflows that consists of artifacts like algorithms, datasets, models, scripts, and experimental results and provide APIs, CLI, meta descriptions, and common automation actions for the related artifacts.
+Few examples of this category are stable and mature scientific workflow engines like Nextflow, Pegasus, and Taverna which have recently introduced support running steps in software containers.
+Also in this category are frameworks that support, in addition to defining workflows, executing and sharing them, for example CK [@grigori_fursin_2020], REANA [@vsimko2019reana], OpenML [@vanschoren2014openml], among others [@isdahl2019out].
 Popular workflow engines like Airflow and Luigi [@_luigi_] require specifying workflows using programming languages and also provide pluggable interfaces that require the installation of separate plugins.
 For example, Airflow and Luigi use Python, Copper [@_copper_engine_] uses Java, Dagr [@_dagr_] uses Scala and SciPipe [@lampa2019scipipe] uses Go as their workflow definition language.
 The goal with Popper is to minimize overhead both in terms of workflow language syntax and infrastructural requirements for running workflows and hence allow users to focus solely on writing the workflows.
