@@ -88,20 +88,23 @@ Popper mitigates these environment-specific overheads by abstracting the differe
 
 ## Design Principles
 
-The design of Popper is based on the following high-level principles:
+The design of Popper is based on the following principles:
 
 * Every step of a workflow is executed inside containers, promoting the container-native paradigm.
+
+* Dockerfile and OCI images as lowest common denominators.
+All available container engines support generating OCI images from Dockerfiles, as well as importing and exporting OCI images; most support the docker registry API as well. These common denominators are assumed by Popper as invariants, thus achieving the previous point (an abstraction over runtimes, engines, builders and orchestrators).
 
 * As containers abstract the OS, Popper abstracts over containers.
 All container engines support generating OCI images from Dockerfile's as well as importing and exporting OCI images from a Docker registry.
 This allows Popper to behave in a container engine agnostic manner.
 
-* It is light-weight.
+* Be as light-weight as possible but not lighter.
 The syntax of Popper workflows can be learned in seconds and is meant to be as close to a Makefile or a shell script as possible with the exception being that every command runs inside a container.
 
 * It is not meant to replace existing workflow engines.
 Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
-It is intended to automate the highest level workflow like codifying the README file, or documentation that explains how to compile, run, and test a software project.
+It is intended to automate the highest level workflow that we currently observe in the form of README files, or documentation that explains how to compile, run, and test a software project.
 
 ## Background
 
