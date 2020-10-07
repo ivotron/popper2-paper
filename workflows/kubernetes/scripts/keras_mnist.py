@@ -25,7 +25,7 @@ epochs = int(os.environ.get("NUM_EPOCHS", "100"))
 img_rows, img_cols = 28, 28
 
 # the data, split between train and test sets
-(x_train, y_train), (x_test, y_test) = mnist.load_data('/workspace/mnist.npz')
+(x_train, y_train), (x_test, y_test) = mnist.load_data('/workspace/workflows/kubernetes/mnist.npz')
 
 train_shape = int(x_train.shape[0] * float(os.environ.get("DATASET_REDUCTION", "1")))
 test_shape = int(x_test.shape[0] * float(os.environ.get("DATASET_REDUCTION", "1")))

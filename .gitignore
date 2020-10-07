@@ -1,19 +1,18 @@
 *.sw?
-artifacts/local/*.npz
-artifacts/local/*.gz
-artifacts/local/results
+workflows/local/*.npz
+workflows/local/*.gz
+workflows/local/results
 
-artifacts/kubernetes/*.npz
-artifacts/kubernetes/*.gz
-artifacts/kubernetes/results
+workflows/kubernetes/*.npz
+workflows/kubernetes/*.gz
+workflows/kubernetes/results
 
+workflows/slurm/*.npz
+workflows/slurm/*.gz
+workflows/slurm/results
 
-artifacts/slurm/*.npz
-artifacts/slurm/*.gz
-artifacts/slurm/results
-
-artifacts/*.ipynb_checkpoints
-artifacts/*.nbconvert.ipynb
+results/*.ipynb_checkpoints
+results/*.nbconvert.ipynb
 
 *.ipynb_checkpoints
 
