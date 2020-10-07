@@ -1,5 +1,5 @@
 ---
-title: "Enabling seamless execution of Computational and Data science workflows on HPC and Cloud with the Popper Container-Native Automation Engine"
+title: "Enabling Seamless Execution of Computational and Data Science Workflows on HPC and Cloud with the Popper Container-native Automation Engine"
 author:
 - name: Jayjeet Chakraborty, Carlos Maltzahn, Ivo Jimenez
   affiliation: UC Santa Cruz
