@@ -56,7 +56,6 @@ It would be more convenient for researchers if workflow engines provided the fle
 <!-- our contributions -->
 
 Popper is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
-The current version of Popper represents a major evolution from an early version [@jimenez2017popper], which inferred a workflow from a pre-determined hard-coded folder layout consisting of bash scripts representing each step instead of assuming the container-native paradigm.
 This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts over container engines, image builders and resource managers, giving users the ability to focus on Dockerfiles (software dependencies) and workflow logic, without having to invest time in runtime specific details.
@@ -66,6 +65,8 @@ This paper makes the following contributions:
 3. Few case studies on how Popper can be used to quickly reproduce complex workflows in different computing environments. 
    We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPUs to scale up and collect results. 
    We also show how an HPC workflow developed on the local machine can be reproduced easily in a Slurm [@slurm] cluster.
+
+The version of Popper introduced in this article represents a major evolution from an early version [@jimenez2017popper], which inferred a workflow from a pre-determined hard-coded folder layout consisting of bash scripts representing each step instead of assuming the container-native paradigm.
 
 # Popper {#sec:popper}
 
@@ -173,8 +174,6 @@ steps:
   args: [transpose, global.csv, -o, global_transposed.csv]
 ```
 
-![DOT diagram of a Popper workflow DAG](./figures/wf.pdf){#fig:casestudy .center height=35%}
-
 A Popper workflow consists of a series of syntactical components called steps, where each step represents a node in the workflow DAG, with a `uses` attribute specifying the required container image. 
 The `uses` attribute can reference Docker images hosted in container image registries; filesystem paths for locally defined container images (Dockerfiles); or publicly accessible GitHub repositories that contain Dockerfiles. 
 The commands or scripts that need to be executed in a container can be defined by the `args` and `runs` attributes. 
@@ -189,8 +188,7 @@ The architecture of the Popper workflow engine is shown in @Fig:arch;
 
 ### Command Line Interface (CLI)
 
-Besides allowing users to communicate with the workflow runner, the CLI allows visualizing workflows by generating DOT diagrams [@dot] like the one shown in @Fig:casestudy;
-generates configuration files for continuous integration systems such as Travis or Jenkins, so that users can continuously validate their workflows;
+Besides allowing users to communicate with the workflow runner, the CLI generates configuration files for continuous integration systems such as Travis or Jenkins, so that users can continuously validate their workflows;
 provides dynamic workflow variable substitution capabilities, among others.
 
 ### Workflow Definition and Configuration Parsers
@@ -246,6 +244,12 @@ For these case studies, we built an image classification workflow that runs the 
 The workflow used for the case studies is depicted in @Lst:casestudy. 
 The code that the workflow references can be found here [^code].
 
+The `download` step downloads the MNIST dataset in the workspace. 
+The `verify` step verifies the downloaded archives against precomputed checksums.
+The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
+The download and train steps use a Keras docker image and the verify step uses a light-weight alpine image.
+Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
+
 ```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
 steps:
 - id: download-dataset
@@ -263,12 +267,6 @@ steps:
     NUM_EPOCHS: '10'
     BATCH_SIZE: '128'
 ```
-
-The `download` step downloads the MNIST dataset in the workspace. 
-The `verify` step verifies the downloaded archives against precomputed checksums.
-The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
-The download and train steps use a Keras docker image and the verify step uses a light-weight alpine image.
-Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
 The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
 1. Thinking of the logical steps of the workflow.
@@ -323,15 +321,7 @@ As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a 
 
 ### Workflow execution on CI
 
-We used the workflow exporter to generate a Travis config file, pushed our MNIST project to GitHub with the config, and activated the repository on Travis to run our workflows on CI.
-For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, epochs, etc. with the help of environment variables to reduce the CI running time and iterate quickly. 
-We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
-Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
-The `.travis.yml` file used by our case study is shown in @Lst:travis.
-It can be generated by running `popper ci travis` from the command line.
-
 ```{#lst:travis .yaml caption="Popper generated Travis config."}
----
 dist: xenial
 language: python
 python: 3.7
@@ -343,14 +333,31 @@ install:
 script: popper run -f wf.yml
 ```
 
+We used the workflow exporter to generate a Travis config file, pushed our MNIST project to GitHub with the config, and activated the repository on Travis to run our workflows on CI.
+For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, epochs, etc. with the help of environment variables to reduce the CI running time and iterate quickly. 
+We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
+Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
+The `.travis.yml` file used by our case study is shown in @Lst:travis.
+It can be generated by running `popper ci travis` from the command line.
+
 By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, and broken links.
 
-# Discussion {#sec:result}
+![Comparison of training durations in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
 As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
 
-This case study showcases the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
+# Discussion {#sec:result}
+
+```{#lst:kubernetes .yaml caption="Config file for running on Kubernetes."}
+resource_manager:
+  name: kubernetes
+  options:
+    volume_size: 4Gi
+    namespace: mynamespace
+```
+
+The previous case study showcased the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 To expand on this point, we analyzed the GitHub repository [^mlperf] of MLPerf [@mattson2019mlperf], a benchmark suite that measures how fast a system can train ML models.
 From a total of 123 issues, 67 were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets; etc.
 Popper can solve much of the problems generally noticed in reproducing research artifacts like these we found.
@@ -361,15 +368,22 @@ The adjustments that users need to make to reproduce workflows on Kubernetes and
 1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes. 
 The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
 
-```{#lst:kubernetes .yaml caption="Config file for running on Kubernetes."}
-resource_manager:
-  name: kubernetes
-  options:
-    volume_size: 4Gi
-    namespace: mynamespace
-```
+2. Similarly, for running on Slurm, users need to specify a few 
+   configuration options like the number of nodes to use for running 
+   the job concurrently, the number of CPUs to allocate to each task, 
+   the worker nodes to use, etc. as shown in @Lst:slurm.
 
-2. Similarly, for running on Slurm, users need to specify a few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the worker nodes to use, etc. as shown in @Lst:slurm.
+It can be seen that with few tweaks like changing the resource manager 
+options in the configuration file, a workflow developed on a local 
+machine can be executed in Kubernetes and Slurm.
+In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
+
+[^mlperf]: <https://github.com/mlperf/training>
+
+# Related Work
+
+The problem of implementing multi-container workflows as described in @Sec:intro is addressed by several existing tools.
+We briefly survey some of these tools and technologies and compare them with Popper by grouping them in categories.
 
 ```{#lst:slurm .yaml caption="Config file for running on Slurm."}
 engine:
@@ -383,16 +397,6 @@ resource_manager:
       nodelist: worker1,worker2
       cpus-per-task: 2
 ```
-
-It can be seen that with few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed in Kubernetes and Slurm.
-In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
-
-[^mlperf]: <https://github.com/mlperf/training>
-
-# Related Work
-
-The problem of implementing multi-container workflows as described in @Sec:intro is addressed by several existing tools.
-We briefly survey some of these tools and technologies and compare them with Popper by grouping them in categories.
 
 ## Workflow definition languages
 
