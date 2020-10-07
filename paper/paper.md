@@ -457,7 +457,6 @@ Given the above, Popper is not intended to replace CI tools, but rather serve as
 Popper aids in making experiments reproducible not only from ML/AI but also from other areas of computer science like Networking, Storage systems, Computational genomics, etc.
 Reproducibility issues in Systems experiments like experiments with the GassyFS [@watkins2016gassyfs] file system were explored and tackled by Popper [@jimenez:ucsctr16]. 
 This experiment used the `1.x` version of Popper, which assumed a workflow from a hardcoded folder layout consisting of bash scripts representing each step of the workflow.
-Few network simulation experiments that run on the Cooja network simulation platform [@mehmood2017cooja] were made reproducible with the use of Popper [@david:precs19]. 
 Additionally, tutorials on how Popper helps in producing reproducible research from different domains of computational science were held in various workshops and talks [@10.1145/3293883.3302575].
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
