@@ -370,7 +370,7 @@ The adjustments that users need to make to reproduce workflows on Kubernetes and
    the job concurrently, the number of CPUs to allocate to each task, 
    the worker nodes to use, etc. as shown in @Lst:slurm.
 
-The configuration is orthogonal to the workflow and is meant to provide
+The configuration files are orthogonal to the workflow and are only meant to provide
 environment-specific options to allow running the same workflow in different environments.
 It can be seen that with few tweaks like changing the resource manager 
 options in the configuration file, a workflow developed on a local 
