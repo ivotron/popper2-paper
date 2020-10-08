@@ -239,15 +239,15 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 # Case Study {#sec:casestudy}
 
 In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
-These study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
-For this study, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
+This study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
+For this study, we built an image classification workflow that runs the training using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
 The workflow used for the case study is depicted in @Lst:casestudy.
-The code that the workflow references can be found in the repository associated to this paper [^code].
+The code that the workflow references can be found in the repository [^code] associated to this paper.
 
 The `download` step downloads the MNIST dataset in the workspace.
 The `verify` step verifies the downloaded archives against precomputed checksums.
 The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
-The download and train steps use a Keras docker image and the verify step uses a lightweight alpine image.
+The download and train steps use a Horovod image and the verify step uses a light-weight alpine image.
 Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case study."}
@@ -310,12 +310,14 @@ This shows how Popper helps improve the performance of scientific workflows dras
 
 For running workflows on Slurm clusters, container engines that are HPC aware, like Singularity, Charliecloud, and Pyxis need to be used.
 Currently, Popper supports running MPI workloads only through Slurm using Singularity as the container engine.
-For our case study, we modified the training script to use the Horovod [@horovod] distributed deep learning framework to facilitate training with MPI [@gropp1999using] on a Slurm cluster.
+To run workflows built on the local machine inside a Slurm cluster, a config file containing Slurm specific options like the number of CPUs or nodes to use for running a job needs to be supplied to the `popper run` command.
+The user should be aware of the availability of resources like the available partitions and the free GPUs on a shared cluster to write a config file accordingly.
+The Slurm resource manager executes the image build or pull process on the Login node of a Slurm cluster and then starts executing the MPI workload on the Compute nodes using `sbatch`.
+With Singularity as the container engine, both the hybrid and bind method can be used to build a singularity container with MPI available inside it.
 The MPI based workflows can be made compatible between Slurm clusters with different MPI implementations if the Singularity images used in the workflows are built on the cluster by binding to the local MPI libraries.
 Otherwise, pre-built images with MPI installed might not be portable as the version of the MPI installed on the host and inside the image might not match.
-In addition, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
-We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
-We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
+Additionally, the programs and scripts need to be MPI compatible to utilize the total compute capacity of multiple nodes in HPC clusters.
+In our case study, we used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
 As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
