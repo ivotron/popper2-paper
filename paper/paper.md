@@ -14,7 +14,7 @@ abstract: |
    In this paper, we present Popper, a container-native workflow engine that does not assume the presence of a Kubernetes cluster or any service other than a container engine such as Docker or Podman. 
    We introduce the design and architecture of Popper and describe how it abstracts away the complexity of multiple container engines and resource managers, enabling users to focus only on writing workflow logic. 
    With Popper, researchers can build and validate workflows easily in almost any environment of their choice including local machines, Slurm based HPC clusters, CI services, or Kubernetes based cloud computing environments. 
-   To exemplify the suitability of this workflow engine, we present a few case studies where we take examples from machine learning and high-performance computing and turn them into Popper workflows.
+   To exemplify the suitability of this workflow engine, we present a case study where we take an example from machine learning and seamlessly execute it in multiple environments by implementing a Popper workflow for it.
 ---
 
 # Introduction {#sec:intro}
@@ -62,9 +62,9 @@ This paper makes the following contributions:
 
 2. Popper, an implementation of the above design that allows running workflows inside containers in different computing environments like local machines, Kubernetes clusters, or HPC [@yang2005high] environments.
 
-3. Few case studies on how Popper can be used to quickly reproduce complex workflows in different computing environments. 
-   We show how an entire Machine Learning workflow can be run on a local machine during development and how it can be reproduced in a Kubernetes cluster with GPUs to scale up and collect results. 
-   We also show how an HPC workflow developed on the local machine can be reproduced easily in a Slurm [@slurm] cluster.
+3. A case study on how Popper can be used to quickly reproduce complex workflows in different computing environments.
+   We show how an entire machine learning workflow can be executed on a local machine during development, and how it can be scaled up by reproducing it in a Kubernetes cluster with nodes that have GPUs available in them.
+   We also show how the same workflow reproduced easily in a Slurm [@slurm] cluster in order to scale it up further.
 
 [^popper1]: The version of Popper described in this article is a major overhaul of an earlier version of Popper [@jimenez2017popper]. See @Sec:previous-popper for more.
 
@@ -238,19 +238,19 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 
 # Case Study {#sec:casestudy}
 
-In this section, we present four case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
-These case studies aim to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
-For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
-The workflow used for the case studies is depicted in @Lst:casestudy. 
-The code that the workflow references can be found here [^code].
+In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
+These study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
+For this study, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
+The workflow used for the case study is depicted in @Lst:casestudy.
+The code that the workflow references can be found in the repository associated to this paper [^code].
 
-The `download` step downloads the MNIST dataset in the workspace. 
+The `download` step downloads the MNIST dataset in the workspace.
 The `verify` step verifies the downloaded archives against precomputed checksums.
 The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
 The download and train steps use a Keras docker image and the verify step uses a lightweight alpine image.
 Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
-```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
+```{#lst:casestudy .yaml caption="Workflow used in the case study."}
 steps:
 - id: download-dataset
   uses: docker://gw000/keras
@@ -316,7 +316,7 @@ In addition, the programs and scripts need to be MPI compatible to utilize the t
 We recommend using a shared filesystem like NFS or AFS [@howard1988overview] mounted on each node and placing the workflow context in there to keep the workspace consistent across all the nodes.
 We used 3 VMs from Azure each with the same NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 for this experiment and used Singularity as the container engine for running this workflow.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
-The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous case studies.
+The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
 As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
 
 ### Workflow execution on CI
@@ -465,7 +465,7 @@ In addition, a case study using Popper in computer networks was presented in [@d
 
 In this paper, we introduce Popper, a container-native workflow execution engine that aims to solve the reproducibility problem in computational science.
 We first describe and analyze the design of Popper's YAML based workflow syntax and the architecture of the Popper workflow engine.
-We present a few case studies using an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and Slurm quickly and with minimal changes in configuration.
+We present a case study for an ML workflow to demonstrate how Popper helps developers and researchers build and test workflows in different computing environments like a local machine, Kubernetes, and Slurm, quickly and with minimal changes in configuration.
 Next, we compare Popper with existing state-of-the-art workflow engines illustrating its YAML based workflow syntax that has a relatively low entry barrier and its ability to run containerized workflows without requiring access to any cloud environment.
 
 As future work, we plan the following:
