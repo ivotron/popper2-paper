@@ -363,13 +363,15 @@ As exemplified in the use cases, Popper helps build workflows that can be run on
 The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
 
 1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes. 
-The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
+   The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
 
 2. Similarly, for running on Slurm, users need to specify a few 
    configuration options like the number of nodes to use for running 
    the job concurrently, the number of CPUs to allocate to each task, 
    the worker nodes to use, etc. as shown in @Lst:slurm.
 
+The configuration files are orthogonal to the workflow and are only meant to provide
+environment-specific options to allow running the same workflow in different environments.
 It can be seen that with few tweaks like changing the resource manager 
 options in the configuration file, a workflow developed on a local 
 machine can be executed in Kubernetes and Slurm.
