@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# fetch timestamp
+timestamp=$(date "+%Y%m%d-%H%M%S")
+
 counter=1
 while [ $counter -le 5 ]
 do
