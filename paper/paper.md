@@ -282,15 +282,11 @@ The general paradigm for building reproducible workflows with Popper usually con
 
 Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
-
 We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
 The image classification workflow was built and run on the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
-
-The results obtained over 5 executions have been shown in @Fig:casestudies.
-To achieve lower training durations, the training should ideally be done on GPUs in the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
-In the next section, we will look at how we ran the workflow developed on the local machine efficiently on the Kubernetes using Popper.
+To achieve lower training durations, the training should ideally be done on GPUs on the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
 
 ## Workflow execution in the Cloud using Kubernetes
 
@@ -306,17 +302,12 @@ script: popper run -f wf.yml
 In this section, we discuss how we reduced the training duration in the above workflow by reproducing it on a GPU enabled Kubernetes cluster.
 On Kubernetes clusters, steps of a Popper workflow run in separate pods that can get scheduled on any node of the cluster in a separate namespace.
 Popper first builds the images required by the workflow and pushes them to an online image registry like DockerHub, Google Container Registry, etc.
-
 Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS [@sandberg1985design] for the different step pods to share.
 After the pod is created, the workflow context consisting of the scripts, configs, etc. is copied into the shared volume mounted inside the pod and executed.
 Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on Cloudlab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
 The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
-
 In our case, we configured the training with an overfitting patience of 5 and allowed the training to run till it overfits, similar to what was done for the local machine case study.
-
-As we can see from @Fig:casestudies, the average training duration was almost 1/4th of what it took to train on the local machine.
-This shows how Popper helps improve the performance of scientific workflows drastically by allowing easy reproduction in cloud infrastructure.
 
 ## Workflow execution in Slurm clusters
 
@@ -327,14 +318,12 @@ The user should be aware of the availability of resources like the Nodes and GPU
 The Slurm resource manager executes the image build or pull process on the login node of a Slurm cluster and then starts executing the containerized MPI workload on the compute nodes using the `sbatch` command, which creates and schedules a job for running the container on Slurm.
 With Singularity as the container engine, both the hybrid and bind method can be used to run a Singularity container with MPI available inside it.
 Using the bind approach provides the benefit of making the same MPI based Singularity image compatible between Slurm clusters with different MPI versions.
-
 In our case study, we used 3 VMs from Azure each with a NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 to create a Slurm cluster with 1 login and 2 compute nodes.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
 
-As we can see from @Fig:casestudies, Popper allowed us to run the workflow in a Slurm cluster with MPI and hence utilize the processing power of multiple GPUs and drastically reduce the training duration.
-
 ## Workflow execution on CI
+
 ![Comparison of training runtime in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 We used the workflow exporter to generate a Travis configuration file, pushed our MNIST project to GitHub with the config, and activated the repository on Travis to run our workflows on CI.
@@ -356,7 +345,15 @@ By setting up CI for Popper workflows, users can continuously validate changes m
 A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
 As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
 
-# Discussion {#sec:result}
+# Results {#sec:results}
+
+The results obtained from executing the workflow in the different computing environments have been shown in @Fig:casestudies.
+We can see that the training duration drastically reduced, by almost 75% as we went from running the workflow on the local machine to running on Kubernetes.
+We achieved further speedup by moving the workflow execution to Slurm where we used 2 GPUs from 2 different nodes instead of 1 as in the case of Kubernetes.
+Also, Popper allowed us to scale our workflow down and run it on CI to continuously validate the workflow.
+These case studies show how Popper helps improve the performance of scientific workflows and boost developer productivity by allowing seamless reproduction on cloud and HPC infrastructure.
+
+# Discussion {#sec:discussions}
 
 The previous case study showcased the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
 To expand on this point, we analyzed the GitHub repository [^mlperf] of MLPerf [@mattson2019mlperf], a benchmark suite that measures how fast a system can train ML models.
