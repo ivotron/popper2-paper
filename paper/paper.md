@@ -253,19 +253,20 @@ Although a single Docker image can be used in all the steps of a workflow, we re
 ```{#lst:casestudy .yaml caption="Workflow used in the case study."}
 steps:
 - id: download-dataset
-  uses: docker://gw000/keras
-  args: ["python", "./scripts/download_dataset.py"]
+  uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
+  args: ["python", "./workflows/mnist/scripts/download_dataset.py"]
 
 - id: verify-dataset
   uses: docker://alpine:3.9.5
-  args: ["./scripts/verify_dataset.sh"]
+  args: ["./workflows/mnist/scripts/verify_dataset.sh"]
 
 - id: run-training
-  uses: docker://gw000/keras
-  args: ["./scripts/run_training.sh"]
+  uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
+  args: ["python", "./workflows/mnist/scripts/keras_mnist.py"]
   env:
-    NUM_EPOCHS: '10'
+    NUM_EPOCHS: '1'
     BATCH_SIZE: '128'
+    DATASET_REDUCTION: '0.1'
 ```
 
 The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
