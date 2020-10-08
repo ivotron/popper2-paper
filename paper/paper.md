@@ -99,9 +99,9 @@ The design of Popper is based on the following principles:
     A layered view of this: OS (Linux) abstracts over hardware; containers abstract over multiple operating systems; Popper abstracts over container infrastructure (runtimes, engines, builders, orchestrators).
 
   * **Be as lightweight as possible but not lighter**.
-    The syntax of Popper workflows can be learned in seconds and is meant to be as close to a a shell script as possible, with the exception being that every command runs inside a container.
+    The syntax of Popper workflows can be learned in seconds and is meant to be as close to a shell script as possible.
 
-  * **Popper YAML files codify the workflow at the highest level**.
+  * **Codify the workflow at the highest level**.
     Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
     It is intended to automate the workflow that we currently observe in the form of README files, or documentation that explains how to compile, run, and test a software project. In other words, Popper is not meant to replace existing, more comprehensive workflow engines such as scientific workflow engines, configuration management frameworks, or domain-specific experiment management tools; rather, the goal is to write YAML-based wrappers around them.
 
