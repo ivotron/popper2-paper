@@ -286,7 +286,7 @@ We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit
 The image classification workflow was built and run on the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
-To achieve lower training durations, the training should ideally be done on GPUs on the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
+To make the training faster, it should be ideally done on GPUs on the cloud which in turn require these workflows to be easily portable to multi-node cloud environments.
 
 ## Workflow execution in the Cloud using Kubernetes
 
@@ -308,6 +308,7 @@ Although any Kubernetes cluster can be used, for this case study, we used a 3-no
 The training pod used the single GPU of the node on which it was scheduled.
 Reproducing the workflow developed on the local machine in the Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 In our case, we configured the training with an overfitting patience of 5 and allowed the training to run till it overfits, similar to what was done for the local machine case study.
+The training can be speed up further by scheduling the workflow on multiple nodes in order to utilize the processing power of multiple GPUs.
 
 ## Workflow execution in Slurm clusters
 
@@ -321,6 +322,7 @@ Using the bind approach provides the benefit of making the same MPI based Singul
 In our case study, we used 3 VMs from Azure each with a NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 to create a Slurm cluster with 1 login and 2 compute nodes.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was run using MPI on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
+<!--TODO: an ending note for this paragraph-->
 
 ## Workflow execution on CI
 
@@ -342,8 +344,6 @@ resource_manager:
 ```
 
 By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, and broken links.
-A summary of the training duration and accuracy obtained by running the workflow in three different computing environment is shown in @Fig:casestudies.
-As one would expect, running the same workflow on better, larger hardware resources reduces the amount of time needed to train the models.
 
 # Results {#sec:results}
 
