@@ -55,7 +55,7 @@ It would be more convenient for researchers if workflow engines provided the fle
 
 <!-- our contributions -->
 
-Popper is a light-weight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
+Popper is a lightweight workflow execution engine that allows users to follow the container-native paradigm for building and running reproducible workflows from archived experimental artifacts.
 This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts over container engines, image builders and resource managers, giving users the ability to focus on Dockerfiles (software dependencies) and workflow logic, without having to invest time in runtime specific details.
@@ -100,8 +100,8 @@ All available container engines support generating OCI images from Dockerfiles, 
 All container engines support generating OCI images from Dockerfile's as well as importing and exporting OCI images from a Docker registry.
 This allows Popper to behave in a container engine agnostic manner.
 
-* Be as light-weight as possible but not lighter.
-The syntax of Popper workflows can be learned in seconds and is meant to be as close to a Makefile or a shell script as possible with the exception being that every command runs inside a container.
+* Be as lightweight as possible but not lighter.
+The syntax of Popper workflows can be learned in seconds and is meant to be as close to a a shell script as possible, with the exception being that every command runs inside a container.
 
 * It is not meant to replace existing workflow engines.
 Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
@@ -240,14 +240,14 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 
 In this section, we present four case studies demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 These case studies aim to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
-For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@mnistdataset] dataset having 3 steps; download; verify; and train.
+For these case studies, we built an image classification workflow that runs the training using Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
 The workflow used for the case studies is depicted in @Lst:casestudy. 
 The code that the workflow references can be found here [^code].
 
 The `download` step downloads the MNIST dataset in the workspace. 
 The `verify` step verifies the downloaded archives against precomputed checksums.
 The `train` step then starts training the model on this downloaded dataset and records the duration of the training.
-The download and train steps use a Keras docker image and the verify step uses a light-weight alpine image.
+The download and train steps use a Keras docker image and the verify step uses a lightweight alpine image.
 Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case studies."}
@@ -282,7 +282,7 @@ The general paradigm for building reproducible workflows with Popper usually con
 Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
 We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
-The image classification workflow was built and run on the MNIST dataset [@deng2012mnist] using Docker as the container engine.
+The image classification workflow was built and run on the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
 The results obtained over 5 executions have been shown in @Fig:casestudies.
