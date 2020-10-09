@@ -485,13 +485,14 @@ Given the above, Popper is not intended to replace CI tools, but rather serve as
 
 ## Previous version of popper {#sec:previous-popper}
 
-Earlier work [@jimenez2016standing; @jimenez2017popper] introduced a convention for organizing folder and bash scripts inside a Git repository in order to make it easier to reproduce experiments associated to academic articles.
-A preliminary version of the CLI tool discussed in @Sec:cli (termed Popper 1.x[^popper1xcli]) aided in the execution of experiments that followed this convention.
-In practical terms, by prescribing a fixed folder layout, the convention resulted in having a single, hard-coded workflow with each step represented by a bash script.
-This earlier Popper 1.x version did not assume containers, and instead left to the user the task of reproducing the environment.
-In contrast, the Popper container-native engine presented here fully embraces the container-native paradigm by implementing the principled design described in @Sec:principles.
-Tutorials that introduce attendees to the Popper container-native engine have been held in various workshops [@10.1145/3293883.3302575] and introductory talks.
-Additionally, a case study using Popper in computer network experiments was presented in [@david2019reproducible].
+Earlier work [@jimenez2016standing; @jimenez2017popper] introduced the _Popper Convention_, a set of guidelines for organizing folder and bash scripts inside a Git repository in order to make it easier to reproduce experiments associated to academic articles.
+An early version of the CLI tool introduced in @Sec:cli aided in the execution of experiments that followed the convention, and was was later labeled as Popper 1.x[^popper1xcli].
+In practical terms, the Popper convention prescribes a fixed folder layout which results in having a hard-coded workflow, with each step represented by a bash script.
+This earlier Popper 1.x version was significantly simpler, as it did not assume containers, did not defined a workflow language, and could not be extended in any way.
+In contrast, the Popper engine presented here fully embraces the container-native paradigm by implementing a principled design (described @Sec:principles), with a robust architectural design, support for workflow files, as well as all the other features described earlier.
+
+In addition to the Popper convention papers, tutorials that introduce the Popper container-native engine have been held in various workshops [@10.1145/3293883.3302575], introductory talks and seminars.
+Additionally, a case study using Popper for implementing computer network experiments was presented in [@david2019reproducible]. This earlier work did not touch on the principles, architecture or cloud/HPC runners that were introduced in previous sections.
 
 [^popper1xcli]: Available in the branch `v1.x` of the official repository: `https://github.com/getpopper/popper/tree/v1.x`.
 
