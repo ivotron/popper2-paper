@@ -3,15 +3,15 @@ title: "Enabling Seamless Execution of Computational and Data Science Workflows 
 author:
 - name: Jayjeet Chakraborty
   affiliation: UC Santa Cruz
-  email: jchakra1@ucsc.edu
+  email: orcid.org/0000-0003-1647-2494
 
 - name: Carlos Maltzahn
   affiliation: UC Santa Cruz
-  email: carlosm@ucsc.edu
+  email: orcid.org/0000-0001-8305-0748
 
 - name: Ivo Jimenez
   affiliation: UC Santa Cruz
-  email: ivotron@ucsc.edu
+  email: orcid.org/0000-0002-2222-1985
 
 
 abstract: |
