@@ -19,7 +19,7 @@ steps:
     "--template=pandoc/template.latex",
     "--csl=pandoc/IEEE.csl",
     "--output=paper.pdf",
-    "--highlight-style=tango",
+    "--highlight-style=haddock",
     "--bibliography=refs.bib",
     "--metadata=IEEETran:true",
     "--metadata=documentclass:IEEETran",

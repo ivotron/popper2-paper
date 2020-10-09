@@ -8,7 +8,7 @@ Repository for the submission:
 
 The repository is structured as follows:
 
-* `workflow/`. Contains the workflow used in the "Case Study" section 
+* `workflows/`. Contains the workflow used in the "Case Study" section 
   of the paper. This workflow trains a model for the MNIST dataset, 
   and can be executed locally or on Kubernetes or Slurm clusters.
 
@@ -20,24 +20,39 @@ The repository is structured as follows:
   running the experiment workflows. It also contains a Jupyter 
   notebook to plot the results which is executed by the workflow here.
 
+## Installing Popper
+To install Popper, run the following in your terminal:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install popper
+```
+
+## Building the paper
+
+```bash
+popper run -f paper/.popper.yml
+```
+
 ## Running the workflow
 
 ### Local
 
 ```bash
-popper run -f workflows/local/.popper.yml
+popper run -f workflows/mnist/.popper.yml
 ```
 
 ### Kubernetes
 
 Get access to a Kubernetes cluster if you don't already have access to 
-one. Popper assumes that a [`kubectl` configuration]() file is 
+one. Popper assumes that a [`kubectl` configuration](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file is 
 available.
 
 To execute the workflow:
 
 ```bash
-popper run -f workflows/kubernetes/.popper.yml -c workflows/kubernetes/config.yml
+popper run -f workflows/mnist/.popper.yml -c workflows/mnist/config_k8s.yml
 ```
 
 ### Slurm
@@ -48,5 +63,5 @@ Slurm cluster, installing popper and cloning this repository, execute:
 Execute the workflow,
 
 ```bash
-popper run -f workflows/slurm/.popper.yml -c workflows/slurm/config.yml
+popper run -f workflows/mnist/.popper.yml -c workflows/mnist/config_slurm.yml
 ```

@@ -109,7 +109,8 @@ $endif$
 \usepackage{fancyvrb}
 \VerbatimFootnotes % allows verbatim text in footnotes
 $if(monofont-size)$
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\$monofont-size$}
+\newcommand{\notsotiny}{\fontsize{6pt}{6pt}\selectfont}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\notsotiny}
 $endif$
 
 % tables {
