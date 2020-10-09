@@ -87,7 +87,7 @@ For example, running a containerized step on Kubernetes would require writing po
 Likewise, running an MPI workload inside a Singularity container on Slurm would require creating job scripts and starting the job with `sbatch`.
 Popper mitigates these environment-specific overheads by abstracting the different implementation details and provides an uniform interface that allows users to write workflows once and reuse them on different environments with tweaks to the configuration file.
 
-## Design Principles {#sec:principles}
+## Design principles {#sec:principles}
 
 The design of Popper is based on the following principles:
 
@@ -143,14 +143,14 @@ Kubernetes supports a wide range of container runtimes including Docker, Rkt, an
 It was originally developed and designed by engineers at Google and it is hosted and maintained by the CNCF (Cloud Native Computing Foundation). 
 Many cloud providers like GCP, AWS, and Azure provide a completely managed and secure hosted Kubernetes platform.
 
-### Continuous Integration
+### Continuous integration
 
-Continuous Integration is a software development paradigm where developers commit code into a shared repository frequently, ideally several times a day.
+Continuous Integration (CI) is a software development paradigm where developers commit code into a shared repository frequently, ideally several times a day.
 Each integration is verified by automated builds and tests of the corresponding commits.
 This helps in detecting errors and anomalies quickly and shortens the debugging time [@virmani2015understanding].
 Several hosted CI services like Travis [@travis], Circle [@circleci], and Jenkins [@jenkins] make continuous integration and continuous validation easily accessible.
 
-## Workflow Definition Language
+## Workflow definition language
 
 YAML [@ben2009yaml] is a human-readable data-serialization language. 
 It is commonly used in writing configuration files and in applications where data is stored or transmitted. 
@@ -177,7 +177,7 @@ Secrets and environment variables needed by a step can be specified by the `secr
 The steps in a workflow are executed sequentially in the order in which they are defined.
 As can be seen in @Lst:wf-example, Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
 
-## Workflow Execution Engine
+## Workflow execution engine
 
 The Popper workflow execution engine[^popperrepo] is composed of several components that talk to each other during a workflow execution.
 The vital architectural components of the system are described in detail throughout this section.
@@ -185,12 +185,12 @@ The architecture of the Popper workflow engine is shown in @Fig:arch;
 
 [^popperrepo]: `https://github.com/getpopper/popper`
 
-### Command Line Interface (CLI)
+### Command line interface (CLI)
 
 Besides allowing users to communicate with the workflow runner, the CLI generates configuration files for continuous integration systems such as Travis or Jenkins, so that users can continuously validate their workflows;
 provides dynamic workflow variable substitution capabilities, among others.
 
-### Workflow Definition and Configuration Parsers
+### Workflow definition and configuration parsers
 
 The workflow file and the configuration file are parsed by their respective parser plugins at the initial stages of the workflow execution.
 The parsers are responsible for reading and parsing the YAML files into an internal format;
@@ -198,14 +198,14 @@ running syntactic and semantic validation checks;
 normalizing the various attributes and generating a workflow DAG.
 The workflow parser has a pluggable architecture that allows adding support to other workflow languages.
 
-### Workflow Runner
+### Workflow runner
 
 The Workflow runner is in charge of taking a parsed workflow representation as input and executing it.
 It also downloads actions referenced by the steps in a workflow, checks the presence of secrets that are required by a workflow, and routes the execution of a step to the configured container engine through the requested resource manager. 
 The runner also maintains a cache directory to optimize multiple aspects of execution such as avoid cloning repositories if they have been already cloned previously. 
 Thus, this component orchestrates the entire workflow execution process.
 
-### Resource Manager and Container Engine API
+### Resource manager and container engine API
 
 Popper supports running containers in both single-node and multi-node cluster environments. 
 Each of these different environments has a very specific job and process scheduling policies. 
@@ -227,7 +227,7 @@ It can either be created by users or provided by system administrators.
 
 ![Architecture of the Popper workflow engine](./figures/architecture_updated.pdf){#fig:arch}
 
-## Workflow Exporter
+## Workflow exporter
 
 Popper allows exporting a workflow to other workflow specification formats such as CWL [@amstutz2016common] and WDL [@_openwdl_], as well as those associated with a CI service (e.g. Travis) or workflow engine (e.g. Airflow [@airflow]).
 In most cases, the workflow specification syntax for these formats is more complex from that one of Popper's, mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
@@ -235,7 +235,7 @@ This prevents lock-in of workflows by Popper as workflows that are written initi
 Exporting to other formats is handled by an extensible Workflow Exporter module that allows creating exporters for an arbitrary list of workflow specification formats. 
 Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-CI are implemented.
 
-# Case Study {#sec:casestudy}
+# Case study {#sec:casestudy}
 
 In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 This study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
@@ -305,7 +305,7 @@ On single node machines, Popper leaves the job of scheduling the containerized s
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
 To make the training faster, it should be ideally done on GPUs on the cloud which requires these workflows to be easily portable to multi-node cloud environments.
 
-## Workflow execution in the Cloud using Kubernetes
+## Workflow execution in the cloud using Kubernetes
 
 ```{#lst:travis .yaml caption="Travis configuration generated by Popper."}
 dist: "xenial"
@@ -366,7 +366,7 @@ resource_manager:
     namespace: mynamespace
 ```
 
-# Results {#sec:results}
+## Results {#sec:results}
 
 The results obtained from executing the workflow in the different computing environments have been shown in @Fig:casestudies.
 We can see that the training duration drastically reduced, by almost 75% as we went from running the workflow on the local machine to running on Kubernetes.
