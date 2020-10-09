@@ -252,14 +252,17 @@ Although a single Docker image can be used in all the steps of a workflow, we re
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case study."}
 steps:
+# download the MNIST dataset
 - id: download-dataset
   uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
   args: ["python", "./workflows/mnist/scripts/download_dataset.py"]
 
+# verify the dataset using checksums
 - id: verify-dataset
   uses: docker://alpine:3.9.5
   args: ["./workflows/mnist/scripts/verify_dataset.sh"]
 
+# run training on the dataset
 - id: run-training
   uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
   args: ["python", "./workflows/mnist/scripts/run_training.sh"]
@@ -466,9 +469,9 @@ In practical terms, by prescribing a fixed folder layout, the convention resulte
 This earlier Popper 1.x version did not assume containers, and instead left to the user the task of reproducing the environment.
 In contrast, the Popper container-native engine presented here fully embraces the container-native paradigm by implementing the principled design described in @Sec:principles.
 Tutorials that introduce attendees to the Popper container-native engine have been held in various workshops [@10.1145/3293883.3302575] and introductory talks.
-Additionally, a case study using Popper in computer networks experiments was presented in [@david2019reproducible].
+Additionally, a case study using Popper in computer network experiments was presented in [@david2019reproducible].
 
-[^popper1xcli]: Available in the branch `popper-1.x` of the official repository: `https://github.com/getpopper/popper/tree/v1.x`.
+[^popper1xcli]: Available in the branch `v1.x` of the official repository: `https://github.com/getpopper/popper/tree/v1.x`.
 
 # Conclusion and Future Work {#sec:conclusionandfuturework}
 

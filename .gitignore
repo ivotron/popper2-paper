@@ -1,15 +1,8 @@
 *.sw?
-workflows/local/*.npz
-workflows/local/*.gz
-workflows/local/results
 
-workflows/kubernetes/*.npz
-workflows/kubernetes/*.gz
-workflows/kubernetes/results
-
-workflows/slurm/*.npz
-workflows/slurm/*.gz
-workflows/slurm/results
+workflows/mnist/*.npz
+workflows/mnist/*.gz
+workflows/mnist/results
 
 results/*.ipynb_checkpoints
 results/*.nbconvert.ipynb
