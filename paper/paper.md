@@ -227,7 +227,7 @@ It can either be created by users or provided by system administrators.
 
 ![Architecture of the Popper workflow engine](./figures/architecture_updated.pdf){#fig:arch}
 
-## Workflow exporter
+### Workflow exporter
 
 Popper allows exporting a workflow to other workflow specification formats such as CWL [@amstutz2016common] and WDL [@_openwdl_], as well as those associated with a CI service (e.g. Travis) or workflow engine (e.g. Airflow [@airflow]).
 In most cases, the workflow specification syntax for these formats is more complex from that one of Popper's, mainly due to the fact that Popper workflow's syntax is fairly minimal and high-level, so it is always the case that a Popper workflow can be written in another existing format that supports containerized workflows.
@@ -466,7 +466,7 @@ The limitation of these workflow engines is the requirement of having access to 
 Although Popper can run workflows on the cloud using Kubernetes, it does not necessarily require access to a Kubernetes cluster for running the containerized steps of a workflow.
 Popper is not exclusively cloud-native since it does not assume the presence of a Kubernetes cluster for running workflows, but in addition to being able to work as cloud-native i.e. run workflows on Kubernetes, it can also behave as container-native in different computing environments like a local machine, Slurm and cloud VM instances over SSH.
 
-## Continuous Integration Tools
+## Continuous integration tools
 
 Continuous Integration is a DevOps practice that enables building and testing code frequently to prevent the accumulation of broken code and support faster development cycles.
 Tools like Travis, Circle, Jenkins, and GitLab-CI have become the standard for doing CI, but they were primarily built for running on the Cloud.
@@ -476,7 +476,7 @@ Running on CI tools hosted locally, like using Gitlab-runner [@gitlabrunner], re
 Popper tackles these problems by providing a workflow abstraction that allows users to write a workflow once and run them interchangeably between different environments like a local machine, CI services, Cloud, and HPC by learning a single tool only.
 Given the above, Popper is not intended to replace CI tools, but rather serve as an abstraction on top of CI services, helping to bridge the gap between a local and a CI environment.
 
-## Previous Version of Popper {#sec:previous-popper}
+## Previous version of popper {#sec:previous-popper}
 
 Earlier work [@jimenez2016standing; @jimenez2017popper] introduced a convention for organizing folder and bash scripts inside a Git repository in order to make it easier to reproduce.
 A preliminary version of the CLI tool [^popper1xcli] (termed Popper 1.x) aided in the execution of experiments that followed this convention.
@@ -488,7 +488,7 @@ Additionally, a case study using Popper in computer network experiments was pres
 
 [^popper1xcli]: Available in the branch `v1.x` of the official repository: `https://github.com/getpopper/popper/tree/v1.x`.
 
-# Conclusion and Future Work {#sec:conclusionandfuturework}
+# Conclusion and future work {#sec:conclusionandfuturework}
 
 In this paper, we introduce Popper, a container-native workflow execution engine that aims to solve the reproducibility problem in computational science.
 We first describe and analyze the design of Popper's YAML based workflow syntax and the architecture of the Popper workflow engine.
@@ -512,10 +512,12 @@ As future work, we plan the following:
   This feature will effectively allow images to be built in an engine-agnostic way, and allow the use of tools such as Kaniko [@kaniko], BuildKit [@buildkit], Buildah [@buildah] among others.
   These tools support rootless image builds and significantly speed up builds by providing remote caching features.
 
-**Acknowledgements**: This work was partially funded by the NSF Awards #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021, as well as by the Center for Research in Open Source Software (CROSS)[^cross].
+# Acknowledgements {.unnumbered}
+
+This work was partially funded by the NSF Awards #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021, as well as by the Center for Research in Open Source Software (CROSS)[^cross].
 
 [^cross]: `https://cross.ucsc.edu`
 [^iris-hep]: `https://iris-hep.org`
 
-# References {#sec:references}
+# References {#sec:references .unnumbered}
 \footnotesize
