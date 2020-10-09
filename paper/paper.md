@@ -95,7 +95,7 @@ The design of Popper is based on the following principles:
     Every step of a workflow executes inside a container.
 
   * **Dockerfile and OCI images as lowest common denominators**.
-    All available container engines support generating Open Container Initiative (OCI) images from Dockerfiles, as well as importing or exporting these to other formats; most support the Docker registry API as well. This common denominator allows Popper to abstract over runtimes, engines, builders, and orchestrators.
+    All available container engines support generating Open Container Initiative (OCI) images from Dockerfiles, as well as importing or exporting these to other formats; most support the Docker registry API as well. This common denominator opens the possibility to create an abstraction layer over runtimes, engines, builders, and orchestrators.
 
   * **Be as lightweight as possible but not lighter**.
     The syntax for defining container-native workflow languages should be simple enough that it can be learned in seconds, and meant to be as close to shell scripts as possible.a
