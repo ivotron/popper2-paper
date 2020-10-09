@@ -1,8 +1,18 @@
 ---
 title: "Enabling Seamless Execution of Computational and Data Science Workflows on HPC and Cloud with the Popper Container-native Automation Engine"
 author:
-- name: Jayjeet Chakraborty, Carlos Maltzahn, Ivo Jimenez
+- name: Jayjeet Chakraborty
   affiliation: UC Santa Cruz
+  email: jchakra1@ucsc.edu
+
+- name: Carlos Maltzahn
+  affiliation: UC Santa Cruz
+  email: carlosm@ucsc.edu
+
+- name: Ivo Jimenez
+  affiliation: UC Santa Cruz
+  email: ivotron@ucsc.edu
+
 
 abstract: |
    The problem of reproducibility and replication in scientific research is quite prevalent to date. 
