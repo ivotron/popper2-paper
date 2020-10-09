@@ -485,9 +485,10 @@ Given the above, Popper is not intended to replace CI tools, but rather serve as
 
 ## Previous version of popper {#sec:previous-popper}
 
-Earlier work [@jimenez2016standing; @jimenez2017popper] introduced the _Popper Convention_, a set of guidelines for organizing folder and bash scripts inside a Git repository in order to make it easier to reproduce experiments associated to academic articles.
-An early version of the CLI tool introduced in @Sec:cli aided in the execution of experiments that followed the convention, and was was later labeled as Popper 1.x[^popper1xcli].
-In practical terms, the Popper convention prescribes a fixed folder layout which results in having a hard-coded workflow, with each step represented by a bash script.
+Earlier work [@jimenez2016standing; @jimenez2017popper] introduced the _Popper Convention_, a set of guidelines for organizing folders and bash scripts inside a Git repository in order to make it easier to reproduce experiments associated to academic articles.
+In practical terms, the Popper convention prescribes a fixed folder layout and script naming scheme. This results in having a hard-coded workflow, with each step represented by a bash script.
+
+An early version of the CLI tool introduced in @Sec:cli aided in the execution of experiments that followed the Popper convention, and was later labeled "Popper 1.x"[^popper1xcli].
 This earlier Popper 1.x version was significantly simpler, as it did not assume containers, did not defined a workflow language, and could not be extended in any way.
 In contrast, the Popper engine presented here fully embraces the container-native paradigm by implementing a principled design (described @Sec:principles), with a robust architectural design, support for workflow files, as well as all the other features described earlier.
 
