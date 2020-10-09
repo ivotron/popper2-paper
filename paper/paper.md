@@ -419,8 +419,10 @@ With few tweaks, a workflow developed on a local machine can be executed on Kube
 Depending on the scenario, users might not even need to be aware of the contents of a configuration file, and instead rely on system administrators to provide this information.
 In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
 
-The second item in the list of design principles presented in @Sec:principles (Dockerfile and OCI images as common denominators) makes Popper a robust tool that raises the abstraction level, from the point of view of users.
+Relying on Dockerfiles and OCI images as common denominators (@Sec:principles) allows to raise the level of abstraction across multiple container runtimes and orchestrators.
 Instead of having to deal with low level engine-specific issues, users can create and share workflows without worrying about what container infrastructure is available in the environments they have access to.
+We believe these invariants will hold in the future, with Dockerfiles likely being standardized as well.
+
 
 [^mlperf]: `https://github.com/mlperf/training`
 
