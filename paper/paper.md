@@ -60,7 +60,7 @@ This paper makes the following contributions:
 
 1. The design and architecture of a container-native workflow engine that abstracts over container engines, image builders, and resource managers, giving users the ability to focus on Dockerfiles (software dependencies) and workflow logic, without having to invest time in runtime specific details.
 
-2. Popper, an implementation of the above design that allows running workflows inside containers in different computing environments like local machines, Kubernetes clusters, or HPC [@yang2005high] environments.
+2. Popper, an implementation of the above design that allows running workflows inside containers in different computing environments like local machines, Kubernetes clusters, or HPC environments.
 
 3. A case study on how Popper can be used to quickly reproduce complex workflows in different computing environments.
    We show how an entire machine learning workflow can be executed on a local machine during development, and how it can be scaled up by reproducing it in a Kubernetes cluster with nodes that have GPUs available in them.
@@ -96,14 +96,12 @@ The design of Popper is based on the following principles:
 
   * **Dockerfile and OCI images as lowest common denominators**.
     All available container engines support generating Open Container Initiative (OCI) images from Dockerfiles, as well as importing or exporting these to other formats; most support the Docker registry API as well. This common denominator allows Popper to abstract over runtimes, engines, builders, and orchestrators.
-    A layered view of this: OS (Linux) abstracts over hardware; containers abstract over multiple operating systems; Popper abstracts over container infrastructure (runtimes, engines, builders, orchestrators).
 
   * **Be as lightweight as possible but not lighter**.
-    The syntax of Popper workflows can be learned in seconds and is meant to be as close to a shell script as possible.
+    The syntax for defining container-native workflow languages should be simple enough that it can be learned in seconds, and meant to be as close to shell scripts as possible.a
 
   * **Codify the workflow at the highest level**.
-    Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
-    It is intended to automate the workflow that we currently observe in the form of README files or documentation that explains how to compile, run, and test a software project. In other words, Popper is not meant to replace existing, more comprehensive workflow engines such as scientific workflow engines, configuration management frameworks, or domain-specific experiment management tools; rather, the goal is to write YAML-based wrappers around them.
+    Automate the workflow that we currently observe in the form of README files; documentation that explains how to compile, run, and test a software project; or artifact descriptions in academic articles describing how to reproduce results. In other words, the goal is _not_ to replace existing, more comprehensive workflow engines such as scientific workflow engines, configuration management frameworks, or domain-specific experiment management tools; rather, the goal is to have a thin wrapper around them.
 
 ## Background
 
@@ -177,6 +175,7 @@ The `uses` attribute can reference Docker images hosted in container image regis
 The commands or scripts that need to be executed in a container can be defined by the `args` and `runs` attributes. 
 Secrets and environment variables needed by a step can be specified by the `secrets` and `env` attributes respectively for making them available inside the container associated with a step.
 The steps in a workflow are executed sequentially in the order in which they are defined.
+As can be seen in @Lst:wf-example, Popper workflows are extremely simple with a linear sequence of steps without any loops, conditionals, retries, or waits.
 
 ## Workflow Execution Engine
 
