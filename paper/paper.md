@@ -299,18 +299,9 @@ The code that the workflow references can be found in the repository [^code] ass
 
 Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
-In our case, we used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8Gb LPDDR3 RAM .
+In our case, we used a laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8GB of LPDDR3 RAM.
 The image classification workflow was executed against the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
-
-```{#lst:kubernetes .yaml caption="Configuration file for running on Kubernetes."}
-resource_manager:
-  name: kubernetes
-  options:
-    volume_size: 4Gi
-    namespace: mynamespace
-```
-
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
 To reduce the runtime of this training ML workflow, it can be executed on machines with GPUs available to them.
 An alternative for this is to make use of the cloud, which in turn requires the workflow to be ported to this environment.
@@ -322,18 +313,13 @@ Popper first builds the images required by the workflow and pushes them to an on
 Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS [@sandberg1985design] for the different step pods to share and the workflow context (scripts, configuration files, etc.) is copied into it.
 Finally, for each step of the workflow, a pod is created that binds to the shared volume and the corresponding scripts or commands are executed inside the pod.
 
-Although any Kubernetes cluster can be used, for this case, we used a 3-node Kubernetes cluster on CloudLab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
-The training pod used the single GPU of the node on which it was scheduled.
-Reproducing a locally developed workflow on a Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size and the image registry credentials.
-In our case, we configured the training with an overfitting patience of 5, similar to what was done for the local machine execution.
-The training can be speed up further by scheduling the workflow on multiple nodes to utilize the processing power of multiple GPUs.
-
-## Workflow execution in Slurm clusters
-
-For running workflows on Slurm clusters, container engines that are HPC-aware, like Singularity, Charliecloud, and Pyxis need to be used.
-Currently, Popper supports running MPI workloads only through Slurm using Singularity as the container engine.
-To run workflows on a Slurm cluster, a configuration file containing Slurm specific options like the number of CPUs or nodes to use for running a job needs to be supplied to the `popper run` command.
-The user should be aware of the availability of resources like the nodes, CPUs, and GPUs on a shared cluster to write the Popper configuration file accordingly.
+```{#lst:kubernetes .yaml caption="Configuration file for running on Kubernetes."}
+resource_manager:
+  name: kubernetes
+  options:
+    volume_size: 4Gi
+    namespace: mynamespace
+```
 
 ```{#lst:slurm .yaml caption="Configuration file for running on Slurm."}
 engine:
@@ -351,6 +337,23 @@ resource_manager:
       cpus-per-task: 2
 ```
 
+Although any Kubernetes cluster can be used, for this case, we used a 3-node Kubernetes cluster on CloudLab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
+The training pod used the single GPU of the node on which it was scheduled.
+Reproducing a locally developed workflow on a Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size and the image registry credentials.
+In our case, we configured the training with an overfitting patience of 5, similar to what was done for the local machine execution.
+The training can be speed up further by scheduling the workflow on multiple nodes to utilize the processing power of multiple GPUs.
+
+## Workflow execution in Slurm clusters
+
+For running workflows on Slurm clusters, container engines that are HPC-aware, like Singularity, Charliecloud, and Pyxis need to be used.
+Currently, Popper supports running MPI workloads only through Slurm using Singularity as the container engine.
+To run workflows on a Slurm cluster, a configuration file containing Slurm specific options like the number of CPUs or nodes to use for running a job needs to be supplied to the `popper run` command.
+The user should be aware of the availability of resources like the nodes, CPUs, and GPUs on a shared cluster to write the Popper configuration file accordingly.
+
+Popper's Slurm runner builds or pulls an image on the login node of a Slurm cluster and then starts executing the containerized MPI workload on the compute nodes using the `sbatch` command, which creates and schedules a job for running the container on Slurm.
+With Singularity as the container engine, both the hybrid and bind method can be used to run a Singularity container with MPI available inside it.
+Using the bind approach provides the benefit of making the same MPI based Singularity image compatible between Slurm clusters with different MPI versions.
+
 ```{#lst:travis .yaml caption="Travis configuration generated by Popper."}
 dist: "xenial"
 language: "python"
@@ -360,11 +363,7 @@ install: "pip install popper"
 script: "popper run -f wf.yml"
 ```
 
-The Slurm resource manager builds or pulls an image on the login node of a Slurm cluster and then starts executing the containerized MPI workload on the compute nodes using the `sbatch` command, which creates and schedules a job for running the container on Slurm.
-With Singularity as the container engine, both the hybrid and bind method can be used to run a Singularity container with MPI available inside it.
-Using the bind approach provides the benefit of making the same MPI based Singularity image compatible between Slurm clusters with different MPI versions.
-
-For our case study, we used 3 VMs from Azure each with an NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 to create a Slurm cluster with 1 login and 2 compute nodes.
+For this case study, we used 3 VMs from Azure each with an NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 to create a Slurm cluster with 1 login and 2 compute nodes.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
 The training step was executed on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
 
@@ -410,7 +409,6 @@ In this way, Popper allows researchers and developers to build and test workflow
 Relying on Dockerfiles and OCI images as common denominators (@Sec:principles) allows to raise the level of abstraction across multiple container runtimes and orchestrators.
 Instead of having to deal with low level engine-specific issues, users can create and share workflows without worrying about what container infrastructure is available in the environments they have access to.
 We believe these invariants will hold in the future, with Dockerfiles likely being standardized as well.
-
 
 [^mlperf]: `https://github.com/mlperf/training`
 
