@@ -239,15 +239,26 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 
 In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 This study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
-For this study, we built an image classification workflow that runs the training using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset having 3 steps; download; verify; and train.
-The workflow used for the case study is depicted in @Lst:casestudy.
-The code that the workflow references can be found in the repository [^code] associated with this paper.
 
-The `download-dataset` step downloads the MNIST dataset in the workspace.
-The `verify-dataset` step verifies the downloaded archives against precomputed checksums.
-The `run-training` step then starts training the model on this downloaded dataset and records the duration of the training.
+The high-level steps that are required for building reproducible workflows with Popper usually consists of the following steps:
+
+ 1. Thinking of the logical steps of the workflow.
+
+ 2. Finding the relevant software packages required for the implementation of these steps.
+      * Finding images containing the required software from remote image registries such as DockerHub.
+      * If a prebuilt image is not available, a `Dockerfile`, which is a file containing specifications for building Docker images, can be used to build an image manually.
+
+ 3. Running the workflow and refining it.
+
+For this case study, we built an image classification workflow that runs trains a model using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset. The workflow consists of three steps:
+the `download-dataset` step downloads the MNIST dataset in the workspace;
+the `verify-dataset` step verifies the downloaded archives against precomputed checksums;
+the `run-training` step then starts training the model on this downloaded dataset and records the duration of the training.
+
+The workflow used for the case study is depicted in @Lst:casestudy.
 The download and train steps use a Horovod image and the verify step uses a lightweight alpine image.
-Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step otherwise it could make dependency management complex, hence defeating the purpose of containers.
+Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step; doing otherwise eventually complicates dependency management, hence defeating the purpose of containers.
+The code that the workflow references can be found in the repository [^code] associated with this paper.
 
 ```{#lst:casestudy .yaml caption="Workflow used in the case study."}
 steps:
