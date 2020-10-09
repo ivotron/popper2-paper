@@ -486,14 +486,14 @@ As future work, we plan the following:
 * Add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL, and Airflow to enable interoperability between different workflow engines.
 
 * Currently, Popper supports logging to the STDOUT or a file.
-  This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog, fluentd, or AWS CloudWatch.
-  Similar abstractions can be implemented to support different tracing mechanisms of containers like `dtrace`.
+  This can be extended to have an abstract mechanism to store and export logs to logging drivers like syslog [@syslog], fluentd [@fluentd], or AWS CloudWatch [@cloudwatch].
+  Similar abstractions can be implemented to support different tracing mechanisms of containers like `dtrace` [@dtrace].
 
-* Add plugins for engines like Kata container and Firecracker to allow running containers with the isolation guarantees of a VM.
+* Add plugins for engines like Kata container [@kata] and Firecracker [@agache2020firecracker] to allow running containers with the isolation guarantees of a VM.
 
 * Building, caching, and layering of images are currently taken care of by the underlying container engine.
   We plan to add an `image` attribute to the Popper workflow syntax to abstract the process of building and pushing images.
-  This feature will effectively allow images to be built in an engine-agnostic way, and allow the use of tools such as Kaniko, BuildKit, Buildah among others.
+  This feature will effectively allow images to be built in an engine-agnostic way, and allow the use of tools such as Kaniko [@kaniko], BuildKit [@buildkit], Buildah [@buildah] among others.
   These tools support rootless image builds and significantly speed up builds by providing remote caching features.
 
 **Acknowledgements**: This work was partially funded by the NSF Awards #OAC-1836650 (IRIS-HEP [^iris-hep]) and #CNS-1705021, as well as by the Center for Research in Open Source Software (CROSS)[^cross].
