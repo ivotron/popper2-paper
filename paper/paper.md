@@ -250,7 +250,7 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 This study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
 
-The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
+The high-level procedure for building reproducible workflows with Popper usually consists of the following steps:
 
  1. Thinking of the logical steps of the workflow.
 
