@@ -386,21 +386,18 @@ These case studies show how Popper helps improve the performance of scientific w
 
 # Discussion {#sec:discussions}
 
-The case study showcased the benefits of using Popper: having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
-To expand on this point, we analyzed the GitHub repository [^mlperf] of MLPerf [@mattson2019mlperf], a benchmark suite that measures how fast a system can train ML models.
+Having portable workflows drastically reduces software development and debugging time by enabling developers and researchers to quickly iterate and test the same workflow logic in different computing environments.
+As anecdotal evidence for this claim, we analyzed the GitHub repository [^mlperf] of MLPerf [@mattson2019mlperf], a benchmark suite that measures how fast a system can train ML models.
 From a total of 123 issues, 67 were related to problems of reproducibility: missing or outdated versions of dependencies, documentation not aligning with the code, missing or broken links for datasets.
 Popper can solve much of the problems generally noticed while reproducing research artifacts like the ones we found.
 
-As exemplified in the use cases, Popper helps build workflows that can be run on Cloud and HPC environments besides the local machine with minimal changes in configuration in a sustainable fashion.
-The adjustments that users need to make to reproduce workflows on Kubernetes and Slurm is described below.
+The configuration files are orthogonal to the workflow and are only meant to provide environment-specific options to allow running the same workflow in different environments.
+In general, the adjustments that need to be made in order to reproduce workflows on Kubernetes and Slurm are the following:
 
-1. To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes. 
-   The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
+  * To run workflows on Kubernetes clusters, users need to pass some configuration options through a YAML file with contents similar to the one shown in @Lst:kubernetes. 
+    The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
 
-2. Similarly, for running workflows on Slurm, users need to specify a few 
-   configuration options like the number of nodes to use for running 
-   the job concurrently, the number of CPUs to allocate to each task, 
-   the MPI library to bind to, as shown in @Lst:slurm.
+  *  Similarly, for running workflows on Slurm, users need to specify a few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the MPI library to bind to, as shown in @Lst:slurm.
 
 ```{#lst:slurm .yaml caption="Configuration file for running on Slurm."}
 engine:
@@ -418,11 +415,10 @@ resource_manager:
       cpus-per-task: 2
 ```
 
-The configuration files are orthogonal to the workflow and are only meant to provide
-environment-specific options to allow running the same workflow in different environments.
-It can be seen that with few tweaks like changing the resource manager 
-options in the configuration file, a workflow developed on a local 
-machine can be executed on Kubernetes and Slurm clusters.
+With few tweaks like changing the resource manager options in the configuration file, a workflow developed on a local machine can be executed on Kubernetes and Slurm clusters.
+
+More generally, this feature allows Popper to cleanly separate concerns: experimentation logic is encoded in the workflow file; runtime or infrastructure information is contained in a configuration file.
+Depending on the scenario, users might not even need to be aware of the contents of a configuration file, and instead rely on system administrators to provide this information.
 In this way, Popper allows researchers and developers to build and test workflows in different computing environments with relatively minimal effort.
 
 [^mlperf]: `https://github.com/mlperf/training`
