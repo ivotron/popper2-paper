@@ -76,7 +76,7 @@ This paper makes the following contributions:
    We show how an entire machine learning workflow can be executed on a local machine during development, and how it can be scaled up by reproducing it in a Kubernetes cluster with nodes that have GPUs available in them.
    We also show how the same workflow can be reproduced easily in a Slurm [@slurm] cluster in order to scale it up further.
 
-[^popper1]: The version of Popper described in this article is a major overhaul of an earlier version of Popper [@jimenez2017popper]. See @Sec:previous-popper for more.
+[^popper1]: The version of Popper described in this article is a major overhaul of an earlier version of Popper. See @Sec:previous-popper for more.
 
 # Popper {#sec:popper}
 
@@ -167,7 +167,7 @@ It is commonly used in writing configuration files and in applications where dat
 Due to its simplicity and wide adoption [@yaml_wide_adoption], we chose YAML for defining Popper workflows and for specifying the configuration for the execution engine. 
 An example Popper workflow is shown in @Lst:wf-example which downloads a dataset in CSV format and generates its transpose.
 
-```{#lst:wf-example .yaml caption="A two-step workflow that downloads a CSV table and obtains its transpose."}
+```{#lst:wf-example .yaml caption="A two-step example Popper workflow."}
 steps:
 # download CSV file with data on global CO2 emissions
 - id: download
@@ -260,16 +260,6 @@ The high-level steps that are required for building reproducible workflows with 
 
  3. Running the workflow and refining it.
 
-For this case study, we built an image classification workflow that runs trains a model using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset. The workflow consists of three steps:
-the `download-dataset` step downloads the MNIST dataset in the workspace;
-the `verify-dataset` step verifies the downloaded archives against precomputed checksums;
-the `run-training` step then starts training the model on this downloaded dataset and records the duration of the training.
-
-The workflow used for the case study is depicted in @Lst:casestudy.
-The download and train steps use a Horovod image and the verify step uses a lightweight alpine image.
-Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step; doing otherwise eventually complicates dependency management, hence defeating the purpose of containers.
-The code that the workflow references can be found in the repository [^code] associated with this paper.
-
 ```{#lst:casestudy .yaml caption="Workflow used in the case study."}
 steps:
 # download the MNIST dataset
@@ -293,6 +283,16 @@ steps:
     DATASET_REDUCTION: '0.1'
 ```
 
+For this case study, we built an image classification workflow that runs trains a model using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset. The workflow consists of three steps:
+the `download-dataset` step downloads the MNIST dataset in the workspace;
+the `verify-dataset` step verifies the downloaded archives against precomputed checksums;
+the `run-training` step then starts training the model on this downloaded dataset and records the duration of the training.
+
+The workflow used for the case study is depicted in @Lst:casestudy.
+The download and train steps use a Horovod image and the verify step uses a lightweight alpine image.
+Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step; doing otherwise eventually complicates dependency management, hence defeating the purpose of containers.
+The code that the workflow references can be found in the repository [^code] associated with this paper.
+
 The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
 
 1. Thinking of the logical steps of the workflow.
@@ -309,26 +309,25 @@ The general paradigm for building reproducible workflows with Popper usually con
 
 Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
-We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8Gb LPDDR3 RAM for this case.
-The image classification workflow was run on the MNIST dataset using Docker as the container engine.
+In our case, we used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8Gb LPDDR3 RAM .
+The image classification workflow was executed against the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
+
+```{#lst:kubernetes .yaml caption="Configuration file for running on Kubernetes."}
+resource_manager:
+  name: kubernetes
+  options:
+    volume_size: 4Gi
+    namespace: mynamespace
+```
+
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
-To make the training faster, it should be ideally done on GPUs on the cloud which requires these workflows to be easily portable to multi-node cloud environments.
+To reduce the runtime of this training ML workflow, it can be executed on machines with GPUs available to them.
+An alternative for this is to make use of the cloud, which in turn requires the workflow to be ported to this environment.
 
 ## Workflow execution in the cloud using Kubernetes
 
-```{#lst:travis .yaml caption="Travis configuration generated by Popper."}
-dist: "xenial"
-language: "python"
-python: "3.8"
-services: "docker"
-install: "pip install popper"
-script: "popper run -f wf.yml"
-```
-
-In this subsection, we discuss how we reduced the training duration in the above workflow by reproducing it on a GPU enabled Kubernetes cluster.
-
-On Kubernetes clusters, steps of a Popper workflow run in separate pods that can get scheduled on any node of the cluster in a separate namespace.
+On Kubernetes, steps of a Popper workflow run in separate pods that can get scheduled on any node of the cluster in a separate namespace.
 Popper first builds the images required by the workflow and pushes them to an online image registry.
 Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS [@sandberg1985design] for the different step pods to share and the workflow context (scripts, configuration files, etc.) is copied into it.
 Finally, for each step of the workflow, a pod is created that binds to the shared volume and the corresponding scripts or commands are executed inside the pod.
@@ -343,38 +342,53 @@ The training can be speed up further by scheduling the workflow on multiple node
 
 For running workflows on Slurm clusters, container engines that are HPC-aware, like Singularity, Charliecloud, and Pyxis need to be used.
 Currently, Popper supports running MPI workloads only through Slurm using Singularity as the container engine.
-
 To run workflows on a Slurm cluster, a configuration file containing Slurm specific options like the number of CPUs or nodes to use for running a job needs to be supplied to the `popper run` command.
 The user should be aware of the availability of resources like the nodes, CPUs, and GPUs on a shared cluster to write the Popper configuration file accordingly.
+
+```{#lst:slurm .yaml caption="Configuration file for running on Slurm."}
+engine:
+  name: singularity
+  options:
+    bind: [/path/to/mpi/lib:/usr/lib/,
+           /path/to/mpi/bin:/usr/bin/]
+
+resource_manager:
+  name: slurm
+  options:
+    run-training:
+      nodes: 2
+      nodelist: worker1,worker2
+      cpus-per-task: 2
+```
+
+```{#lst:travis .yaml caption="Travis configuration generated by Popper."}
+dist: "xenial"
+language: "python"
+python: "3.8"
+services: "docker"
+install: "pip install popper"
+script: "popper run -f wf.yml"
+```
+
 The Slurm resource manager builds or pulls an image on the login node of a Slurm cluster and then starts executing the containerized MPI workload on the compute nodes using the `sbatch` command, which creates and schedules a job for running the container on Slurm.
 With Singularity as the container engine, both the hybrid and bind method can be used to run a Singularity container with MPI available inside it.
 Using the bind approach provides the benefit of making the same MPI based Singularity image compatible between Slurm clusters with different MPI versions.
 
 For our case study, we used 3 VMs from Azure each with an NVIDIA 12GB PCI P100 GPU running Ubuntu 18.04 to create a Slurm cluster with 1 login and 2 compute nodes.
 We used `mpich` which is a popular implementation of MPI, with Singularity following the bind approach, where we install MPI on the host and then bind mount the `/path/to/mpi/bin` and `/path/to/mpi/lib` of the MPI package inside the Singularity container for the MPI version in the host and the container to stay consistent.
-The training step was run using MPI on the 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
-
-<!--`TODO`: an ending note for this paragraph-->
+The training step was executed on 2 compute nodes having a GPU each and the training parameters were the same as in the previous executions.
 
 ## Workflow execution on CI
 
-![Comparison of training runtime in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
-
 We used the workflow exporter to generate a Travis configuration file, pushed our MNIST project to GitHub with the configuration, and activated the repository on Travis to run our workflows on CI.
-For long-running workflows like those consisting of ML/AI or BigData workloads, it is recommended to scale down various parameters like dataset size, and epochs. with the help of environment variables to reduce the CI running time and iterate quickly. 
-We declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
+For long-running workflows like those consisting of ML/AI or big data workloads, it is recommended to scale down various parameters like dataset size or number of epochs, with the help of environment variables to reduce the CI running time and iterate quickly.
+In this case, we declared environment variables like `NUM_EPOCHS`, `DATASET_REDUCTION`, and `BATCH_SIZE` to control the number of epochs, size of training data, and batch size respectively in our workflow.
 Using the above variables we used only 10% of the dataset and configured the training for a single epoch, thus effectively reducing our CI running time by approx. 75%.
-The `.travis.yml` file used by our case study is shown in @Lst:travis.
+The `.travis.yml` configuration file used in our case is shown in @Lst:travis.
 It can be generated by running `popper ci travis` from the command line.
 By setting up CI for Popper workflows, users can continuously validate changes made to their workflows and also protect their workflows from getting outdated due to reasons such as outdated dependencies, outdated container images, and broken links.
 
-```{#lst:kubernetes .yaml caption="Configuration file for running on Kubernetes."}
-resource_manager:
-  name: kubernetes
-  options:
-    volume_size: 4Gi
-    namespace: mynamespace
-```
+![Comparison of training runtime in 3 different computing environments with Popper.](./figures/plot.png){#fig:casestudies}
 
 ## Results {#sec:results}
 
@@ -398,22 +412,6 @@ In general, the adjustments that need to be made in order to reproduce workflows
     The `volume_size` and `namespace` options are not required if the defaults are suitable for running the workflow but we show it here to depict some ways in which the Kubernetes resource manager can be customized.
 
   *  Similarly, for running workflows on Slurm, users need to specify a few configuration options like the number of nodes to use for running the job concurrently, the number of CPUs to allocate to each task, the MPI library to bind to, as shown in @Lst:slurm.
-
-```{#lst:slurm .yaml caption="Configuration file for running on Slurm."}
-engine:
-  name: singularity
-  options:
-    bind: [/path/to/mpi/lib:/usr/lib/,
-           /path/to/mpi/bin:/usr/bin/]
-
-resource_manager:
-  name: slurm
-  options:
-    run-training:
-      nodes: 2
-      nodelist: worker1,worker2
-      cpus-per-task: 2
-```
 
 With few tweaks, a workflow developed on a local machine can be executed on Kubernetes and Slurm clusters. More generally, this feature allows Popper to cleanly separate concerns: experimentation logic is encoded in the workflow file; runtime or infrastructure information is contained in a configuration file.
 Depending on the scenario, users might not even need to be aware of the contents of a configuration file, and instead rely on system administrators to provide this information.
