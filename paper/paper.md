@@ -108,7 +108,7 @@ The design of Popper is based on the following principles:
     All available container engines support generating Open Container Initiative (OCI) images from Dockerfiles, as well as importing or exporting these to other formats; most support the Docker registry API as well. This common denominator opens the possibility to create an abstraction layer over runtimes, engines, builders, and orchestrators.
 
   * **Be as lightweight as possible but not lighter**.
-    The syntax for defining container-native workflow languages should be simple enough that it can be learned in seconds, and meant to be as close to shell scripts as possible.a
+    The syntax for defining container-native workflow languages should be simple enough that it can be learned in seconds, and meant to be as close to shell scripts as possible.
 
   * **Codify the workflow at the highest level**.
     Automate the workflow that we currently observe in the form of README files; documentation that explains how to compile, run, and test a software project; or artifact descriptions in academic articles describing how to reproduce results. In other words, the goal is _not_ to replace existing, more comprehensive workflow engines such as scientific workflow engines, configuration management frameworks, or domain-specific experiment management tools; rather, the goal is to have a thin wrapper around them.
@@ -250,7 +250,7 @@ Currently, plugins for CI services like TravisCI, CircleCI, Jenkins, and Gitlab-
 In this section, we present a case study demonstrating how the Popper workflow engine allows reproducing and scaling workflows in different computing environments.
 This study aims to emphasize on how Popper can help in mitigating the reproducibility issues and make life easier for researchers and developers.
 
-The high-level steps that are required for building reproducible workflows with Popper usually consists of the following steps:
+The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
 
  1. Thinking of the logical steps of the workflow.
 
@@ -283,7 +283,7 @@ steps:
     DATASET_REDUCTION: '0.1'
 ```
 
-For this case study, we built an image classification workflow that runs trains a model using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset. The workflow consists of three steps:
+For this case study, we built an image classification workflow that trains a model using Horovod [@horovod] and Keras [@gulli2017deep] over the MNIST [@deng2012mnist] dataset. The workflow consists of three steps:
 the `download-dataset` step downloads the MNIST dataset in the workspace;
 the `verify-dataset` step verifies the downloaded archives against precomputed checksums;
 the `run-training` step then starts training the model on this downloaded dataset and records the duration of the training.
@@ -292,16 +292,6 @@ The workflow used for the case study is depicted in @Lst:casestudy.
 The download and train steps use a Horovod image and the verify step uses a lightweight alpine image.
 Although a single Docker image can be used in all the steps of a workflow, we recommend using images specific to the purpose of a step; doing otherwise eventually complicates dependency management, hence defeating the purpose of containers.
 The code that the workflow references can be found in the repository [^code] associated with this paper.
-
-The general paradigm for building reproducible workflows with Popper usually consists of the following steps:
-
-1. Thinking of the logical steps of the workflow.
-
-2. Finding the relevant software packages required for the implementation of these steps.
-   * Finding images containing the required software from remote image registries like DockerHub, Quay.io, or Google Container Registry.
-   * If a prebuilt image is not available, a `Dockerfile`, which is a file containing specifications for building Docker images, can be used to build an image manually.
-
-3. Running the workflow and refining it.
 
 [^code]: `https://github.com/ivotron/popper-canopie-paper`
 
