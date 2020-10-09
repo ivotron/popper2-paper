@@ -210,7 +210,7 @@ Thus, this component orchestrates the entire workflow execution process.
 
 Popper supports running containers in both single-node and multi-node cluster environments. 
 Each of these different environments has a very specific job and process scheduling policies. 
-The resource manager API is a pluggable interface that allows the creation of plugins (also referred to as runners) for distinct job schedulers (e.g. Slurm, SGE, HTCondor) and cluster managers (e.g. Kubernetes, Mesos, YARN). 
+The resource manager API is a pluggable interface that allows the creation of plugins (also referred to as runners) for distinct job schedulers (e.g. Slurm, HTCondor) and cluster managers (e.g. Kubernetes, Mesos [@hindman2011mesos]).
 Currently, plugins for Slurm and Kubernetes exist, as well as the default local runner that executes workflows on the local machine where Popper is executed.
 Resource manager plugins provide abstractions for different container engines which allows a particular resource manager to support new container engines through plugins.
 For example, in the case of Slurm, it currently supports running Docker and Singularity containers but other container engines can also be integrated like Charliecloud [@charliecloud] and Pyxis [@pyxis].
@@ -255,9 +255,10 @@ steps:
 # download the MNIST dataset
 - id: download-dataset
   uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
-  args: ["python", "./workflows/mnist/scripts/download_dataset.py"]
+  runs: [python]
+  args: ["./workflows/mnist/scripts/download_dataset.py"]
 
-# verify the dataset using checksums
+# verify the dataset against checksums
 - id: verify-dataset
   uses: docker://alpine:3.9.5
   args: ["./workflows/mnist/scripts/verify_dataset.sh"]
@@ -265,7 +266,7 @@ steps:
 # run training on the dataset
 - id: run-training
   uses: docker://horovod/horovod:0.19.3-tf2.1.0-torch-mxnet1.6.0-py3.6-gpu
-  args: ["python", "./workflows/mnist/scripts/run_training.sh"]
+  args: ["./workflows/mnist/scripts/run_training.sh"]
   env:
     NUM_EPOCHS: '1'
     BATCH_SIZE: '128'
@@ -288,7 +289,7 @@ The general paradigm for building reproducible workflows with Popper usually con
 
 Popper aids researchers in writing, testing, and debugging workflows on their local development machines.
 Researchers can iterate quickly by making changes and executing the `popper run` command to see the effect of their changes immediately.
-We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8 Gb LPDDR3 RAM for this case study.
+We used an Apple Macbook Pro Laptop with a 2.4GHz quad-core Intel Core i5 64-bit processor and 8Gb LPDDR3 RAM for this case.
 The image classification workflow was run on the MNIST dataset using Docker as the container engine.
 On single node machines, Popper leaves the job of scheduling the containerized steps to the host machines OS.
 We ran the workflow 5 times with an overfitting patience of 5 on the laptop's CPU.
@@ -310,7 +311,7 @@ On Kubernetes clusters, steps of a Popper workflow run in separate pods that can
 Popper first builds the images required by the workflow and pushes them to an online image registry like DockerHub, Google Container Registry, etc.
 Then a `PersistentVolumeClaim` is created to claim persistent storage space from a shared filesystem like NFS [@sandberg1985design] for the different step pods to share and the workflow context consisting of scripts, configs, etc. is copied into it.
 Finally, for each step of the workflow, a pod is created that binds to the shared volume and the corresponding scripts or commands are executed inside the pod.
-Although any Kubernetes cluster can be used, for this case study, we used a 3-node Kubernetes cluster on CloudLab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
+Although any Kubernetes cluster can be used, for this case, we used a 3-node Kubernetes cluster on CloudLab [@CloudLab] each with an NVIDIA 12GB PCI P100 GPU.
 The training pod used the single GPU of the node on which it was scheduled.
 Reproducing a locally developed workflow on a Kubernetes cluster only requires changing the resource manager specifications in the configuration file like specifying Kubernetes as the requested resource manager, specifying the `PersistentVolumeClaim` size, the image registry credentials, etc.
 In our case, we configured the training with an overfitting patience of 5, similar to what was done for the local machine execution.
@@ -481,7 +482,7 @@ Next, we compare Popper with existing state-of-the-art workflow engines illustra
 
 As future work, we plan the following:
 
-* Add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter and resource managers like HTCondor, TORQUE to Popper in order to extend the range of the different computing environments currently supported.
+* Add support for more container engines like NVIDIA Pyxis, Charliecloud, Shifter [@gerhardt2017shifter] and resource managers like HTCondor, TORQUE [@staples2006torque] to Popper in order to extend the range of the different computing environments currently supported.
 
 * Add more exporter plugins for exporting Popper workflows to advanced workflow syntaxes such as CWL, WDL, and Airflow to enable interoperability between different workflow engines.
 
