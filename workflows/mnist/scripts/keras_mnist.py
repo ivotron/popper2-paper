@@ -1,15 +1,14 @@
-import math
+from __future__ import print_function
 import os
-
+import math
+import keras
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras import backend as K
+import horovod.keras as hvd
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.keras import backend as K
-
-import horovod.tensorflow.keras as hvd
 
 # Horovod: initialize Horovod.
 hvd.init()
@@ -78,27 +77,19 @@ opt = keras.optimizers.Adadelta(1.0 * hvd.size())
 # Horovod: add Horovod Distributed Optimizer.
 opt = hvd.DistributedOptimizer(opt)
 
-model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=opt,
-              experimental_run_tf_function=False,
-              metrics=['accuracy'])
-
 callbacks = [
-    # Horovod: broadcast initial variable states from rank 0 to all other processes.
-    # This is necessary to ensure consistent initialization of all workers when
-    # training is started with random weights or restored from a checkpoint.
-    hvd.callbacks.BroadcastGlobalVariablesCallback(0),
+    keras.callbacks.ModelCheckpoint('./checkpoint-{epoch}.h5')
 ]
 
-# Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
-if hvd.rank() == 0:
-    callbacks.append(keras.callbacks.ModelCheckpoint('./checkpoint-{epoch}.h5'))
+model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
 
 model.fit(x_train, y_train,
+	  callbacks=callbacks,
           batch_size=batch_size,
-          callbacks=callbacks,
           epochs=epochs,
-          verbose=1 if hvd.rank() == 0 else 0,
+          verbose=1,
           validation_data=(x_test, y_test))
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
